@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Toast.makeText(getApplicationContext(), "onMenuItemClick", Toast.LENGTH_SHORT).show();
+            //    Toast.makeText(getApplicationContext(), "onMenuItemClick", Toast.LENGTH_SHORT).show();
                 // Handle the menu item
                 return true;
             }
@@ -89,13 +89,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                Toast.makeText(getApplicationContext(),"onDrawerOpened",Toast.LENGTH_SHORT).show();
+            //    Toast.makeText(getApplicationContext(),"onDrawerOpened",Toast.LENGTH_SHORT).show();
 
             }
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                Toast.makeText(getApplicationContext(),"onDrawerClosed",Toast.LENGTH_SHORT).show();
+           //     Toast.makeText(getApplicationContext(),"onDrawerClosed",Toast.LENGTH_SHORT).show();
             }
         };
         mActionBarDrawerToggle.syncState();
@@ -111,13 +111,13 @@ public class MainActivity extends AppCompatActivity {
                 mdrawerLayout.closeDrawers();
                 switch (menuItem.getItemId()){
                     case R.id.all:
-                        Toast.makeText(getApplicationContext(),"all",Toast.LENGTH_SHORT).show();
+                       Toast.makeText(getApplicationContext(),"所有物品",Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.my:
-                        Toast.makeText(getApplicationContext(),"my",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(),"我的物品",Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.setting:
-                        Toast.makeText(getApplicationContext(),"setting",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(),"設定",Toast.LENGTH_SHORT).show();
                         return true;
                 }
                 return true;
@@ -126,18 +126,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initViewPager(){
-
-
 // ...
-
-
-
-
 
         mTabs = (android.support.design.widget.TabLayout) findViewById(R.id.tabs);
         mTabs.addTab(mTabs.newTab().setText("Tab 1").setIcon(R.drawable.note));
         mTabs.addTab(mTabs.newTab().setText("Tab 2"));
         mTabs.addTab(mTabs.newTab().setText("Tab 3"));
+        mTabs.addTab(mTabs.newTab().setText("Tab 4"));
+        mTabs.addTab(mTabs.newTab().setText("Tab 5"));
+        mTabs.addTab(mTabs.newTab().setText("Tab 6"));
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         mViewPager.setAdapter(new SamplePagerAdapter());
@@ -149,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return 3;
+            return 6;
         }
 
         @Override
@@ -200,15 +197,15 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_about:
                 // About option clicked.
-                Toast.makeText(getApplicationContext(),"onOptions1",Toast.LENGTH_SHORT).show();
+             //  Toast.makeText(getApplicationContext(),"onOptions1",Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.action_exit:
                 // Exit option clicked.
-                Toast.makeText(getApplicationContext(),"onOptions2",Toast.LENGTH_SHORT).show();
+             //   Toast.makeText(getApplicationContext(),"onOptions2",Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.action_settings:
                 // Settings option clicked.
-                Toast.makeText(getApplicationContext(),"onOptions3",Toast.LENGTH_SHORT).show();
+             //   Toast.makeText(getApplicationContext(),"onOptions3",Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

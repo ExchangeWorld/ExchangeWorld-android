@@ -25,7 +25,7 @@
                 style="@style/CustomTabLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                />
+                app:tabMode="scrollable"/>
             <android.support.v4.view.ViewPager
                 android:id="@+id/viewpager"
                 android:layout_below="@id/tabs"
