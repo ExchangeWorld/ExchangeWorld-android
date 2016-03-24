@@ -134,7 +134,8 @@ public class DemoFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+            Bundle savedInstanceState)
+    {
         return inflater.inflate(R.layout.fragment_demo, container, false);
     }
 
@@ -182,6 +183,8 @@ public class DemoFragment extends Fragment {
 
         mNiceTabLayout.setOnIndicatorColorChangedListener((MainActivity) getActivity());
 
+        //bottom menu
+        /*
         mToolbar = (Toolbar) view.findViewById(R.id.demo_toolbar);
         mToolbar.inflateMenu(R.menu.demo_bottom);
         mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -281,6 +284,7 @@ public class DemoFragment extends Fragment {
                 return false;
             }
         });
+        */ //bottom menu
     }
 
     private void testBadge() {
