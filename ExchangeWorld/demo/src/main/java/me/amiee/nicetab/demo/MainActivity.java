@@ -40,8 +40,25 @@ public class MainActivity extends AppCompatActivity implements NiceTabStrip.OnIn
         view.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
-                Toast.makeText(MainActivity.this, menuItem.getTitle() + " pressed", Toast.LENGTH_LONG).show();
-                ;
+                //menuItem.getTitle()
+                int id= menuItem.getItemId();
+
+                if(id==R.id.all){
+                    Intent intent = new Intent();
+                    intent.setClass(MainActivity.this, MyItemActivity.class);
+                    startActivity(intent);
+                }
+                else if(id==R.id.my){
+                    Intent intent = new Intent();
+                    intent.setClass(MainActivity.this, MyItemActivity.class);
+                    startActivity(intent);
+                }
+                else if(id==R.id.setting){
+                    Intent intent = new Intent();
+                    intent.setClass(MainActivity.this, MyItemActivity.class);
+                    startActivity(intent);
+                }
+
 
                 menuItem.setChecked(true);
                 drawerLayout.closeDrawers();
