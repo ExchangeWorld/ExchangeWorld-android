@@ -61,9 +61,9 @@ public class DemoFragment extends Fragment {
         ));
 
         mTabs.add(new SamplePagerItem(
-                getString(R.string.threec), // Title
+                getString(R.string.makeup), // Title
                 R.drawable.ic_search, // Icon
-                R.drawable.ic_threec, // Icon
+                R.drawable.ic_makeup, // Icon
                 getResources().getColor(R.color.gray), // Indicator color
                 getResources().getColor(R.color.gray) // Divider color
         ));
@@ -77,16 +77,17 @@ public class DemoFragment extends Fragment {
         ));
 
         mTabs.add(new SamplePagerItem(
-                getString(R.string.makeup), // Title
-                R.drawable.ic_me, // Icon
-                R.drawable.ic_makeup, // Icon
+                getString(R.string.threec), // Title
+                R.drawable.ic_coffee, // Icon
+                R.drawable.ic_threec, // Icon
                 getResources().getColor(R.color.gray), // Indicator color
                 getResources().getColor(R.color.gray) // Divider color
         ));
+
         mTabs.add(new SamplePagerItem(
-                getString(R.string.woman_cloth), // Title
-                R.drawable.ic_me, // Icon
-                R.drawable.ic_cloth, // Icon
+                getString(R.string.women_cloth), // Title
+                R.drawable.ic_coffee, // Icon
+                R.drawable.ic_womencloth, // Icon
                 getResources().getColor(R.color.gray), // Indicator color
                 getResources().getColor(R.color.gray) // Divider color
         ));
