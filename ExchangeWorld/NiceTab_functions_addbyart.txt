@@ -1,2 +1,3 @@
 mNiceTabLayout.setTabMode(NiceTabLayout.TabMode.TITLE_ONLY);
 //¤TºØ¼Ò¦¡ title icon and both
+test
