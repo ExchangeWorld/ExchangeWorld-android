@@ -25,4 +25,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.0.1'
     compile 'com.android.support:recyclerview-v7:23.0.1'
     compile 'com.facebook.fresco:fresco:0.7.0'
+    compile 'com.android.support:support-v4:23.2.0'
+    compile 'com.android.support:design:23.0.1' //add for navigation drawer maybe will cause erro
 }

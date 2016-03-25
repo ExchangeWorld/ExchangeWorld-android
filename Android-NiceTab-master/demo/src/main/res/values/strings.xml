@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">NiceTab</string>
+    <string name="app_name" translatable="false">ExchangeWorld</string>
     <string name="github" translatable="false">GitHub</string>
     <string name="github_url" translatable="false"><![CDATA[https://github.com/RobotAmiee/Android-NiceTab]]></string>
     <string name="demo_title_basic">Basic</string>
@@ -42,4 +42,6 @@
     <string name="tab_icon_style">Tab Icon Style</string>
     <string name="ios" translatable="false">iOS</string>
     <string name="android" translatable="false">Android</string>
+    <string name="open">open</string>
+    <string name="close">close</string>
 </resources>
