@@ -44,4 +44,8 @@
     <string name="android" translatable="false">Android</string>
     <string name="open">open</string>
     <string name="close">close</string>
+    <string name="threec">3C</string>
+    <string name="woman_cloth">女性服飾</string>
+    <string name="book">書籍</string>
+    <string name="makeup">化妝品</string>
 </resources>

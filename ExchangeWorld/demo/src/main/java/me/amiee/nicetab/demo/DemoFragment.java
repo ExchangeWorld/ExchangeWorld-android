@@ -45,7 +45,7 @@ public class DemoFragment extends Fragment {
         }
      //   Toast.makeText(getContext(),"DemoFragment",Toast.LENGTH_SHORT).show();
         mTabs.add(new SamplePagerItem(
-                "Clothes", // Title
+                "男性服飾", // Title
                 R.drawable.ic_home, // Icon 連到.xml ios tab style 有tab selected跟not select差別
                 R.drawable.clothes, // Icon android icon
                 getResources().getColor(R.color.gray), // Indicator color
@@ -53,7 +53,7 @@ public class DemoFragment extends Fragment {
         ));
 
         mTabs.add(new SamplePagerItem(
-                "3C", // Title
+                "電腦用品", // Title
                 R.drawable.ic_activity, // Icon
                 R.drawable.computer, // Icon
                 getResources().getColor(R.color.gray), // Indicator color
@@ -61,25 +61,32 @@ public class DemoFragment extends Fragment {
         ));
 
         mTabs.add(new SamplePagerItem(
-                getString(R.string.tab_search), // Title
+                getString(R.string.threec), // Title
                 R.drawable.ic_search, // Icon
-                R.drawable.ic_search_a, // Icon
+                R.drawable.ic_threec, // Icon
                 getResources().getColor(R.color.gray), // Indicator color
                 getResources().getColor(R.color.gray) // Divider color
         ));
 
         mTabs.add(new SamplePagerItem(
-                getString(R.string.tab_me), // Title
+                getString(R.string.book), // Title
                 R.drawable.ic_me, // Icon
-                R.drawable.ic_me_a, // Icon
+                R.drawable.ic_book, // Icon
                 getResources().getColor(R.color.gray), // Indicator color
                 getResources().getColor(R.color.gray) // Divider color
         ));
 
         mTabs.add(new SamplePagerItem(
-                getString(R.string.tab_long_long_title), // Title
-                R.drawable.ic_coffee, // Icon
-                R.drawable.ic_coffee_a, // Icon
+                getString(R.string.makeup), // Title
+                R.drawable.ic_me, // Icon
+                R.drawable.ic_makeup, // Icon
+                getResources().getColor(R.color.gray), // Indicator color
+                getResources().getColor(R.color.gray) // Divider color
+        ));
+        mTabs.add(new SamplePagerItem(
+                getString(R.string.woman_cloth), // Title
+                R.drawable.ic_me, // Icon
+                R.drawable.ic_cloth, // Icon
                 getResources().getColor(R.color.gray), // Indicator color
                 getResources().getColor(R.color.gray) // Divider color
         ));
