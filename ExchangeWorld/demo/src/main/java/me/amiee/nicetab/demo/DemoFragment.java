@@ -110,7 +110,7 @@ public class DemoFragment extends Fragment {
 
         Fragment createFragment() {
             return AppsFragment.newInstance();
-        }
+        } //這裡設定tab對應的fragment
 
         CharSequence getTitle() {
             return mTitle;

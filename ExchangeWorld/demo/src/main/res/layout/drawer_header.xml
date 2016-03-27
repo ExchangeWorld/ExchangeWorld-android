@@ -1,20 +1,48 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="190dp"
-    android:background="@drawable/drawer_head"
-    >
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/drawer_head">
+
+    <ImageView
+        android:layout_width="200px"
+        android:layout_height="200px"
+        android:id="@+id/imageView"
+        android:src="@drawable/pic_drawer_myhead"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="28dp" />
+
     <TextView
         android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="24dp"
-        android:layout_marginStart="24dp"
-        android:layout_alignParentBottom="true"
-        android:text="歡迎"
+        android:text="鄭哲亞"
+        android:textSize="17sp"
+        android:textColor="#fff"
+        android:textStyle="bold"
+        android:paddingBottom="8dp"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/imageView"
+        android:layout_alignLeft="@+id/imageView"
+        android:layout_alignStart="@+id/imageView" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="台北市文山區"
         android:textSize="14sp"
         android:textColor="#fff"
         android:textStyle="bold"
         android:paddingBottom="8dp"
-        />
+        android:layout_below="@+id/name"
+        android:layout_alignLeft="@+id/name"
+        android:layout_alignStart="@+id/name" />
+
+
 
 </RelativeLayout>

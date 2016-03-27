@@ -48,5 +48,8 @@
     <string name="threec">3C產品</string>
     <string name="book">書籍</string>
     <string name="makeup">化妝品</string>
+    <string name="title_activity_my_item">MyItemActivity</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="action_settings">Settings</string>
 
 </resources>
