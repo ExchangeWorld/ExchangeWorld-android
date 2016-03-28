@@ -51,5 +51,8 @@
     <string name="title_activity_my_item">MyItemActivity</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="action_settings">Settings</string>
-
+    <string name="drawer_search">搜尋主頁</string>
+    <string name="drawer_myPage">個人頁面</string>
+    <string name="drawer_accountSetting">帳號設定</string>
+    <string name="drawer_aboutEXWD">關於EXWD</string>
 </resources>

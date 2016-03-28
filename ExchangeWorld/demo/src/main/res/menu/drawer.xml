@@ -1,17 +1,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
         <item
-            android:id="@+id/all"
+            android:id="@+id/drawer_searchPage"
             android:icon="@drawable/note"
-            android:title="所有物品"/>
+            android:title="@string/drawer_search"/>
         <item
-            android:id="@+id/my"
+            android:id="@+id/drawer_myPage"
             android:icon="@drawable/folders"
-            android:title="我的物品"/>
+            android:title="@string/drawer_myPage"/>
         <item
-            android:id="@+id/setting"
+            android:id="@+id/drawer_accountSetting"
             android:icon="@drawable/settings"
             android:color="@android:color/black"
-            android:title="設定"/>
+            android:title="@string/drawer_accountSetting"/>
+    <item
+        android:id="@+id/drawer_aboutEXWD"
+        android:icon="@drawable/settings"
+        android:color="@android:color/black"
+        android:title="@string/drawer_aboutEXWD"/>
 
 </menu>

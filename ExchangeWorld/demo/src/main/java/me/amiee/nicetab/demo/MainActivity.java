@@ -43,17 +43,22 @@ public class MainActivity extends AppCompatActivity implements NiceTabStrip.OnIn
                 //menuItem.getTitle()
                 int id= menuItem.getItemId();
 
-                if(id==R.id.all){
+                if(id==R.id.drawer_searchPage){
                     Intent intent = new Intent();
                     intent.setClass(MainActivity.this, MyItemActivity.class);
                     startActivity(intent);
                 }
-                else if(id==R.id.my){
+                else if(id==R.id.drawer_myPage){
                     Intent intent = new Intent();
                     intent.setClass(MainActivity.this, MyItemActivity.class);
                     startActivity(intent);
                 }
-                else if(id==R.id.setting){
+                else if(id==R.id.drawer_accountSetting){
+                    Intent intent = new Intent();
+                    intent.setClass(MainActivity.this, MyItemActivity.class);
+                    startActivity(intent);
+                }
+                else if(id==R.id.drawer_aboutEXWD){
                     Intent intent = new Intent();
                     intent.setClass(MainActivity.this, MyItemActivity.class);
                     startActivity(intent);

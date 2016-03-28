@@ -14,7 +14,8 @@
         android:layout_alignParentStart="true"
         android:layout_marginLeft="30dp"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="28dp" />
+        android:layout_marginTop="28dp"
+        android:adjustViewBounds="false" />
 
     <TextView
         android:id="@+id/name"
