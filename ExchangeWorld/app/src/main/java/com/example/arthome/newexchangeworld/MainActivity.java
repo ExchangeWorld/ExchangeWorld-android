@@ -32,8 +32,6 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -90,7 +88,15 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-         if (id == R.id.nav_gallery) {
+
+         if (id == R.id.drawer_searchPage){
+
+             transaction.replace(R.id.content_frame, tabFragment.newInstance());
+             transaction.commit();
+         }else if (id == R.id.drawer_myPage){
+             transaction.replace(R.id.content_frame, MyPageFragment.newInstance());
+             transaction.commit();
+         }else if (id == R.id.nav_gallery) {
              Intent intent = new Intent();
              intent.setClass(MainActivity.this, TestActivity.class);
              startActivity(intent);
@@ -98,16 +104,9 @@ public class MainActivity extends AppCompatActivity
          else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
-
-        }else if (id == R.id.drawer_searchPage){
-
-             transaction.replace(R.id.content_frame, tabFragment.newInstance());
+             transaction.replace(R.id.content_frame, oneFragment.newInstance("one", "one"));
              transaction.commit();
-        }else if (id == R.id.drawer_myPage){
-
-        transaction.replace(R.id.content_frame, oneFragment.newInstance("one", "one"));
-        transaction.commit();
-    }
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
