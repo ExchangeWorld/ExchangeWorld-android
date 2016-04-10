@@ -4,17 +4,20 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/drawer_searchPage"
-            android:icon="@drawable/ic_setting"
+            android:icon="@drawable/ic_home"
             android:title="@string/drawer_search"/>
         <item
             android:id="@+id/drawer_myPage"
+            android:icon="@drawable/ic_user"
             android:title="@string/drawer_myPage"/>
         <item
             android:id="@+id/drawer_accountSetting"
+            android:icon="@drawable/ic_setting"
             android:color="@android:color/black"
             android:title="@string/drawer_accountSetting"/>
         <item
             android:id="@+id/drawer_aboutEXWD"
+            android:icon="@drawable/ic_info"
             android:color="@android:color/black"
             android:title="@string/drawer_aboutEXWD"/>
         <item
