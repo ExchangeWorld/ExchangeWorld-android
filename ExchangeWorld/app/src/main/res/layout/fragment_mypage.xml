@@ -25,11 +25,11 @@
                 android:textColor="#fff"
                 android:textStyle="bold"
                 android:paddingBottom="8dp"
+                android:layout_marginLeft="110dp"
+                android:layout_marginStart="110dp"
                 android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginLeft="78dp"
-                android:layout_marginStart="78dp" />
+                android:layout_alignParentStart="true" />
 
             <TextView
                 android:id="@+id/textView5"
@@ -43,6 +43,18 @@
                 android:layout_below="@+id/textView4"
                 android:layout_alignLeft="@+id/textView4"
                 android:layout_alignStart="@+id/textView4" />
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/myhead"
+                android:id="@+id/imageView3"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/textView5"
+                android:layout_toStartOf="@+id/textView5"
+                android:layout_marginRight="19dp"
+                android:layout_marginEnd="19dp" />
         </RelativeLayout>
 
         <LinearLayout
