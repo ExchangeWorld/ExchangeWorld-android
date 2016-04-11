@@ -22,14 +22,14 @@
                 android:layout_height="wrap_content"
                 android:text="鄭哲亞"
                 android:textSize="17sp"
-                android:textColor="#fff"
                 android:textStyle="bold"
                 android:paddingBottom="8dp"
                 android:layout_marginLeft="110dp"
                 android:layout_marginStart="110dp"
                 android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:layout_alignParentStart="true"
+                style="@style/mTextStyle"/>
 
             <TextView
                 android:id="@+id/textView5"
@@ -37,12 +37,12 @@
                 android:layout_height="wrap_content"
                 android:text="台北市文山區"
                 android:textSize="14sp"
-                android:textColor="#fff"
                 android:textStyle="bold"
                 android:paddingBottom="8dp"
                 android:layout_below="@+id/textView4"
                 android:layout_alignLeft="@+id/textView4"
-                android:layout_alignStart="@+id/textView4" />
+                android:layout_alignStart="@+id/textView4"
+                style="@style/mTextStyle"/>
 
             <ImageView
                 android:layout_width="60dp"
@@ -69,7 +69,8 @@
                 android:background="#FFFF"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:layout_alignParentStart="true"
+                style="@style/MyCustomTabLayout"/>
 
             <android.support.v4.view.ViewPager
                 android:layout_width="wrap_content"

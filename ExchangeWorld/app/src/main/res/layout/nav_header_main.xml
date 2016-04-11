@@ -29,13 +29,13 @@
         android:layout_height="wrap_content"
         android:text="鄭哲亞"
         android:textSize="17sp"
-        android:textColor="#fff"
         android:textStyle="bold"
         android:paddingBottom="4dp"
         android:layout_marginTop="20dp"
         android:layout_below="@+id/imageView"
         android:layout_alignLeft="@+id/imageView"
-        android:layout_alignStart="@+id/imageView" />
+        android:layout_alignStart="@+id/imageView"
+        style="@style/mTextStyle" />
 
     <TextView
         android:id="@+id/textView2"
@@ -43,12 +43,12 @@
         android:layout_height="wrap_content"
         android:text="台北市文山區"
         android:textSize="14sp"
-        android:textColor="#fff"
         android:textStyle="bold"
         android:paddingBottom="8dp"
         android:layout_below="@+id/name"
         android:layout_alignLeft="@+id/name"
-        android:layout_alignStart="@+id/name" />
+        android:layout_alignStart="@+id/name"
+        style="@style/mTextStyle" />
 
 
 
