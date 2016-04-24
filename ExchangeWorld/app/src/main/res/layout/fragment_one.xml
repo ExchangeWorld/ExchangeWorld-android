@@ -13,4 +13,10 @@
         android:text="Fragment1"
         android:id="@+id/textView"
         android:layout_gravity="center" />
+
+    <ImageView
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:id="@+id/cameraImageView"
+        android:layout_gravity="center_horizontal|bottom" />
 </FrameLayout>
