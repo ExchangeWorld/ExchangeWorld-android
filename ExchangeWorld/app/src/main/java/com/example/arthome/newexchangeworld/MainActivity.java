@@ -25,6 +25,10 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     //test merge
+    public void camera(View view){
+        Snackbar.make(view, "Camera clicked", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
