@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">ExchangeWorld</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="drawer_search">搜尋主頁</string>
+    <string name="drawer_myPage">個人頁面</string>
+    <string name="drawer_accountSetting">帳號設定</string>
+    <string name="drawer_aboutEXWD">關於EXWD</string>
+    <string name="title_activity_test">TestActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
