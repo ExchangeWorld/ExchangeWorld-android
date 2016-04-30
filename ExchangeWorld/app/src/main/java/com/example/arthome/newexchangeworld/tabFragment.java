@@ -3,15 +3,18 @@ package com.example.arthome.newexchangeworld;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.support.v4.app.FragmentManager;
 
 import com.example.arthome.newexchangeworld.ItemPage.ItemFragment;
+import com.google.android.gms.maps.*;
+
+import java.util.Map;
 
 /**
  * Created by arthome on 2016/4/9.
@@ -21,12 +24,13 @@ public class tabFragment extends Fragment {
     PagerAdapter pagerAdapter;
     TabLayout tabLayout;
 
+
+
     public tabFragment(){
         //require empty constructor
     }
     public static tabFragment newInstance() {
         tabFragment fragment = new tabFragment();
-
 
         return fragment;
     }
@@ -44,6 +48,7 @@ public class tabFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         //super.onViewCreated(view, savedInstanceState);
+
 
         FragmentManager childFragmentManager = getChildFragmentManager();//fragment in frament
         //set tab to fragment
@@ -68,7 +73,8 @@ public class tabFragment extends Fragment {
         public Fragment getItem(int position){
             switch (position){
                 case 0:
-                    return oneFragment.newInstance("1","2");
+                    return MapFragment.newInstance();
+                //oneFragment.newInstance("1","2")
                 case 1:
                     return ItemFragment.newInstance();
                 case 2:
