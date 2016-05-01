@@ -55,6 +55,7 @@ public class tabFragment extends Fragment {
         pagerAdapter =new myTabPagerAdapter(childFragmentManager);
         viewPager = (ViewPager) view.findViewById(R.id.Viewpager);
         viewPager.setAdapter(pagerAdapter);
+        viewPager.setOffscreenPageLimit(2); //create the two fragment beside, more memory needed
         tabLayout = (TabLayout) view.findViewById(R.id.TabLayout);
         tabLayout.setupWithViewPager(viewPager);
     }
