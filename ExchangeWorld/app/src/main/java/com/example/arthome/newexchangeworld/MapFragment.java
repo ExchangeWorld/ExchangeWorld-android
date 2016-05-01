@@ -25,11 +25,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
  */
 public class MapFragment extends Fragment {
 
-
     private GoogleMap mMap;
-
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
