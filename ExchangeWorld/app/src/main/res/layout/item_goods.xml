@@ -19,9 +19,9 @@
             android:layout_alignParentStart="true" />
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:id="@+id/imageView5"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:id="@+id/category_image"
             android:layout_below="@+id/imageView4"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
@@ -33,16 +33,17 @@
             android:text="goods_name"
             android:id="@+id/id_goods_name"
             android:layout_below="@+id/imageView4"
-            android:layout_toRightOf="@+id/imageView5"
-            android:layout_toEndOf="@+id/imageView5" />
+            android:layout_toRightOf="@+id/category_image"
+            android:layout_toEndOf="@+id/category_image" />
 
         <ImageView
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:id="@+id/imageView6"
-            android:layout_below="@+id/imageView5"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:id="@+id/user_image"
+            android:layout_below="@+id/category_image"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:src="@drawable/ic_user" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -50,9 +51,9 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="user_name"
             android:id="@+id/id_user_name"
-            android:layout_below="@+id/id_goods_name"
-            android:layout_toRightOf="@+id/imageView6"
-            android:layout_toEndOf="@+id/imageView6" />
+            android:layout_alignBottom="@+id/user_image"
+            android:layout_toRightOf="@+id/user_image"
+            android:layout_toEndOf="@+id/user_image" />
 
     </RelativeLayout>
 </LinearLayout>

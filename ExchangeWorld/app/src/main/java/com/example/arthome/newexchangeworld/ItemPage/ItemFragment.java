@@ -10,6 +10,8 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -105,6 +107,7 @@ public class ItemFragment extends Fragment{
 
                 GoodsModel goodsModel = new GoodsModel();
                 goodsModel.setName(mjson.getString("name"));
+                goodsModel.setCategory(mjson.getString("category"));
                 goodsModelList.add(goodsModel);
                 goodsModelList.add(goodsModel);
                 goodsModelList.add(goodsModel);
@@ -114,7 +117,6 @@ public class ItemFragment extends Fragment{
                 double pos_x = mjson.getDouble("position_x");
                 String description = mjson.getString("description");
                return goodsModelList;
-
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -149,7 +151,6 @@ public class ItemFragment extends Fragment{
                 mAdapter = new ItemAdapter(result);
                 mRecyclerView.setAdapter(mAdapter);
             }
-
         }
     }
 
@@ -180,8 +181,19 @@ public class ItemFragment extends Fragment{
             //  String info = items.get(position);
             View view = viewHolder.itemView;
             TextView goods_textView = (TextView) view.findViewById(R.id.id_goods_name);
-            goods_textView.setText(goodsModel.get(0).getName()); //TODO change to array
             TextView user_textView = (TextView) view.findViewById(R.id.id_user_name);
+            ImageView category_image = (ImageView) view.findViewById(R.id.category_image);
+
+            goods_textView.setText(goodsModel.get(0).getName()); //TODO change to array
+
+            switch(goodsModel.get(0).getCategory()){
+                case "Books":
+                    category_image.setImageResource(R.drawable.ic_book);
+                    break;
+                default:
+                    break;
+            }
+
             user_textView.setText("Art");
         }
 
