@@ -22,25 +22,23 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.viewHolder> {
 
     @Override
     public viewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_card, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_goods, viewGroup, false);
         return new viewHolder(view);
-
     }
 
     @Override
     public int getItemViewType(int position) {
         return super.getItemViewType(position);
-
     }
 
     @Override
     public void onBindViewHolder(viewHolder viewHolder, int position) {
-        String info = items.get(position);
+      //  String info = items.get(position);
         View view = viewHolder.itemView;
-        TextView textView = (TextView) view.findViewById(R.id.info_text);
-        textView.setText(info);
-        //手動更改高度
-        textView.setHeight(200);
+        TextView goods_textView = (TextView) view.findViewById(R.id.id_goods_name);
+        goods_textView.setText("Computers");
+        TextView user_textView = (TextView) view.findViewById(R.id.id_goods_name);
+        user_textView.setText("Art");
     }
 
     @Override
