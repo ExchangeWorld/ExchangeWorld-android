@@ -17,6 +17,7 @@ public class GoodsModel {
     private String description;
     private String created_at;
     private String updated_at;
+    private String onwer_name;
 
     public int getGid() {
         return gid;
@@ -120,6 +121,14 @@ public class GoodsModel {
 
     public void setUpdated_at(String updated_at) {
         this.updated_at = updated_at;
+    }
+
+    public String getOnwer_name() {
+        return onwer_name;
+    }
+
+    public void setOnwer_name(String onwer_name) {
+        this.onwer_name = onwer_name;
     }
     /*
     {

@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.example.arthome.newexchangeworld.R;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.util.List;
 
@@ -44,6 +46,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.myViewHolder> 
 
         viewHolder.goods_textView.setText(goodsModel.get(0).getName()); //TODO change to array
 
+        ImageLoader imageLoader = ImageLoader.getInstance();
+        imageLoader.displayImage(goodsModel.get(0).getPhoto_path(),viewHolder.goods_image);
+
         switch(goodsModel.get(0).getCategory()){
             case "Books":
                 viewHolder.category_image.setImageResource(R.drawable.ic_book);
@@ -51,7 +56,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.myViewHolder> 
             default:
                 break;
         }
-        viewHolder.user_textView.setText("Art");
+        viewHolder.user_textView.setText(goodsModel.get(0).getOnwer_name());
     }
 
     @Override
@@ -63,11 +68,13 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.myViewHolder> 
         TextView goods_textView;
         TextView user_textView;
         ImageView category_image;
+        ImageView goods_image;
         public myViewHolder(View itemView) {
             super(itemView);
             goods_textView = (TextView) itemView.findViewById(R.id.id_goods_name);
             user_textView = (TextView) itemView.findViewById(R.id.id_user_name);
             category_image = (ImageView) itemView.findViewById(R.id.category_image);
+            goods_image = (ImageView) itemView.findViewById(R.id.goods_image);
 
         }
     }

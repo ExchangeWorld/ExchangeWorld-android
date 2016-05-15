@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.example.arthome.newexchangeworld.R;
+import com.google.android.gms.location.places.AutocompletePrediction;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -102,12 +104,18 @@ public class ItemFragment extends Fragment{
                 }
                 String sJson = buffer.toString();
                 JSONObject mjson = new JSONObject(sJson);
-
+                JSONObject onwerjson;
+                onwerjson = mjson.getJSONObject("owner");
                 List<GoodsModel> goodsModelList = new ArrayList<>();
 
                 GoodsModel goodsModel = new GoodsModel();
+                goodsModel.setOnwer_name(onwerjson.getString("name"));
                 goodsModel.setName(mjson.getString("name"));
                 goodsModel.setCategory(mjson.getString("category"));
+                String goods_imageUrl = mjson.getString("photo_path");
+                goods_imageUrl = goods_imageUrl.substring(2,goods_imageUrl.length()-2);
+                goodsModel.setPhoto_path(goods_imageUrl);
+
                 goodsModelList.add(goodsModel);
                 goodsModelList.add(goodsModel);
                 goodsModelList.add(goodsModel);
