@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
-
+/*              three dot setting on toolbar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
