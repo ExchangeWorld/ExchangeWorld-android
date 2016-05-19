@@ -21,7 +21,6 @@ import java.util.List;
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.myViewHolder> {
     //private ArrayList<String> items = new ArrayList<>();
     private List<GoodsModel> goodsModel ;
-
     public ItemAdapter(List<GoodsModel> goodsModel) {
         this.goodsModel = goodsModel;
     }
@@ -41,11 +40,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.myViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(myViewHolder viewHolder, int position) {
+    public void onBindViewHolder(myViewHolder viewHolder, int position) { //change list_item name here
         //  String info = items.get(position);
 
         viewHolder.goods_textView.setText(goodsModel.get(0).getName()); //TODO change to array
-
         ImageLoader imageLoader = ImageLoader.getInstance();
         imageLoader.displayImage(goodsModel.get(0).getPhoto_path(),viewHolder.goods_image);
 
@@ -56,7 +54,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.myViewHolder> 
             default:
                 break;
         }
-        viewHolder.user_textView.setText(goodsModel.get(0).getOnwer_name());
+        viewHolder.user_textView.setText(goodsModel.get(0).getOwner().getName());
     }
 
     @Override

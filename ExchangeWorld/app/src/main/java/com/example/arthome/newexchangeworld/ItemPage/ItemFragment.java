@@ -11,11 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.Switch;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import com.google.gson.Gson;
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.example.arthome.newexchangeworld.R;
 import com.google.android.gms.location.places.AutocompletePrediction;
@@ -103,33 +99,26 @@ public class ItemFragment extends Fragment{
                     buffer.append(line);
                 }
                 String sJson = buffer.toString();
-                JSONObject mjson = new JSONObject(sJson);
-                JSONObject onwerjson;
-                onwerjson = mjson.getJSONObject("owner");
+                //JSONObject mjson = new JSONObject(sJson);
                 List<GoodsModel> goodsModelList = new ArrayList<>();
 
-                GoodsModel goodsModel = new GoodsModel();
-                goodsModel.setOnwer_name(onwerjson.getString("name"));
-                goodsModel.setName(mjson.getString("name"));
-                goodsModel.setCategory(mjson.getString("category"));
-                String goods_imageUrl = mjson.getString("photo_path");
+                //convert json to gson
+                Gson gson = new Gson();
+                GoodsModel goodsModel = gson.fromJson(sJson, GoodsModel.class);
+              //  Log.i("oscart",testgson.getOwner().getName()+"---"+testgson.getOwner().getPhoto_path());
+
+                String goods_imageUrl = goodsModel.getPhoto_path();
                 goods_imageUrl = goods_imageUrl.substring(2,goods_imageUrl.length()-2);
                 goodsModel.setPhoto_path(goods_imageUrl);
-
                 goodsModelList.add(goodsModel);
                 goodsModelList.add(goodsModel);
                 goodsModelList.add(goodsModel);
                 goodsModelList.add(goodsModel);
 
-                String itemName = mjson.getString("name");
-                double pos_x = mjson.getDouble("position_x");
-                String description = mjson.getString("description");
                return goodsModelList;
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
                 e.printStackTrace();
             } finally {
                 if(connection != null) {

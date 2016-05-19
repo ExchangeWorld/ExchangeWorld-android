@@ -18,6 +18,7 @@ public class GoodsModel {
     private String created_at;
     private String updated_at;
     private String onwer_name;
+    private Owner owner;
 
     public int getGid() {
         return gid;
@@ -129,6 +130,14 @@ public class GoodsModel {
 
     public void setOnwer_name(String onwer_name) {
         this.onwer_name = onwer_name;
+    }
+
+    public Owner getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Owner owner) {
+        this.owner = owner;
     }
     /*
     {
