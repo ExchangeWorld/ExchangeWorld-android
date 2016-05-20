@@ -26,8 +26,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.myViewHolder> 
     }
 
 
-
-
     @Override
     public myViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_goods, parent, false);
@@ -43,18 +41,19 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.myViewHolder> 
     public void onBindViewHolder(myViewHolder viewHolder, int position) { //change list_item name here
         //  String info = items.get(position);
 
-        viewHolder.goods_textView.setText(goodsModel.get(0).getName()); //TODO change to array
-        ImageLoader imageLoader = ImageLoader.getInstance();
-        imageLoader.displayImage(goodsModel.get(0).getPhoto_path(),viewHolder.goods_image);
+            viewHolder.goods_textView.setText(goodsModel.get(position).getName()); //TODO change to array
+            ImageLoader imageLoader = ImageLoader.getInstance();
+            imageLoader.displayImage(goodsModel.get(position).getPhoto_path(), viewHolder.goods_image);
 
-        switch(goodsModel.get(0).getCategory()){
-            case "Books":
-                viewHolder.category_image.setImageResource(R.drawable.ic_book);
-                break;
-            default:
-                break;
-        }
-        viewHolder.user_textView.setText(goodsModel.get(0).getOwner().getName());
+            switch (goodsModel.get(position).getCategory()) {
+                case "Books":
+                    viewHolder.category_image.setImageResource(R.drawable.ic_book);
+                    break;
+                default:
+                    break;
+            }
+            viewHolder.user_textView.setText(goodsModel.get(position).getOwner().getName());
+
     }
 
     @Override

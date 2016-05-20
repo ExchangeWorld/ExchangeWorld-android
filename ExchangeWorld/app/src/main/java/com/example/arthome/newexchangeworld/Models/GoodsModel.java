@@ -20,6 +20,20 @@ public class GoodsModel {
     private String onwer_name;
     private Owner owner;
 
+    public GoodsModel() {
+    }
+
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    private String error;
+
     public int getGid() {
         return gid;
     }

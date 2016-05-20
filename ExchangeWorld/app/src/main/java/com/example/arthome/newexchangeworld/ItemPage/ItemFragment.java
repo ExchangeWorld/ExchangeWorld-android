@@ -61,7 +61,7 @@ public class ItemFragment extends Fragment{
         super.onViewCreated(view, savedInstanceState);
         //原本的initView
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        new downloadAPI().execute("http://exwd.csie.org:43002/api/goods/1");
+        new downloadAPI().execute("http://exwd.csie.org:43002/api/goods/");
        /*
         //列數為2
         int spanCount = 2;
@@ -82,39 +82,42 @@ public class ItemFragment extends Fragment{
         protected List<GoodsModel> doInBackground(String... params) {
             HttpURLConnection connection = null;
             BufferedReader reader = null;
-
+            int goods_count=1;
             try {
-                URL url = new URL(params[0]);
+
+                URL url = new URL(params[0]+Integer.toString(goods_count));
                 connection = (HttpURLConnection) url.openConnection();
                 connection.connect(); // it still works without this line, don't know why
-
-                InputStream stream = connection.getInputStream();
-
-                reader = new BufferedReader(new InputStreamReader(stream));
-
-                StringBuffer buffer = new StringBuffer();
-
-                String line = "";
-                while ((line = reader.readLine())!= null){
-                    buffer.append(line);
-                }
-                String sJson = buffer.toString();
-                //JSONObject mjson = new JSONObject(sJson);
                 List<GoodsModel> goodsModelList = new ArrayList<>();
+                while(connection.getResponseCode()!=500) { //not error
 
-                //convert json to gson
-                Gson gson = new Gson();
-                GoodsModel goodsModel = gson.fromJson(sJson, GoodsModel.class);
-              //  Log.i("oscart",testgson.getOwner().getName()+"---"+testgson.getOwner().getPhoto_path());
+                    InputStream stream = connection.getInputStream();
 
-                String goods_imageUrl = goodsModel.getPhoto_path();
-                goods_imageUrl = goods_imageUrl.substring(2,goods_imageUrl.length()-2);
-                goodsModel.setPhoto_path(goods_imageUrl);
-                goodsModelList.add(goodsModel);
-                goodsModelList.add(goodsModel);
-                goodsModelList.add(goodsModel);
-                goodsModelList.add(goodsModel);
+                    reader = new BufferedReader(new InputStreamReader(stream));
 
+                    StringBuffer buffer = new StringBuffer();
+
+                    String line = "";
+                    while ((line = reader.readLine()) != null) {
+                        buffer.append(line);
+                    }
+                    String sJson;
+                    sJson= buffer.toString();
+                    //JSONObject mjson = new JSONObject(sJson);
+                    //convert json to gson
+                    Gson gson = new Gson();
+                    GoodsModel goodsModel;
+                    goodsModel = gson.fromJson(sJson, GoodsModel.class);
+                    String goods_imageUrl = goodsModel.getPhoto_path();
+                    goods_imageUrl = goods_imageUrl.substring(2, goods_imageUrl.length() - 2);
+                    goodsModel.setPhoto_path(goods_imageUrl);
+                    goodsModelList.add(goodsModel);
+
+                    goods_count++;
+                    url = new URL(params[0]+Integer.toString(goods_count));
+                    connection = (HttpURLConnection) url.openConnection();
+                    connection.connect(); // it still works without this line, don't know why
+                }
                return goodsModelList;
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -141,6 +144,7 @@ public class ItemFragment extends Fragment{
             //mText.setText(result.toString());
             //TODO need to set data to list
             if(result != null){
+
                 //列數為2
                 int spanCount = 2;
                 mLayoutManager = new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL);
@@ -150,5 +154,4 @@ public class ItemFragment extends Fragment{
             }
         }
     }
-
 }
