@@ -24,8 +24,6 @@ public class tabFragment extends Fragment {
     PagerAdapter pagerAdapter;
     TabLayout tabLayout;
 
-
-
     public tabFragment(){
         //require empty constructor
     }

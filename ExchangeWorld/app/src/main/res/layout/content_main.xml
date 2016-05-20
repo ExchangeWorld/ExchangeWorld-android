@@ -21,7 +21,7 @@
     </FrameLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/cameraFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
@@ -32,6 +32,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="30dp"
-        android:onClick="camera"/>
+        android:onClick="camera"
+        android:visibility="invisible"/>
 
 </RelativeLayout>

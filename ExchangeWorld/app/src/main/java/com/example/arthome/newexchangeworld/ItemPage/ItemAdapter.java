@@ -73,7 +73,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.myViewHolder> 
             user_textView = (TextView) itemView.findViewById(R.id.id_user_name);
             category_image = (ImageView) itemView.findViewById(R.id.category_image);
             goods_image = (ImageView) itemView.findViewById(R.id.goods_image);
-
         }
     }
 }

@@ -31,6 +31,8 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     //test merge
+
+
     public void camera(View view){
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent, 0);
@@ -53,6 +55,8 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        FloatingActionButton cameraButton = (FloatingActionButton) findViewById(R.id.cameraFab);
+
         //for download image
         // Create global configuration and initialize ImageLoader with this config
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
@@ -71,8 +75,8 @@ public class MainActivity extends AppCompatActivity
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.content_frame, tabFragment.newInstance());
             transaction.commit();
+            cameraButton.setVisibility(View.VISIBLE);
         }
-
     }
 
     @Override
@@ -114,14 +118,15 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
+        FloatingActionButton cameraButton = (FloatingActionButton) findViewById(R.id.cameraFab);
          if (id == R.id.drawer_searchPage){
-
              transaction.replace(R.id.content_frame, tabFragment.newInstance());
              transaction.commit();
+             cameraButton.setVisibility(View.VISIBLE);
          }else if (id == R.id.drawer_myPage){
              transaction.replace(R.id.content_frame, MyPageFragment.newInstance());
              transaction.commit();
+             cameraButton.setVisibility(View.INVISIBLE);
          }else if (id == R.id.nav_gallery) {
              Intent intent = new Intent();
              intent.setClass(MainActivity.this, TestActivity.class);
