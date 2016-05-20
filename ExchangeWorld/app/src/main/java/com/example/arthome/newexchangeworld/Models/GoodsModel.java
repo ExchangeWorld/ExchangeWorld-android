@@ -23,7 +23,6 @@ public class GoodsModel {
     public GoodsModel() {
     }
 
-
     public String getError() {
         return error;
     }

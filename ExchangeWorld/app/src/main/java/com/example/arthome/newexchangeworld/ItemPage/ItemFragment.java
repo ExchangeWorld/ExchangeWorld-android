@@ -14,10 +14,7 @@ import android.view.ViewGroup;
 import com.google.gson.Gson;
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.example.arthome.newexchangeworld.R;
-import com.google.android.gms.location.places.AutocompletePrediction;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
