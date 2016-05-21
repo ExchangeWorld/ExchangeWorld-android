@@ -10,17 +10,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.app.FragmentManager;
+import android.widget.Toast;
 
 import com.example.arthome.newexchangeworld.ItemPage.ItemFragment;
 import com.example.arthome.newexchangeworld.SearchTab.AreaFragment;
 import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Map;
 
 /**
  * Created by arthome on 2016/4/9.
  */
-public class tabFragment extends Fragment {
+public class tabFragment extends Fragment implements AreaFragment.AreaSelectedListener{
     ViewPager viewPager;
     PagerAdapter pagerAdapter;
     TabLayout tabLayout;
@@ -57,6 +59,17 @@ public class tabFragment extends Fragment {
         viewPager.setOffscreenPageLimit(2); //create the two fragment beside, more memory needed
         tabLayout = (TabLayout) view.findViewById(R.id.TabLayout);
         tabLayout.setupWithViewPager(viewPager);
+    }
+
+    @Override
+    public void MapZooming(LatLng latlng) {
+        MapFragment mapF = (MapFragment) getChildFragmentManager().findFragmentByTag("MAPTAG");
+        if(mapF!=null){
+            mapF.move(latlng);
+        }
+        else {
+            Toast.makeText(getContext(),"Null",Toast.LENGTH_SHORT).show();
+        }
     }
 
     class myTabPagerAdapter extends FragmentPagerAdapter {
