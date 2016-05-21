@@ -68,7 +68,6 @@ public class MapFragment extends Fragment {
                         mMap.addMarker(new MarkerOptions().position(sydney).title("世新大學"));
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 18));
                     }
-
                 }
 
             });

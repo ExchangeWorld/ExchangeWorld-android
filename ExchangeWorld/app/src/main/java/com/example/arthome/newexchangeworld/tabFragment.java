@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.support.v4.app.FragmentManager;
 
 import com.example.arthome.newexchangeworld.ItemPage.ItemFragment;
+import com.example.arthome.newexchangeworld.SearchTab.AreaFragment;
 import com.google.android.gms.maps.*;
 
 import java.util.Map;
@@ -77,7 +78,7 @@ public class tabFragment extends Fragment {
                 case 1:
                     return ItemFragment.newInstance();
                 case 2:
-                    return oneFragment.newInstance("1","2");
+                    return AreaFragment.newInstance();
                 default:
                     return null;
             }
