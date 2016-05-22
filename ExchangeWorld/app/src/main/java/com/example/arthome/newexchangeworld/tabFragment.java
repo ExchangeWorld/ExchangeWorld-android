@@ -62,13 +62,14 @@ public class tabFragment extends Fragment implements AreaFragment.AreaSelectedLi
     }
 
     @Override
-    public void MapZooming(LatLng latlng) {
-        MapFragment mapF = (MapFragment) getChildFragmentManager().findFragmentByTag("MAPTAG");
+    public void MapZooming(LatLng latLng, int zoomSize) {
+        //spend five hour finding, viewpager autoTag the fragments Tag name "android:switcher:" + R.id.Viewpager + ":0"
+        MapFragment mapF = (MapFragment) getChildFragmentManager().findFragmentByTag("android:switcher:" + R.id.Viewpager + ":0");
         if(mapF!=null){
-            mapF.move(latlng);
+            mapF.move(latLng,zoomSize);
         }
         else {
-            Toast.makeText(getContext(),"Null",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(),"not suceess",Toast.LENGTH_SHORT).show();
         }
     }
 

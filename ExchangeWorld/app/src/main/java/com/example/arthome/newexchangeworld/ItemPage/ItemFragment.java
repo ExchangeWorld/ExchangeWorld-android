@@ -30,6 +30,9 @@ import java.util.List;
  * Created by arthome on 2016/4/10.
  */
 public class ItemFragment extends Fragment{
+    public void toast(){
+        Log.i("oscar","good");
+    }
 
     private RecyclerView mRecyclerView;
     private ItemAdapter mAdapter;

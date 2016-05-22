@@ -32,14 +32,6 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener  {
-    //test merge
-//    @Override
-//    public void MapZooming(LatLng latlng) {
-//
-//       // tabFragment tb = (tabFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_tabid);
-//        MapFragment mapF = (MapFragment) getSupportFragmentManager().findFragmentByTag("MAPTAG");
-//        mapF.move(latlng);
-//    }
 
     public void camera(View view){
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);

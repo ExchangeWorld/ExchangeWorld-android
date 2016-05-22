@@ -67,10 +67,8 @@ public class MapFragment extends Fragment {
                         sydney = new LatLng(24.989042, 121.546373);
                         mMap.addMarker(new MarkerOptions().position(sydney).title("世新大學"));
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 18));
-
                     }
                 }
-
             });
         }
         return inflater.inflate(R.layout.map, container, false);
@@ -81,7 +79,7 @@ public class MapFragment extends Fragment {
 
         return fragment;
     }
-    public void move(LatLng latlng){
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng,18));
+    public void move(LatLng latlng,int zoomSize){
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng,zoomSize));
     }
 }
