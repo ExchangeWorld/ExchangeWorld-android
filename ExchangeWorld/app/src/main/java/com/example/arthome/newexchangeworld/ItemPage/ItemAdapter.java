@@ -23,23 +23,25 @@ import java.util.List;
  */
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.myViewHolder> {
+    private static MyViewHolderClicks myViewHolderClicks;
+    public interface MyViewHolderClicks{
+        void onGoodsClick(View itemView, int position);
+    }
+    public void setMyViewHolderClicks(MyViewHolderClicks ViewHolderClicks){
+        myViewHolderClicks = ViewHolderClicks;
+    }
+
     //private ArrayList<String> items = new ArrayList<>();
     private List<GoodsModel> goodsModel ;
     public ItemAdapter(List<GoodsModel> goodsModel) {
         this.goodsModel = goodsModel;
     }
-    myViewHolder.MyViewHolderClicks listener;
+
     @Override
     public myViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_goods, parent, false);
         //for  MyViewHolderClicks
-        myViewHolder viewHolder = new myViewHolder(view,  new myViewHolder.MyViewHolderClicks() {
-            @Override
-            public void onGoodsClick() {
-                Log.i("oscart","Clicked");
-
-            }
-        });
+        myViewHolder viewHolder = new myViewHolder(view);
         return viewHolder;
     }
 
@@ -51,10 +53,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.myViewHolder> 
     @Override
     public void onBindViewHolder(myViewHolder viewHolder, int position) { //change list_item name here
         //  String info = items.get(position);
-            Log.i("onBing!!!!!!!!",Integer.toString(position));
+            Log.i("onBing!!!!!!!!", Integer.toString(position));
             viewHolder.goods_textView.setText(goodsModel.get(position).getName());
             ImageLoader imageLoader = ImageLoader.getInstance();
             imageLoader.displayImage(goodsModel.get(position).getPhoto_path(), viewHolder.goods_image);
+
 
             switch (goodsModel.get(position).getCategory()) {
                 case "Books":
@@ -78,33 +81,20 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.myViewHolder> 
         ImageView goods_image;
         MyViewHolderClicks mListener;
         CardView mCardView;
-        public myViewHolder(View itemView, MyViewHolderClicks listener) {
+        public myViewHolder(View itemView) {
             super(itemView);
-            mListener = listener;
             goods_textView = (TextView) itemView.findViewById(R.id.id_goods_name);
             user_textView = (TextView) itemView.findViewById(R.id.id_user_name);
             category_image = (ImageView) itemView.findViewById(R.id.category_image);
             goods_image = (ImageView) itemView.findViewById(R.id.goods_image);
             mCardView = (CardView) itemView.findViewById(R.id.cardView);
-            user_textView.setOnClickListener(this);
-            mCardView.setOnClickListener(this);
+            mCardView.setOnClickListener(this); // onClick
         }
-
         @Override
         public void onClick(View v) {
-            switch (v.getId()){
-                case R.id.user_image :
-                case  R.id.id_user_name:
-                    //// TODO: go to  userpage
-                    break;
-                default:
-                    mListener.onGoodsClick();
-                    break;
-            }
+            // Triggers click upwards to the adapter on click
+            if (myViewHolderClicks != null)
+                myViewHolderClicks.onGoodsClick(itemView,getLayoutPosition());
         }
-        public interface MyViewHolderClicks{
-            public void onGoodsClick();
-        }
-
     }
 }

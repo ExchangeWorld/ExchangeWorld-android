@@ -2,6 +2,7 @@ package com.example.arthome.newexchangeworld.ItemPage;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.example.arthome.newexchangeworld.MainActivity;
 import com.google.gson.Gson;
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.example.arthome.newexchangeworld.R;
@@ -136,7 +140,7 @@ public class ItemFragment extends Fragment{
         }
 
         @Override
-        protected void onPostExecute(List<GoodsModel> result) {
+        protected void onPostExecute(final List<GoodsModel> result) {
             super.onPostExecute(result);
             //mText.setText(result.toString());
             //TODO need to set data to list
@@ -146,6 +150,16 @@ public class ItemFragment extends Fragment{
                 mLayoutManager = new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL);
                 mRecyclerView.setLayoutManager(mLayoutManager);
                 mAdapter = new ItemAdapter(result);
+                mAdapter.setMyViewHolderClicks(new ItemAdapter.MyViewHolderClicks() {
+                    @Override
+                    public void onGoodsClick(View itemView, int position) {
+                        Toast.makeText(getContext(),Integer.toString(position)+"clicked",Toast.LENGTH_SHORT);
+                        GoodsModel goodsModel = result.get(position);
+                        Intent intent = new Intent(getActivity(), ItemDetailActivity.class);
+                        intent.putExtra("goodModel", new Gson().toJson(goodsModel));
+                        startActivity(intent);
+                    }
+                });
                 mRecyclerView.setAdapter(mAdapter);
             }
         }
