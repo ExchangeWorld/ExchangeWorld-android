@@ -30,9 +30,6 @@ import java.util.List;
  * Created by arthome on 2016/4/10.
  */
 public class ItemFragment extends Fragment{
-    public void toast(){
-        Log.i("oscar","good");
-    }
 
     private RecyclerView mRecyclerView;
     private ItemAdapter mAdapter;
@@ -144,7 +141,6 @@ public class ItemFragment extends Fragment{
             //mText.setText(result.toString());
             //TODO need to set data to list
             if(result != null){
-
                 //列數為2
                 int spanCount = 2;
                 mLayoutManager = new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL);
