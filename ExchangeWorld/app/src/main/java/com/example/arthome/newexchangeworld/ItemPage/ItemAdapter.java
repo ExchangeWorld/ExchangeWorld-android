@@ -75,26 +75,39 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.myViewHolder> 
     }
 
     static class myViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        TextView goods_textView;
-        TextView user_textView;
-        ImageView category_image;
-        ImageView goods_image;
-        MyViewHolderClicks mListener;
-        CardView mCardView;
+        private TextView goods_textView;
+        private TextView user_textView;
+        private ImageView category_image;
+        private ImageView goods_image;
+        private ImageView user_image;
+        private CardView mCardView;
         public myViewHolder(View itemView) {
             super(itemView);
-            goods_textView = (TextView) itemView.findViewById(R.id.id_goods_name);
-            user_textView = (TextView) itemView.findViewById(R.id.id_user_name);
-            category_image = (ImageView) itemView.findViewById(R.id.category_image);
-            goods_image = (ImageView) itemView.findViewById(R.id.goods_image);
-            mCardView = (CardView) itemView.findViewById(R.id.cardView);
+            SetUpUIViews();
             mCardView.setOnClickListener(this); // onClick
+            user_textView.setOnClickListener(this);
+            user_image.setOnClickListener(this);
         }
         @Override
         public void onClick(View v) {
             // Triggers click upwards to the adapter on click
             if (myViewHolderClicks != null)
-                myViewHolderClicks.onGoodsClick(itemView,getLayoutPosition());
+                switch (v.getId()){
+                    case R.id.user_image :
+                    case R.id.id_user_name :
+                        Log.i("oscart","user clicked");  //TODO go to user page
+                        break;
+                    default:
+                        myViewHolderClicks.onGoodsClick(itemView,getLayoutPosition());
+                }
+        }
+        public void SetUpUIViews(){
+            goods_textView = (TextView) itemView.findViewById(R.id.id_goods_name);
+            user_textView = (TextView) itemView.findViewById(R.id.id_user_name);
+            category_image = (ImageView) itemView.findViewById(R.id.category_image);
+            goods_image = (ImageView) itemView.findViewById(R.id.goods_image);
+            user_image = (ImageView) itemView.findViewById(R.id.user_image);
+            mCardView = (CardView) itemView.findViewById(R.id.cardView);
         }
     }
 }

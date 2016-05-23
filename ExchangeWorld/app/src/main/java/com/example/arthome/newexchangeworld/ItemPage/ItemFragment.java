@@ -113,7 +113,6 @@ public class ItemFragment extends Fragment{
                     goods_imageUrl = goods_imageUrl.substring(2, goods_imageUrl.length() - 2);
                     goodsModel.setPhoto_path(goods_imageUrl);
                     goodsModelList.add(goodsModel);
-
                     goods_count++;
                     url = new URL(params[0]+Integer.toString(goods_count));
                     connection = (HttpURLConnection) url.openConnection();
