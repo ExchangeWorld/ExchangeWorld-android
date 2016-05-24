@@ -53,7 +53,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.myViewHolder> 
     @Override
     public void onBindViewHolder(myViewHolder viewHolder, int position) { //change list_item name here
         //  String info = items.get(position);
-            Log.i("onBing!!!!!!!!", Integer.toString(position));
             viewHolder.goods_textView.setText(goodsModel.get(position).getName());
             ImageLoader imageLoader = ImageLoader.getInstance();
             imageLoader.displayImage(goodsModel.get(position).getPhoto_path(), viewHolder.goods_image);

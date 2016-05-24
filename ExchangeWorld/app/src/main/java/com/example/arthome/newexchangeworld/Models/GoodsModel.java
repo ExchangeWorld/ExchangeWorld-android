@@ -8,7 +8,6 @@ public class GoodsModel {
     private int rate;
     private int exchanged;
     private int deleted;
-    private int owner_uid;
     private double position_x;
     private double position_y;
     private String name;
@@ -17,7 +16,6 @@ public class GoodsModel {
     private String description;
     private String created_at;
     private String updated_at;
-    private String onwer_name;
     private Owner owner;
 
     public GoodsModel() {
@@ -63,14 +61,6 @@ public class GoodsModel {
 
     public void setDeleted(int deleted) {
         this.deleted = deleted;
-    }
-
-    public int getOwner_uid() {
-        return owner_uid;
-    }
-
-    public void setOwner_uid(int owner_uid) {
-        this.owner_uid = owner_uid;
     }
 
     public double getPosition_x() {
@@ -137,13 +127,6 @@ public class GoodsModel {
         this.updated_at = updated_at;
     }
 
-    public String getOnwer_name() {
-        return onwer_name;
-    }
-
-    public void setOnwer_name(String onwer_name) {
-        this.onwer_name = onwer_name;
-    }
 
     public Owner getOwner() {
         return owner;

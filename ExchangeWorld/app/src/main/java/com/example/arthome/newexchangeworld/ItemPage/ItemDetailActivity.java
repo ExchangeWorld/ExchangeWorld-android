@@ -1,16 +1,26 @@
 package com.example.arthome.newexchangeworld.ItemPage;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.example.arthome.newexchangeworld.R;
 import com.google.gson.Gson;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class ItemDetailActivity extends AppCompatActivity {
 
+    ImageView goodsImage;
+    TextView ownerName;
+    TextView goodsDescription;
+    TextView goodsName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,8 +38,22 @@ public class ItemDetailActivity extends AppCompatActivity {
                 String json = bundle.getString("goodModel");
                 GoodsModel goodsModel = new Gson().fromJson(json, GoodsModel.class);
                 Log.i("oscart",json);
+
+                setUpUIView();
+                ImageLoader imageLoader = ImageLoader.getInstance();
+                imageLoader.displayImage(goodsModel.getPhoto_path(),goodsImage);
+                ownerName.setText(goodsModel.getOwner().getName());
+                goodsDescription.setText(goodsModel.getDescription());
+                goodsName.setText(goodsModel.getName());
             }
         }
+
+    public void setUpUIView(){
+        goodsImage = (ImageView ) findViewById(R.id.goods_image_detail);
+        ownerName = (TextView) findViewById(R.id.owner_name_detail);
+        goodsDescription = (TextView) findViewById(R.id.goods_description_detail);
+        goodsName = (TextView) findViewById(R.id.goods_name_detail);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
