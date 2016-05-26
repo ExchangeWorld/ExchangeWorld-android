@@ -1,5 +1,8 @@
 package com.example.arthome.newexchangeworld;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -10,6 +13,7 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.example.arthome.newexchangeworld.ItemPage.ItemFragment;
 
@@ -45,6 +49,11 @@ public class MyPageFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         //super.onViewCreated(view, savedInstanceState);
+
+        //for circle head view
+        ImageView head = (ImageView) view.findViewById(R.id.imageView3);
+        Bitmap bitHead = BitmapFactory.decodeResource(getContext().getResources(),R.drawable.myhead);
+        head.setImageBitmap(MainActivity.getCroppedBitmap(bitHead));
 
         FragmentManager childFragmentManager = getChildFragmentManager();//fragment in frament
         //set tab to fragment
