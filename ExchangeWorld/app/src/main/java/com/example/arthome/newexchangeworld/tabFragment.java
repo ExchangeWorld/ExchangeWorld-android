@@ -98,7 +98,7 @@ public class tabFragment extends Fragment implements AreaFragment.AreaSelectedLi
                     return null;
             }
         }
-
+//
         @Override // tab顯示的text
         public CharSequence getPageTitle(int position) {
             switch (position) {
