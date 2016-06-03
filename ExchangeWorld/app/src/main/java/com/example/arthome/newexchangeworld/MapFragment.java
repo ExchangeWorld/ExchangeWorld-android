@@ -1,9 +1,16 @@
 package com.example.arthome.newexchangeworld;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +26,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import static android.support.v4.content.ContextCompat.checkSelfPermission;
 
 /**
  * A fragment that launches other parts of the demo application.
@@ -48,6 +57,10 @@ public class MapFragment extends Fragment {
                         mMap =googleMap;
                         googleMap.getUiSettings().setAllGesturesEnabled(true);
 
+                        if(ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.ACCESS_COARSE_LOCATION)==PackageManager.PERMISSION_GRANTED
+                                && ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED) {
+                            mMap.setMyLocationEnabled(true);
+                        } //check location permission
 
                         LatLng sydney = new LatLng(-34, 151);
                         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
@@ -55,7 +68,6 @@ public class MapFragment extends Fragment {
                         mMap.addMarker(new MarkerOptions().position(sydney).title("世新大學"));
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 18));
                     }
-
                 }
             });
         }
@@ -65,7 +77,9 @@ public class MapFragment extends Fragment {
     public static MapFragment newInstance() {
         MapFragment fragment = new MapFragment();
 
-
         return fragment;
+    }
+    public void move(LatLng latlng,int zoomSize){
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng,zoomSize));
     }
 }

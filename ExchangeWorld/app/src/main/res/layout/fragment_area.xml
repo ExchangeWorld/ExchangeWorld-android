@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/cardBackground"
+    android:id="@+id/scrollView" >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp" >
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:id="@+id/im_taiwan"
+            android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp"
+            android:src="@drawable/taiwan"
+            android:layout_alignParentTop="true"
+            android:background="@color/white"
+            android:layout_toLeftOf="@+id/im_keelung"
+            android:layout_toStartOf="@+id/im_keelung" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="台灣"
+            android:id="@+id/textView13"
+            android:layout_below="@+id/im_taiwan"
+            android:layout_alignLeft="@+id/im_taiwan"
+            android:layout_alignStart="@+id/im_taiwan"
+            android:layout_marginTop="3dp" />
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:id="@+id/im_keelung"
+            android:layout_centerHorizontal="true"
+            android:background="@color/white"
+            android:src="@drawable/keelung" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="基隆"
+            android:id="@+id/textView12"
+            android:layout_below="@+id/im_keelung"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="3dp"/>
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:id="@+id/im_taipei"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/im_keelung"
+            android:layout_toEndOf="@+id/im_keelung"
+            android:background="@color/white"
+            android:src="@drawable/taipei" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="台北"
+            android:id="@+id/textView14"
+            android:layout_below="@+id/im_taipei"
+            android:layout_alignLeft="@+id/im_taipei"
+            android:layout_alignStart="@+id/im_taipei"
+            android:layout_marginTop="3dp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp" >
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:id="@+id/im_newtaipeicity"
+            android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp"
+            android:src="@drawable/newtaipeicity"
+            android:layout_alignParentTop="true"
+            android:background="@color/white"
+            android:layout_toLeftOf="@+id/im_taoyuan"
+            android:layout_toStartOf="@+id/im_taoyuan" />
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:id="@+id/im_taoyuan"
+            android:layout_centerHorizontal="true"
+            android:background="@color/white"
+            android:src="@drawable/taoyuan" />
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:id="@+id/im_hsinchucity"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/im_taoyuan"
+            android:layout_toEndOf="@+id/im_taoyuan"
+            android:background="@color/white"
+            android:src="@drawable/hsinchucity" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="新北市"
+            android:id="@+id/textView6"
+            android:layout_below="@+id/im_newtaipeicity"
+            android:layout_alignLeft="@+id/im_newtaipeicity"
+            android:layout_alignStart="@+id/im_newtaipeicity"
+            android:layout_marginTop="3dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="桃園市"
+            android:id="@+id/textView7"
+            android:layout_below="@+id/im_taoyuan"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="3dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="新竹市"
+            android:id="@+id/textView8"
+            android:layout_below="@+id/im_hsinchucity"
+            android:layout_alignLeft="@+id/im_hsinchucity"
+            android:layout_alignStart="@+id/im_hsinchucity"
+            android:layout_marginTop="3dp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp" >
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:id="@+id/im_hsinchu"
+            android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp"
+            android:src="@drawable/hsinchu"
+            android:layout_alignParentTop="true"
+            android:background="@color/white"
+            android:layout_toLeftOf="@+id/im_miaoli"
+            android:layout_toStartOf="@+id/im_miaoli" />
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:id="@+id/im_miaoli"
+            android:layout_centerHorizontal="true"
+            android:background="@color/white"
+            android:src="@drawable/miaoli" />
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:id="@+id/im_taichung"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/im_miaoli"
+            android:layout_toEndOf="@+id/im_miaoli"
+            android:background="@color/white"
+            android:src="@drawable/taichung" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="新竹縣"
+            android:id="@+id/textView9"
+            android:layout_below="@+id/im_hsinchu"
+            android:layout_alignLeft="@+id/im_hsinchu"
+            android:layout_alignStart="@+id/im_hsinchu"
+            android:layout_marginTop="3dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="苗栗縣"
+            android:id="@+id/textView10"
+            android:layout_below="@+id/im_miaoli"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="3dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="台中市"
+            android:id="@+id/textView11"
+            android:layout_below="@+id/im_taichung"
+            android:layout_alignLeft="@+id/im_taichung"
+            android:layout_alignStart="@+id/im_taichung"
+            android:layout_marginTop="3dp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp" >
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:id="@+id/im_nantou"
+            android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp"
+            android:src="@drawable/nantou"
+            android:layout_alignParentTop="true"
+            android:background="@color/white"
+            android:layout_toLeftOf="@+id/im_changhua"
+            android:layout_toStartOf="@+id/im_changhua" />
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:id="@+id/im_changhua"
+            android:layout_centerHorizontal="true"
+            android:background="@color/white"
+            android:src="@drawable/changhua" />
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:id="@+id/im_yunlin"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/im_changhua"
+            android:layout_toEndOf="@+id/im_changhua"
+            android:background="@color/white"
+            android:src="@drawable/yunlin" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="南投縣"
+            android:id="@+id/textView15"
+            android:layout_below="@+id/im_nantou"
+            android:layout_alignLeft="@+id/im_nantou"
+            android:layout_alignStart="@+id/im_nantou"
+            android:layout_marginTop="3dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="彰化縣"
+            android:id="@+id/textView16"
+            android:layout_below="@+id/im_changhua"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="3dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="雲林縣"
+            android:id="@+id/textView17"
+            android:layout_below="@+id/im_yunlin"
+            android:layout_alignLeft="@+id/im_yunlin"
+            android:layout_alignStart="@+id/im_yunlin"
+            android:layout_marginTop="3dp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp" >
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:id="@+id/im_chiayi"
+            android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp"
+            android:src="@drawable/chiayi"
+            android:layout_alignParentTop="true"
+            android:background="@color/white"
+            android:layout_toLeftOf="@+id/im_chiayicity"
+            android:layout_toStartOf="@+id/im_chiayicity" />
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:id="@+id/im_chiayicity"
+            android:layout_centerHorizontal="true"
+            android:background="@color/white"
+            android:src="@drawable/chiayicity" />
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:id="@+id/im_tainan"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/im_chiayicity"
+            android:layout_toEndOf="@+id/im_chiayicity"
+            android:background="@color/white"
+            android:src="@drawable/tainan" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="嘉義縣"
+            android:id="@+id/textView18"
+            android:layout_below="@+id/im_chiayi"
+            android:layout_alignLeft="@+id/im_chiayi"
+            android:layout_alignStart="@+id/im_chiayi"
+            android:layout_marginTop="3dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="嘉義市"
+            android:id="@+id/textView19"
+            android:layout_below="@+id/im_chiayicity"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="3dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="台南市"
+            android:id="@+id/textView20"
+            android:layout_below="@+id/im_tainan"
+            android:layout_alignLeft="@+id/im_tainan"
+            android:layout_alignStart="@+id/im_tainan"
+            android:layout_marginTop="3dp" />
+    </RelativeLayout>
+
+</LinearLayout>
+</ScrollView>

@@ -10,21 +10,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.app.FragmentManager;
+import android.widget.Toast;
 
+import com.example.arthome.newexchangeworld.ItemPage.ItemCategory;
 import com.example.arthome.newexchangeworld.ItemPage.ItemFragment;
+import com.example.arthome.newexchangeworld.SearchTab.AreaFragment;
 import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Map;
 
 /**
  * Created by arthome on 2016/4/9.
  */
-public class tabFragment extends Fragment {
+public class tabFragment extends Fragment implements AreaFragment.AreaSelectedListener{
     ViewPager viewPager;
     PagerAdapter pagerAdapter;
     TabLayout tabLayout;
-
-
 
     public tabFragment(){
         //require empty constructor
@@ -55,8 +57,21 @@ public class tabFragment extends Fragment {
         pagerAdapter =new myTabPagerAdapter(childFragmentManager);
         viewPager = (ViewPager) view.findViewById(R.id.Viewpager);
         viewPager.setAdapter(pagerAdapter);
+        viewPager.setOffscreenPageLimit(2); //create the two fragment beside, more memory needed
         tabLayout = (TabLayout) view.findViewById(R.id.TabLayout);
         tabLayout.setupWithViewPager(viewPager);
+    }
+
+    @Override
+    public void MapZooming(LatLng latLng, int zoomSize) {
+        //spend five hour finding, viewpager autoTag the fragments Tag name "android:switcher:" + R.id.Viewpager + ":0"
+        MapFragment mapF = (MapFragment) getChildFragmentManager().findFragmentByTag("android:switcher:" + R.id.Viewpager + ":0");
+        if(mapF!=null){
+            mapF.move(latLng,zoomSize);
+        }
+        else {
+            Toast.makeText(getContext(),"not suceess",Toast.LENGTH_SHORT).show();
+        }
     }
 
     class myTabPagerAdapter extends FragmentPagerAdapter {
@@ -76,14 +91,13 @@ public class tabFragment extends Fragment {
                     return MapFragment.newInstance();
                 //oneFragment.newInstance("1","2")
                 case 1:
-                    return ItemFragment.newInstance();
+                    return ItemCategory.newInstance();
                 case 2:
-                    return oneFragment.newInstance("1","2");
+                    return AreaFragment.newInstance();
                 default:
                     return null;
             }
         }
-
         @Override // tab顯示的text
         public CharSequence getPageTitle(int position) {
             switch (position) {
