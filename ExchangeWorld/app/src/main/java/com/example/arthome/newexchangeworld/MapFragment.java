@@ -2,6 +2,10 @@ package com.example.arthome.newexchangeworld;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
@@ -25,6 +29,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -180,15 +185,42 @@ public class MapFragment extends Fragment {
         }
     }
     public void setGoodsMap(List<GoodsModel> listGoodsModel){
+        BitmapDescriptor icon;
         for(int i=0;i<listGoodsModel.size();i++){
             double lat = listGoodsModel.get(i).getPosition_x();
             double lng = listGoodsModel.get(i).getPosition_y();
             String title = listGoodsModel.get(i).getName();
             LatLng sydney = new LatLng(lng, lat); //check if x is lat or x is lng
             Log.i("oscart", title + " " + Double.toString(lat));
-            mMap.addMarker(new MarkerOptions().position(sydney).title(title));
+            switch (listGoodsModel.get(i).getCategory()){//TODO add all category
+                case "Textbooks":
+                    icon = getBitmapDescriptor(R.drawable.category_textbooks);
+                    break;
+                case "Others":
+                    icon = getBitmapDescriptor(R.drawable.category_others);
+                    break;
+                case "Books":
+                    icon = getBitmapDescriptor(R.drawable.category_books);
+                    break;
+                default:
+                    icon = getBitmapDescriptor(R.drawable.category_books);
+                    break;
+            }
+            mMap.addMarker(new MarkerOptions().position(sydney).title(title).icon(icon));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 15)); //for test, remove later
         }
     }
+    //google marker cant add vector image
+    private BitmapDescriptor getBitmapDescriptor(int id) {
+        Drawable vectorDrawable = ContextCompat.getDrawable(getContext(), id);
+        int h =  vectorDrawable.getIntrinsicHeight();
+        int w =  vectorDrawable.getIntrinsicWidth();
+        vectorDrawable.setBounds(0, 0, 80, 80);//set to size
+        Bitmap bm = Bitmap.createBitmap(80, 80, Bitmap.Config.ARGB_8888);//set to size
+        Canvas canvas = new Canvas(bm);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bm);
+    }
+
 
 }

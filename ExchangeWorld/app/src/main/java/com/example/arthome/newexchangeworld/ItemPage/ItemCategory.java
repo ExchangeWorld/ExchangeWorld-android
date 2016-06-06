@@ -42,7 +42,7 @@ public class ItemCategory extends Fragment implements View.OnClickListener {
                 if(page!=null){
                     Toast.makeText(getContext(),"good",Toast.LENGTH_SHORT).show();
                     FragmentTransaction transaction = page.getFragmentManager().beginTransaction();
-                    transaction.replace(page.getId(), ItemFragment.newInstance());
+                    transaction.replace(page.getId(), ItemFragment.newInstance()).addToBackStack(null);
                     transaction.commit();
                 }
                 else {
