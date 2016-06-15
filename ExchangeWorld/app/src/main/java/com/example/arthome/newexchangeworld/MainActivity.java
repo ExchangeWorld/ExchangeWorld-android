@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -93,10 +94,27 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
+        //// TODO: need fix to be better
+        //for backbutton in Item_Category
+        FragmentManager fm = getSupportFragmentManager();
+        for (Fragment frag : fm.getFragments()) {
+            if (frag.isVisible()) {
+                FragmentManager childFm = frag.getChildFragmentManager();
+                if (childFm.getBackStackEntryCount() > 0) {
+                    for (Fragment childfragnested: childFm.getFragments()) {
+                        FragmentManager childFmNestManager = childfragnested.getFragmentManager();
+                        if(childfragnested.isVisible()) {
+                            childFmNestManager.popBackStack();
+                            return;
+                        }
+                    }
+                }
+            }
+        }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
+        }else{
             super.onBackPressed();
         }
     }

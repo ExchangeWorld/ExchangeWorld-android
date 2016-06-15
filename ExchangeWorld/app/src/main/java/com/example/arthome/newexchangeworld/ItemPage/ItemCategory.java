@@ -40,7 +40,7 @@ public class ItemCategory extends Fragment implements View.OnClickListener {
                 //TODO find fragment then transition
                 //Fragment page = getParentFragment().getChildFragmentManager().findFragmentByTag("android:switcher:" + R.id.Viewpager + ":1");
                 //if(page!=null){
-                    Toast.makeText(getContext(),"good",Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(),"good",Toast.LENGTH_SHORT).show();
                     FragmentTransaction transaction = getFragmentManager().beginTransaction();
                     transaction.replace(R.id.fragment_category, ItemFragment.newInstance()).addToBackStack(null);
                     transaction.commit();

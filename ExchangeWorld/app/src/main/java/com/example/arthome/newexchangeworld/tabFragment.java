@@ -60,6 +60,21 @@ public class tabFragment extends Fragment implements AreaFragment.AreaSelectedLi
         viewPager.setOffscreenPageLimit(2); //create the two fragment beside, more memory needed
         tabLayout = (TabLayout) view.findViewById(R.id.TabLayout);
         tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setOnTabSelectedListener(
+                new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
+                    @Override
+                    public void onTabReselected(TabLayout.Tab tab) {
+                        switch (tab.getPosition()){
+                            case 1 : //item_categorypage reselected
+                                FragmentManager fm = getChildFragmentManager();
+                                if(fm.getBackStackEntryCount()>0) { //popback to category page
+                                    fm.popBackStack();
+                                }
+                                break;
+                        }
+                        super.onTabReselected(tab);
+                    }
+                });
     }
 
     @Override
