@@ -38,16 +38,16 @@ public class ItemCategory extends Fragment implements View.OnClickListener {
         switch (v.getId()){
             case R.id.category_3c:
                 //TODO find fragment then transition
-                Fragment page = getParentFragment().getChildFragmentManager().findFragmentByTag("android:switcher:" + R.id.Viewpager + ":1");
-                if(page!=null){
+                //Fragment page = getParentFragment().getChildFragmentManager().findFragmentByTag("android:switcher:" + R.id.Viewpager + ":1");
+                //if(page!=null){
                     Toast.makeText(getContext(),"good",Toast.LENGTH_SHORT).show();
-                    FragmentTransaction transaction = page.getFragmentManager().beginTransaction();
-                    transaction.replace(page.getId(), ItemFragment.newInstance()).addToBackStack(null);
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                    transaction.replace(R.id.fragment_category, ItemFragment.newInstance()).addToBackStack(null);
                     transaction.commit();
-                }
-                else {
-                    Toast.makeText(getContext(),"bad",Toast.LENGTH_SHORT).show();
-                }
+                //}
+                //else {
+                //    Toast.makeText(getContext(),"bad",Toast.LENGTH_SHORT).show();
+                //}
 
                 break;
             case R.id.category_others:
