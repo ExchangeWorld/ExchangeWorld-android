@@ -51,7 +51,7 @@ public class ItemCategory extends Fragment implements View.OnClickListener {
                     fragment.setArguments(bundle);
 
                     transaction = getFragmentManager().beginTransaction();
-                    transaction.replace(R.id.fragment_category, fragment).addToBackStack(null);
+                    transaction.replace(R.id.item_container, fragment).addToBackStack(null);
                     transaction.commit();
                 //}
                 //else {
@@ -66,7 +66,7 @@ public class ItemCategory extends Fragment implements View.OnClickListener {
                 fragment.setArguments(bundle);
 
                 transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_category, fragment).addToBackStack(null);
+                transaction.replace(R.id.item_container, fragment).addToBackStack(null);
                 transaction.commit();
                 break;
             case R.id.category_cosmetic:
@@ -80,7 +80,7 @@ public class ItemCategory extends Fragment implements View.OnClickListener {
                 fragment.setArguments(bundle);
 
                 transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_category, fragment).addToBackStack(null);
+                transaction.replace(R.id.item_container, fragment).addToBackStack(null);
                 transaction.commit();
                 break;
             case R.id.category_books:
@@ -90,7 +90,7 @@ public class ItemCategory extends Fragment implements View.OnClickListener {
                 fragment.setArguments(bundle);
 
                 transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_category, fragment).addToBackStack(null);
+                transaction.replace(R.id.item_container, fragment).addToBackStack(null);
                 transaction.commit();
                 break;
         }

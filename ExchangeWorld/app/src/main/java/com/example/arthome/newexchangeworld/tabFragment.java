@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.support.v4.app.FragmentManager;
 import android.widget.Toast;
 
+import com.example.arthome.newexchangeworld.ItemPage.BlankFragment;
 import com.example.arthome.newexchangeworld.ItemPage.ItemCategory;
 import com.example.arthome.newexchangeworld.ItemPage.ItemFragment;
 import com.example.arthome.newexchangeworld.SearchTab.AreaFragment;
@@ -106,7 +107,7 @@ public class tabFragment extends Fragment implements AreaFragment.AreaSelectedLi
                     return MapFragment.newInstance();
                 //oneFragment.newInstance("1","2")
                 case 1:
-                    return ItemCategory.newInstance();
+                    return BlankFragment.newInstance();
                 case 2:
                     return AreaFragment.newInstance();
                 default:
