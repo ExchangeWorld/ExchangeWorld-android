@@ -159,7 +159,12 @@ public class MainActivity extends AppCompatActivity
              transaction.replace(R.id.content_frame, MyPageFragment.newInstance());
              transaction.commit();
              cameraButton.setVisibility(View.INVISIBLE);
-         }else if (id == R.id.nav_gallery) {
+         }else if (id == R.id.drawer_accountSetting){
+             Intent intent = new Intent();
+             intent.setClass(MainActivity.this, Login.class);
+             startActivity(intent);
+         }
+         else if (id == R.id.nav_gallery) {
              Intent intent = new Intent();
              intent.setClass(MainActivity.this, TestActivity.class);
              startActivity(intent);
@@ -170,7 +175,6 @@ public class MainActivity extends AppCompatActivity
              transaction.replace(R.id.content_frame, oneFragment.newInstance("one", "one"));
              transaction.commit();
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -204,5 +208,4 @@ public class MainActivity extends AppCompatActivity
         //return _bmp;
         return output;
     }
-
 }
