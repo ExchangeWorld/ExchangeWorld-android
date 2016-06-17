@@ -1,6 +1,7 @@
 package com.example.arthome.newexchangeworld;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
@@ -13,15 +14,21 @@ import android.util.AttributeSet;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+
+import org.json.JSONObject;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -70,8 +77,8 @@ public class Login extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 // App code
-                Toast.makeText(getApplicationContext(),"登入成功",Toast.LENGTH_SHORT);
             }
+
 
             @Override
             public void onCancel() {
@@ -82,7 +89,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onError(FacebookException exception) {
                 // App code
-                Toast.makeText(getApplicationContext(),"登入出現錯誤",Toast.LENGTH_SHORT);
+                Toast.makeText(getApplicationContext(), "登入出現錯誤", Toast.LENGTH_SHORT);
             }
         });
     }
