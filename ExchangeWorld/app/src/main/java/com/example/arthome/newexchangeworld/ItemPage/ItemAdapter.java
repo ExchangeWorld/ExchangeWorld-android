@@ -1,5 +1,6 @@
 package com.example.arthome.newexchangeworld.ItemPage;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,7 @@ import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.example.arthome.newexchangeworld.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -36,10 +38,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.myViewHolder> 
     public ItemAdapter(List<GoodsModel> goodsModel) {
         this.goodsModel = goodsModel;
     }
+    private Context context;
 
     @Override
     public myViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_goods, parent, false);
+        context=parent.getContext();
+        View view = LayoutInflater.from(context).inflate(R.layout.item_goods, parent, false);
         //for  MyViewHolderClicks
         myViewHolder viewHolder = new myViewHolder(view);
         return viewHolder;
@@ -54,10 +58,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.myViewHolder> 
     public void onBindViewHolder(myViewHolder viewHolder, int position) { //change list_item name here
         //  String info = items.get(position);
             viewHolder.goods_textView.setText(goodsModel.get(position).getName());
-            ImageLoader imageLoader = ImageLoader.getInstance();
-            imageLoader.displayImage(goodsModel.get(position).getPhoto_path(), viewHolder.goods_image);
-
-
+            Picasso.with(context).load(goodsModel.get(position).getPhoto_path()).into(viewHolder.goods_image);
             switch (goodsModel.get(position).getCategory()) {
                 case "Books":
                     viewHolder.category_image.setImageResource(R.drawable.ic_book);
