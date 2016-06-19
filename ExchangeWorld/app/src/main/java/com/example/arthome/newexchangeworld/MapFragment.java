@@ -199,7 +199,6 @@ public class MapFragment extends Fragment {
     }
     Map<Marker,GoodsModel > allMarkersMap = new HashMap<Marker, GoodsModel>();  //hash map for infowindow
     ImageView user_image;
-    boolean not_first_time_showing_info_window = false;
     public void setGoodsMap(List<GoodsModel> listGoodsModel){
         BitmapDescriptor icon;
         for(int i=0;i<listGoodsModel.size();i++){
@@ -244,11 +243,12 @@ public class MapFragment extends Fragment {
                 GoodsModel good = allMarkersMap.get(marker);
                 user_textView.setText(good.getOwner().getName());
                 goods_textView.setText(good.getName());
-                if (not_first_time_showing_info_window) { //TODO bug, have to click twice to show pic
+                if (marker.isInfoWindowShown()) { //TODO bug, have to click twice to show pic
                     Picasso.with(getContext()).load(good.getPhoto_path()).into(goods_image);
+                    Log.i("oscart","shown");
                 } else { // if it's the first time, load the image with the callback set
-                    not_first_time_showing_info_window=true;
                     Picasso.with(getContext()).load(good.getPhoto_path()).into(goods_image,new InfoWindowRefresher(marker));
+                    Log.i("oscart", "not shown");
                 }
                 return view;
             }
@@ -264,12 +264,15 @@ public class MapFragment extends Fragment {
         @Override
         public void onSuccess() {
             if(markerToRefresh != null &&markerToRefresh.isInfoWindowShown()) {
+                Log.i("oscart", "success");
                 markerToRefresh.showInfoWindow();
             }
         }
 
         @Override
-        public void onError() {}
+        public void onError() {
+            Log.i("oscart", "error");
+        }
     }
 
 
