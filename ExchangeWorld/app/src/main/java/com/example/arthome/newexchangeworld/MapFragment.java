@@ -16,10 +16,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.google.android.gms.maps.CameraUpdate;
@@ -33,8 +36,12 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,7 +54,11 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.security.auth.callback.Callback;
 
 import static android.support.v4.content.ContextCompat.checkSelfPermission;
 
@@ -145,6 +156,9 @@ public class MapFragment extends Fragment {
                     Gson gson = new Gson();
                     try {
                         goodsModel = gson.fromJson(jsonArray.get(i).toString(), GoodsModel.class);
+                        String goods_imageUrl = goodsModel.getPhoto_path();
+                        goods_imageUrl = goods_imageUrl.substring(2, goods_imageUrl.length() - 2);
+                        goodsModel.setPhoto_path(goods_imageUrl);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -153,7 +167,6 @@ public class MapFragment extends Fragment {
                         goodsModelList.add(goodsModel);
                     }
                 }
-
                 return goodsModelList;
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -184,6 +197,9 @@ public class MapFragment extends Fragment {
             }
         }
     }
+    Map<Marker,GoodsModel > allMarkersMap = new HashMap<Marker, GoodsModel>();  //hash map for infowindow
+    ImageView user_image;
+    boolean not_first_time_showing_info_window = false;
     public void setGoodsMap(List<GoodsModel> listGoodsModel){
         BitmapDescriptor icon;
         for(int i=0;i<listGoodsModel.size();i++){
@@ -206,10 +222,57 @@ public class MapFragment extends Fragment {
                     icon = getBitmapDescriptor(R.drawable.category_books);
                     break;
             }
-            mMap.addMarker(new MarkerOptions().position(sydney).title(title).icon(icon));
+            Marker marker = mMap.addMarker(new MarkerOptions().position(sydney).title(title).icon(icon));
+            allMarkersMap.put(marker, listGoodsModel.get(i));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 15)); //for test, remove later
         }
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {//InfoWindow
+            @Override
+            public View getInfoWindow(Marker marker) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {    //TODO finish infowindow
+                Log.i("oscart", marker.getId() + marker.getTitle());
+                View view = getActivity().getLayoutInflater().inflate(R.layout.item_goods, null);
+                TextView goods_textView = (TextView) view.findViewById(R.id.id_goods_name);
+                TextView user_textView = (TextView) view.findViewById(R.id.id_user_name);
+                ImageView category_image = (ImageView) view.findViewById(R.id.category_image);
+                ImageView goods_image = (ImageView) view.findViewById(R.id.goods_image);
+                user_image = (ImageView) view.findViewById(R.id.user_image);
+                GoodsModel good = allMarkersMap.get(marker);
+                user_textView.setText(good.getOwner().getName());
+                goods_textView.setText(good.getName());
+                if (not_first_time_showing_info_window) { //TODO bug, have to click twice to show pic
+                    Picasso.with(getContext()).load(good.getPhoto_path()).into(goods_image);
+                } else { // if it's the first time, load the image with the callback set
+                    not_first_time_showing_info_window=true;
+                    Picasso.with(getContext()).load(good.getPhoto_path()).into(goods_image,new InfoWindowRefresher(marker));
+                }
+                return view;
+            }
+        });
     }
+    private class InfoWindowRefresher implements com.squareup.picasso.Callback {
+        private Marker markerToRefresh;
+
+        private InfoWindowRefresher(Marker markerToRefresh) {
+            this.markerToRefresh = markerToRefresh;
+        }
+
+        @Override
+        public void onSuccess() {
+            if(markerToRefresh != null &&markerToRefresh.isInfoWindowShown()) {
+                markerToRefresh.showInfoWindow();
+            }
+        }
+
+        @Override
+        public void onError() {}
+    }
+
+
     //google marker cant add vector image
     private BitmapDescriptor getBitmapDescriptor(int id) {
         Drawable vectorDrawable = ContextCompat.getDrawable(getContext(), id);
