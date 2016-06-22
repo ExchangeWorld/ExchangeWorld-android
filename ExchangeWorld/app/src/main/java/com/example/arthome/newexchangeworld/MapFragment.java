@@ -1,6 +1,7 @@
 package com.example.arthome.newexchangeworld;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -10,6 +11,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -23,7 +25,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.arthome.newexchangeworld.ItemPage.ItemDetailActivity;
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -100,12 +104,41 @@ public class MapFragment extends Fragment {
                         sydney = new LatLng(24.989042, 121.546373);
                         mMap.addMarker(new MarkerOptions().position(sydney).title("世新大學"));
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 18));
+                        mMap.setOnInfoWindowClickListener(myInfoWindowClickListener());
+                        mMap.setOnMarkerClickListener(myMarkerClickListener());
                         new downloadGoodsAPI().execute("http://exwd.csie.org:43002/api/goods/search");
                     }
                 }
             });
         }
         return inflater.inflate(R.layout.map, container, false);
+    }
+
+    @NonNull
+    private GoogleMap.OnMarkerClickListener myMarkerClickListener() {
+        return new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                marker.showInfoWindow();
+                LatLng latLng = marker.getPosition();
+                //latLng = new LatLng(latLng.latitude, latLng.longitude);
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                mMap.moveCamera(CameraUpdateFactory.scrollBy(0,-200));//move
+                return true; // if return true, will not do default(move to center and show infowindow)
+            }
+        };
+    }
+
+    @NonNull
+    private GoogleMap.OnInfoWindowClickListener myInfoWindowClickListener() {
+        return new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                Intent intent = new Intent(getActivity(), ItemDetailActivity.class);
+                intent.putExtra("goodModel", new Gson().toJson(allMarkersMap.get(marker)));
+                startActivity(intent);
+            }
+        };
     }
 
     public static MapFragment newInstance() {
