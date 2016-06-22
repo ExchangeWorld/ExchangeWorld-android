@@ -1,6 +1,7 @@
 package com.example.arthome.newexchangeworld.ItemPage;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -88,6 +89,15 @@ public class ItemFragment extends Fragment{
     }
 
     public class downloadAPI extends AsyncTask<String,String,List<GoodsModel>> {
+
+        private ProgressDialog progressDialog = new ProgressDialog(getContext());
+
+        @Override
+        protected void onPreExecute() {
+            //progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog = ProgressDialog.show(getContext(),"Loading","Please wait",true);
+            super.onPreExecute();
+        }
 
         @Override
         protected List<GoodsModel> doInBackground(String... params) {
@@ -181,6 +191,7 @@ public class ItemFragment extends Fragment{
                     }
                 });
                 mRecyclerView.setAdapter(mAdapter);
+                progressDialog.dismiss();
             }
         }
     }
