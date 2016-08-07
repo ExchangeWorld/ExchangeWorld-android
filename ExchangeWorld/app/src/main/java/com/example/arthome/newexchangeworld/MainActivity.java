@@ -40,14 +40,15 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener  {
 
     public void camera(View view){
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, 0);
+        Intent intent = new Intent();
+        intent.setClass(MainActivity.this, pictureActivity.class);
+        startActivity(intent);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == RESULT_OK) {
+        if (requestCode == 0 && resultCode == RESULT_OK && data != null) {
             Bitmap mbmp = (Bitmap) data.getExtras().get("data");
             ImageView CameraV = (ImageView) findViewById(R.id.cameraImageView);
             CameraV.setImageBitmap(mbmp);

@@ -52,7 +52,7 @@ public class tabFragment extends Fragment implements AreaFragment.AreaSelectedLi
         //super.onViewCreated(view, savedInstanceState);
 
 
-        FragmentManager childFragmentManager = getChildFragmentManager();//fragment in frament
+        FragmentManager childFragmentManager = getChildFragmentManager();//fragment in fragment
         //set tab to fragment
         pagerAdapter =new myTabPagerAdapter(childFragmentManager);
         viewPager = (ViewPager) view.findViewById(R.id.Viewpager);
