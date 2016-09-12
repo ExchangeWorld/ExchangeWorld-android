@@ -9,79 +9,56 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.arthome.newexchangeworld.pictureActivity">
 
-    <ImageView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/itemPicture"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
+    <Button
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:text="Camera"
+        android:id="@+id/camerabutton"
+        android:layout_weight="0.3"
         android:layout_alignParentTop="true"
-        android:layout_above="@+id/itemTitle" />
-
-    <EditText
-        android:layout_width="fill_parent"
-        android:layout_height="120dp"
-        android:id="@+id/itemContent"
-        android:layout_weight="0.5"
-        android:inputType="text"
-        android:layout_above="@+id/linearLayout"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:text="write some content...."
-        android:gravity="left|top" />
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:id="@+id/linearLayout">
+        android:layout_alignRight="@+id/GalleryView"
+        android:layout_alignEnd="@+id/GalleryView" />
 
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="100dp"
-            android:text="Gallery"
-            android:id="@+id/gallerybutton"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_weight="0.3" />
+    <GridView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/GalleryView"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/camerabutton"
+        android:numColumns="3" />
 
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="100dp"
-            android:text="Camera"
-            android:id="@+id/camerabutton"
-            android:layout_alignParentBottom="true"
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/PostLayout">
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/PhotoView"
+            android:longClickable="false"
             android:layout_alignParentLeft="true"
-            android:layout_toLeftOf="@+id/gallerybutton"
-            android:layout_toStartOf="@+id/gallerybutton"
-            android:layout_weight="0.3" />
+            android:layout_marginLeft="0dp"
+            android:layout_alignParentTop="true"
+            android:layout_above="@+id/postText" />
 
-        <Button
-            android:layout_width="0dp"
+        <EditText
+            android:layout_width="fill_parent"
             android:layout_height="100dp"
-            android:text="SUBMIT"
-            android:id="@+id/submitbutton"
-            android:layout_alignBottom="@+id/linearLayout"
+            android:id="@+id/postText"
+            android:editable="true"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_weight="0.4"
-            android:clickable="true"
-            android:enabled="true"
-            android:onClick="onSubmit" />
-    </LinearLayout>
-
-    <EditText
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:id="@+id/itemTitle"
-        android:layout_above="@+id/itemContent"
-        android:gravity="center_vertical|left"
-        android:text="title"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+            android:maxLength="100"
+            android:singleLine="true"
+            android:inputType="text"
+            android:imeOptions="actionDone"/>
+    </RelativeLayout>
 
 </RelativeLayout>

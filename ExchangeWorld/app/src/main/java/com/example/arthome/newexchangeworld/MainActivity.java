@@ -36,8 +36,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener  {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener  {
 
     public void camera(View view){
         Intent intent = new Intent();
@@ -45,7 +44,7 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+/*    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 0 && resultCode == RESULT_OK && data != null) {
@@ -53,7 +52,7 @@ public class MainActivity extends AppCompatActivity
             ImageView CameraV = (ImageView) findViewById(R.id.cameraImageView);
             CameraV.setImageBitmap(mbmp);
         }
-    }
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
