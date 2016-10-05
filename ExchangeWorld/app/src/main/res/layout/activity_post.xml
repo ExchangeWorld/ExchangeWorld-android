@@ -14,13 +14,13 @@
         android:layout_height="wrap_content"
         android:id="@+id/postPhoto"
         android:layout_alignParentTop="true"
-        android:layout_above="@+id/postText" />
+        android:layout_above="@+id/nameText" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:text="White something here"
-        android:id="@+id/postText"
+        android:id="@+id/nameText"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>
