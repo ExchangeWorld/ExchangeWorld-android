@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Intent intent = new Intent();
         intent.setClass(MainActivity.this, pictureActivity.class);
         startActivity(intent);
+        MainActivity.this.finish();
     }
 
 /*    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
