@@ -1,5 +1,6 @@
 package com.example.arthome.newexchangeworld;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,6 +14,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.multidex.MultiDex;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -31,12 +33,12 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.arthome.newexchangeworld.SearchTab.AreaFragment;
-import com.google.android.gms.maps.model.LatLng;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener  {
+
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener  {
 
     public void camera(View view){
         Intent intent = new Intent();
@@ -57,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -66,7 +69,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //for download image
         // Create global configuration and initialize ImageLoader with this config
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
+        .build();
         ImageLoader.getInstance().init(config);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -94,10 +98,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
+        //// TODO: need fix to be better
+        //for backbutton in Item_Category
+        FragmentManager fm = getSupportFragmentManager();
+        for (Fragment frag : fm.getFragments()) {
+            if (frag.isVisible()) {
+                FragmentManager childFm = frag.getChildFragmentManager();
+                if (childFm.getBackStackEntryCount() > 0) {
+                    for (Fragment childfragnested: childFm.getFragments()) {
+                        FragmentManager childFmNestManager = childfragnested.getFragmentManager();
+                        if(childfragnested.isVisible()) {
+                            childFmNestManager.popBackStack();
+                            return;
+                        }
+                    }
+                }
+            }
+        }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
+        }else{
             super.onBackPressed();
         }
     }
@@ -140,7 +161,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
              transaction.replace(R.id.content_frame, MyPageFragment.newInstance());
              transaction.commit();
              cameraButton.setVisibility(View.INVISIBLE);
-         }else if (id == R.id.nav_gallery) {
+         }else if (id == R.id.drawer_accountSetting){
+             Intent intent = new Intent();
+             intent.setClass(MainActivity.this, Login.class);
+             startActivity(intent);
+         }
+         else if (id == R.id.nav_gallery) {
              Intent intent = new Intent();
              intent.setClass(MainActivity.this, TestActivity.class);
              startActivity(intent);
@@ -151,12 +177,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
              transaction.replace(R.id.content_frame, oneFragment.newInstance("one", "one"));
              transaction.commit();
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(newBase);
+        MultiDex.install(this); //fix multidex can't find class bug
+    }
 
     //for circle view
     public static Bitmap getCroppedBitmap(Bitmap bitmap) {
@@ -180,5 +210,4 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //return _bmp;
         return output;
     }
-
 }

@@ -78,7 +78,7 @@ public class MyPageFragment extends Fragment {
         public Fragment getItem(int position){
             switch (position){
                 case 0:
-                    return ItemFragment.newInstance();
+                    return oneFragment.newInstance("1","2");
                 case 1:
                     return twoFragment.newInstance("1","2");
                 case 2:

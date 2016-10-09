@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.support.v4.app.FragmentManager;
 import android.widget.Toast;
 
+import com.example.arthome.newexchangeworld.ItemPage.BlankFragment;
 import com.example.arthome.newexchangeworld.ItemPage.ItemCategory;
 import com.example.arthome.newexchangeworld.ItemPage.ItemFragment;
 import com.example.arthome.newexchangeworld.SearchTab.AreaFragment;
@@ -60,6 +61,21 @@ public class tabFragment extends Fragment implements AreaFragment.AreaSelectedLi
         viewPager.setOffscreenPageLimit(2); //create the two fragment beside, more memory needed
         tabLayout = (TabLayout) view.findViewById(R.id.TabLayout);
         tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setOnTabSelectedListener(
+                new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
+                    @Override
+                    public void onTabReselected(TabLayout.Tab tab) {
+                        switch (tab.getPosition()){
+                            case 1 : //item_categorypage reselected
+                                FragmentManager fm = getChildFragmentManager();
+                                if(fm.getBackStackEntryCount()>0) { //popback to category page
+                                    fm.popBackStack();
+                                }
+                                break;
+                        }
+                        super.onTabReselected(tab);
+                    }
+                });
     }
 
     @Override
@@ -91,7 +107,7 @@ public class tabFragment extends Fragment implements AreaFragment.AreaSelectedLi
                     return MapFragment.newInstance();
                 //oneFragment.newInstance("1","2")
                 case 1:
-                    return ItemCategory.newInstance();
+                    return BlankFragment.newInstance();
                 case 2:
                     return AreaFragment.newInstance();
                 default:

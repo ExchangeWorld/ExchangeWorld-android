@@ -1,6 +1,7 @@
 package com.example.arthome.newexchangeworld.ItemPage;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -15,10 +16,15 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.arthome.newexchangeworld.MainActivity;
+import com.google.android.gms.maps.MapFragment;
 import com.google.gson.Gson;
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.example.arthome.newexchangeworld.R;
 
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,7 +46,9 @@ public class ItemFragment extends Fragment{
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<String> items = new ArrayList<>();
 
-    public ItemFragment(){};
+    public ItemFragment(){
+
+    };
 
     public static ItemFragment newInstance(){
         ItemFragment fragment = new ItemFragment();
@@ -60,9 +68,12 @@ public class ItemFragment extends Fragment{
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        //get which url to download
+        Bundle bundle = getArguments();
+        String url = bundle.getString("URL");
         //原本的initView
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        new downloadAPI().execute("http://exwd.csie.org:43002/api/goods/");
+        new downloadAPI().execute(url);
        /*
         //列數為2
         int spanCount = 2;
@@ -79,46 +90,65 @@ public class ItemFragment extends Fragment{
 
     public class downloadAPI extends AsyncTask<String,String,List<GoodsModel>> {
 
+        private ProgressDialog progressDialog = new ProgressDialog(getContext());
+
+        @Override
+        protected void onPreExecute() {
+            //progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog = ProgressDialog.show(getContext(),"Loading","Please wait",true);
+            super.onPreExecute();
+        }
+
         @Override
         protected List<GoodsModel> doInBackground(String... params) {
             HttpURLConnection connection = null;
             BufferedReader reader = null;
-            int goods_count=1;
+            //int goods_count=1;
             try {
 
-                URL url = new URL(params[0]+Integer.toString(goods_count));
+                URL url = new URL(params[0]);
                 connection = (HttpURLConnection) url.openConnection();
                 connection.connect(); // it still works without this line, don't know why
                 List<GoodsModel> goodsModelList = new ArrayList<>();
-                while(connection.getResponseCode()!=500) { //not error
 
-                    InputStream stream = connection.getInputStream();
 
-                    reader = new BufferedReader(new InputStreamReader(stream));
+                InputStream stream = connection.getInputStream();
 
-                    StringBuffer buffer = new StringBuffer();
+                reader = new BufferedReader(new InputStreamReader(stream));
 
-                    String line = "";
-                    while ((line = reader.readLine()) != null) {
-                        buffer.append(line);
-                    }
-                    String sJson;
-                    sJson= buffer.toString();
-                    //JSONObject mjson = new JSONObject(sJson);
-                    //convert json to gson
-                    Gson gson = new Gson();
-                    GoodsModel goodsModel;
-                    goodsModel = gson.fromJson(sJson, GoodsModel.class);
-                    String goods_imageUrl = goodsModel.getPhoto_path();
-                    goods_imageUrl = goods_imageUrl.substring(2, goods_imageUrl.length() - 2);
-                    goodsModel.setPhoto_path(goods_imageUrl);
-                    goodsModelList.add(goodsModel);
-                    goods_count++;
-                    url = new URL(params[0]+Integer.toString(goods_count));
-                    connection = (HttpURLConnection) url.openConnection();
-                    connection.connect(); // it still works without this line, don't know why
+                StringBuffer buffer = new StringBuffer();
+
+                String line = "";
+                while ((line = reader.readLine()) != null) {
+                    buffer.append(line);
                 }
-               return goodsModelList;
+                String sJson;
+                sJson= buffer.toString();
+
+                JSONArray jsonArray= null; //try and catch?
+                try {
+                    jsonArray = new JSONArray(sJson);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                GoodsModel goodsModel = null;
+                for(int i=0;i<jsonArray.length();i++){
+                    Gson gson = new Gson();
+                    try {
+                        goodsModel = gson.fromJson(jsonArray.get(i).toString(), GoodsModel.class);
+                        String goods_imageUrl = goodsModel.getPhoto_path();
+                        goods_imageUrl = goods_imageUrl.substring(2, goods_imageUrl.length() - 2);
+                        goodsModel.setPhoto_path(goods_imageUrl);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    if(goodsModel!=null) {
+                        //Log.i("oscart",Integer.toString(i)+goodsModel.getName());
+                        goodsModelList.add(goodsModel);
+                    }
+                }
+
+                return goodsModelList;
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -138,6 +168,7 @@ public class ItemFragment extends Fragment{
             return null;
         }
 
+
         @Override
         protected void onPostExecute(final List<GoodsModel> result) {
             super.onPostExecute(result);
@@ -152,7 +183,7 @@ public class ItemFragment extends Fragment{
                 mAdapter.setMyViewHolderClicks(new ItemAdapter.MyViewHolderClicks() {
                     @Override
                     public void onGoodsClick(View itemView, int position) {
-                        Toast.makeText(getContext(),Integer.toString(position)+"clicked",Toast.LENGTH_SHORT);
+                        //Toast.makeText(getContext(),Integer.toString(position)+"clicked",Toast.LENGTH_SHORT);
                         GoodsModel goodsModel = result.get(position);
                         Intent intent = new Intent(getActivity(), ItemDetailActivity.class);
                         intent.putExtra("goodModel", new Gson().toJson(goodsModel));
@@ -160,6 +191,7 @@ public class ItemFragment extends Fragment{
                     }
                 });
                 mRecyclerView.setAdapter(mAdapter);
+                progressDialog.dismiss();
             }
         }
     }

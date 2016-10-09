@@ -79,4 +79,3 @@
         android:layout_alignLeft="@+id/category_clothes"
         android:layout_alignStart="@+id/category_clothes" />
 </RelativeLayout>
-
