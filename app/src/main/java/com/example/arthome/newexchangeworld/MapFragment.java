@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
@@ -21,12 +22,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.arthome.newexchangeworld.ItemPage.ItemDetailActivity;
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -59,16 +63,23 @@ import java.util.List;
 import java.util.Map;
 
 import static android.support.v4.content.ContextCompat.checkSelfPermission;
+
 /**
  * A fragment that launches other parts of the demo application.
  */
 public class MapFragment extends Fragment {
 
     private GoogleMap mMap;
+    private Button cancelButton, uploadButton;
+    private Marker draggableMarker;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.map, container, false);
+        cancelButton = (Button) view.findViewById(R.id.map_cancel_button);
+        uploadButton = (Button) view.findViewById(R.id.map_upload_button);
+
         SupportMapFragment mSupportMapFragment;
 
         mSupportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapwhere);
@@ -84,18 +95,18 @@ public class MapFragment extends Fragment {
                 @Override
                 public void onMapReady(GoogleMap googleMap) {
                     if (googleMap != null) {
-                        mMap =googleMap;
+                        mMap = googleMap;
                         googleMap.getUiSettings().setAllGesturesEnabled(true);
 
-                        if(ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.ACCESS_COARSE_LOCATION)==PackageManager.PERMISSION_GRANTED
-                                && ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED) {
+                        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                                && ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                             mMap.setMyLocationEnabled(true);
                         } //check location permission
 
                         LatLng sydney = new LatLng(-34, 151);
                         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
                         sydney = new LatLng(24.989042, 121.546373);
-                        mMap.addMarker(new MarkerOptions().position(sydney).title("世新大學").draggable(true));
+//                        mMap.addMarker(new MarkerOptions().position(sydney).title("世新大學").draggable(true));
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 18));
                         mMap.setOnInfoWindowClickListener(myInfoWindowClickListener());
                         mMap.setOnMarkerClickListener(myMarkerClickListener());
@@ -105,7 +116,7 @@ public class MapFragment extends Fragment {
                 }
             });
         }
-        return inflater.inflate(R.layout.map, container, false);
+        return view;
     }
 
     @NonNull
@@ -113,14 +124,14 @@ public class MapFragment extends Fragment {
         return new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                if(allMarkersMap.containsKey(marker)) {
+                if (allMarkersMap.containsKey(marker)) {
                     marker.showInfoWindow();
                     LatLng latLng = marker.getPosition();
                     //latLng = new LatLng(latLng.latitude, latLng.longitude);
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                     mMap.moveCamera(CameraUpdateFactory.scrollBy(0, -200));//move
-                }else {
-                    Toast.makeText(getContext(),"not custom click",Toast.LENGTH_SHORT).show();
+                } else {
+
                 }
                 return true; // if return true, will not do default(move to center and show infowindow)
             }
@@ -139,7 +150,7 @@ public class MapFragment extends Fragment {
         };
     }
 
-    private GoogleMap.OnMarkerDragListener myMarkerDragListener(){
+    private GoogleMap.OnMarkerDragListener myMarkerDragListener() {
         return new GoogleMap.OnMarkerDragListener() {
             @Override
             public void onMarkerDragStart(Marker marker) {
@@ -153,7 +164,7 @@ public class MapFragment extends Fragment {
 
             @Override
             public void onMarkerDragEnd(Marker marker) {
-                Toast.makeText(getContext(),marker.getPosition().latitude+"\n"+marker.getPosition().longitude,Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), marker.getPosition().latitude + "\n" + marker.getPosition().longitude, Toast.LENGTH_SHORT).show();
             }
         };
     }
@@ -163,11 +174,12 @@ public class MapFragment extends Fragment {
 
         return fragment;
     }
-    public void move(LatLng latlng,int zoomSize){
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng,zoomSize));
+
+    public void move(LatLng latlng, int zoomSize) {
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, zoomSize));
     }
 
-    public class downloadGoodsAPI extends AsyncTask<String,String,List<GoodsModel>> {
+    public class downloadGoodsAPI extends AsyncTask<String, String, List<GoodsModel>> {
 
         @Override
         protected List<GoodsModel> doInBackground(String... params) {
@@ -193,16 +205,16 @@ public class MapFragment extends Fragment {
                     buffer.append(line);
                 }
                 String sJson;
-                sJson= buffer.toString();
+                sJson = buffer.toString();
 
-                JSONArray jsonArray= null; //try and catch?
+                JSONArray jsonArray = null; //try and catch?
                 try {
                     jsonArray = new JSONArray(sJson);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 GoodsModel goodsModel = null;
-                for(int i=0;i<jsonArray.length();i++){
+                for (int i = 0; i < jsonArray.length(); i++) {
                     Gson gson = new Gson();
                     try {
                         goodsModel = gson.fromJson(jsonArray.get(i).toString(), GoodsModel.class);
@@ -212,7 +224,7 @@ public class MapFragment extends Fragment {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    if(goodsModel!=null) {
+                    if (goodsModel != null) {
                         //Log.i("oscart",Integer.toString(i)+goodsModel.getName());
                         goodsModelList.add(goodsModel);
                     }
@@ -223,10 +235,10 @@ public class MapFragment extends Fragment {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                if(connection != null) {
+                if (connection != null) {
                     connection.disconnect();
                 }
-                if(reader != null){
+                if (reader != null) {
                     try {
                         reader.close();
                     } catch (IOException e) {
@@ -242,22 +254,24 @@ public class MapFragment extends Fragment {
             super.onPostExecute(result);
             //mText.setText(result.toString());
             //TODO need to set data to list
-            if(result != null){
+            if (result != null) {
                 setGoodsMap(result);
             }
         }
     }
-    Map<Marker,GoodsModel > allMarkersMap = new HashMap<Marker, GoodsModel>();  //hash map for infowindow
+
+    Map<Marker, GoodsModel> allMarkersMap = new HashMap<Marker, GoodsModel>();  //hash map for infowindow
     ImageView user_image;
-    public void setGoodsMap(List<GoodsModel> listGoodsModel){
+
+    public void setGoodsMap(List<GoodsModel> listGoodsModel) {
         BitmapDescriptor icon;
-        for(int i=0;i<listGoodsModel.size();i++){
+        for (int i = 0; i < listGoodsModel.size(); i++) {
             double lat = listGoodsModel.get(i).getPosition_x();
             double lng = listGoodsModel.get(i).getPosition_y();
             String title = listGoodsModel.get(i).getName();
             LatLng sydney = new LatLng(lng, lat); //check if x is lat or x is lng
             Log.i("oscart", title + " " + Double.toString(lat));
-            switch (listGoodsModel.get(i).getCategory()){//TODO add all category
+            switch (listGoodsModel.get(i).getCategory()) {//TODO add all category
                 case "Textbooks":
                     icon = getBitmapDescriptor(R.drawable.category_textbooks);
                     break;
@@ -295,15 +309,16 @@ public class MapFragment extends Fragment {
                 goods_textView.setText(good.getName());
                 if (marker.isInfoWindowShown()) { //TODO bug, have to click twice to show pic
                     Picasso.with(getContext()).load(good.getPhoto_path()).into(goods_image);
-                    Log.i("oscart","shown");
+                    Log.i("oscart", "shown");
                 } else { // if it's the first time, load the image with the callback set
-                    Picasso.with(getContext()).load(good.getPhoto_path()).into(goods_image,new InfoWindowRefresher(marker));
+                    Picasso.with(getContext()).load(good.getPhoto_path()).into(goods_image, new InfoWindowRefresher(marker));
                     Log.i("oscart", "not shown");
                 }
                 return view;
             }
         });
     }
+
     private class InfoWindowRefresher implements com.squareup.picasso.Callback {
         private Marker markerToRefresh;
 
@@ -313,7 +328,7 @@ public class MapFragment extends Fragment {
 
         @Override
         public void onSuccess() {
-            if(markerToRefresh != null &&markerToRefresh.isInfoWindowShown()) {
+            if (markerToRefresh != null && markerToRefresh.isInfoWindowShown()) {
                 Log.i("oscart", "success");
                 markerToRefresh.showInfoWindow();
             }
@@ -329,8 +344,8 @@ public class MapFragment extends Fragment {
     //google marker cant add vector image
     private BitmapDescriptor getBitmapDescriptor(int id) {
         Drawable vectorDrawable = ContextCompat.getDrawable(getContext(), id);
-        int h =  vectorDrawable.getIntrinsicHeight();
-        int w =  vectorDrawable.getIntrinsicWidth();
+        int h = vectorDrawable.getIntrinsicHeight();
+        int w = vectorDrawable.getIntrinsicWidth();
         vectorDrawable.setBounds(0, 0, 80, 80);//set to size
         Bitmap bm = Bitmap.createBitmap(80, 80, Bitmap.Config.ARGB_8888);//set to size
         Canvas canvas = new Canvas(bm);
@@ -338,6 +353,9 @@ public class MapFragment extends Fragment {
         return BitmapDescriptorFactory.fromBitmap(bm);
     }
 
-
-
+    public void setDraggableMarker() {
+//        LatLng sydney = new LatLng(24.989042, 121.546373);
+        LatLng myLocation = new LatLng(mMap.getMyLocation().getLatitude(), mMap.getMyLocation().getLongitude());
+        draggableMarker = mMap.addMarker(new MarkerOptions().position(myLocation).title("長按並拖曳定位").draggable(true));
+    }
 }

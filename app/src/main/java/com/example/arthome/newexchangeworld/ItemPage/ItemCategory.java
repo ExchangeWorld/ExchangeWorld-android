@@ -1,19 +1,14 @@
 package com.example.arthome.newexchangeworld.ItemPage;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.arthome.newexchangeworld.MapFragment;
 import com.example.arthome.newexchangeworld.R;
-import com.example.arthome.newexchangeworld.tabFragment;
 
 /**
  * Created by arthome on 2016/5/31.

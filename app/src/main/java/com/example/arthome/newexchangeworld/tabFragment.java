@@ -13,27 +13,22 @@ import android.support.v4.app.FragmentManager;
 import android.widget.Toast;
 
 import com.example.arthome.newexchangeworld.ItemPage.BlankFragment;
-import com.example.arthome.newexchangeworld.ItemPage.ItemCategory;
-import com.example.arthome.newexchangeworld.ItemPage.ItemFragment;
 import com.example.arthome.newexchangeworld.SearchTab.AreaFragment;
-import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.LatLng;
-
-import java.util.Map;
 
 /**
  * Created by arthome on 2016/4/9.
  */
-public class tabFragment extends Fragment implements AreaFragment.AreaSelectedListener{
+public class TabFragment extends Fragment implements AreaFragment.AreaSelectedListener{
     ViewPager viewPager;
     PagerAdapter pagerAdapter;
     TabLayout tabLayout;
 
-    public tabFragment(){
+    public TabFragment(){
         //require empty constructor
     }
-    public static tabFragment newInstance() {
-        tabFragment fragment = new tabFragment();
+    public static TabFragment newInstance() {
+        TabFragment fragment = new TabFragment();
 
         return fragment;
     }
@@ -88,6 +83,11 @@ public class tabFragment extends Fragment implements AreaFragment.AreaSelectedLi
         else {
             Toast.makeText(getContext(),"not suceess",Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public MapFragment getMapFragment(){
+        MapFragment mapF = (MapFragment) getChildFragmentManager().findFragmentByTag("android:switcher:" + R.id.Viewpager + ":0");
+            return mapF;
     }
 
     class myTabPagerAdapter extends FragmentPagerAdapter {

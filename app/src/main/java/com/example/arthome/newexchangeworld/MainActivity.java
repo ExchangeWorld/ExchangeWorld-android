@@ -10,17 +10,12 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.multidex.MultiDex;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -28,23 +23,23 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
-import android.widget.Toast;
 
+import com.example.arthome.newexchangeworld.Models.PostModel;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener  {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
-    public void camera(View view){
+    private TabFragment tabFragment = TabFragment.newInstance();
+
+    public void camera(View view) {
         Intent intent = new Intent();
         intent.setClass(MainActivity.this, pictureActivity.class);
         startActivity(intent);
-        MainActivity.this.finish();
     }
 
 /*    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -70,7 +65,7 @@ public class MainActivity extends AppCompatActivity
         //for download image
         // Create global configuration and initialize ImageLoader with this config
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
-        .build();
+                .build();
         ImageLoader.getInstance().init(config);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -84,13 +79,13 @@ public class MainActivity extends AppCompatActivity
 
         //for circle head view
         View headerView = navigationView.getHeaderView(0); // for Navigation findViewById
-        ImageView  im = (ImageView) headerView.findViewById(R.id.imageView2);
-        Bitmap myhead = BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.myhead);
+        ImageView im = (ImageView) headerView.findViewById(R.id.imageView2);
+        Bitmap myhead = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.myhead);
         im.setImageBitmap(getCroppedBitmap(myhead));
 
         if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.content_frame, tabFragment.newInstance());
+            transaction.replace(R.id.content_frame, tabFragment);
             transaction.commit();
             cameraButton.setVisibility(View.VISIBLE);
         }
@@ -105,9 +100,9 @@ public class MainActivity extends AppCompatActivity
             if (frag.isVisible()) {
                 FragmentManager childFm = frag.getChildFragmentManager();
                 if (childFm.getBackStackEntryCount() > 0) {
-                    for (Fragment childfragnested: childFm.getFragments()) {
+                    for (Fragment childfragnested : childFm.getFragments()) {
                         FragmentManager childFmNestManager = childfragnested.getFragmentManager();
-                        if(childfragnested.isVisible()) {
+                        if (childfragnested.isVisible()) {
                             childFmNestManager.popBackStack();
                             return;
                         }
@@ -118,11 +113,24 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        }else{
+        } else {
             super.onBackPressed();
         }
     }
-/*              three dot setting on toolbar
+
+    @Override
+    protected void onNewIntent(Intent intent) { //從post Activity回到Main會call
+        super.onNewIntent(intent);
+        if (intent.getFlags() == Intent.FLAG_ACTIVITY_CLEAR_TOP){
+
+            MapFragment mapFragment = tabFragment.getMapFragment();
+            PostModel postModel = (PostModel) intent.getExtras().getSerializable("postInfo");
+            System.out.println(">>>post "+postModel.getName());
+            mapFragment.setDraggableMarker();
+        }
+    }
+
+    /*              three dot setting on toolbar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -153,29 +161,27 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         FloatingActionButton cameraButton = (FloatingActionButton) findViewById(R.id.cameraFab);
-         if (id == R.id.drawer_searchPage){
-             transaction.replace(R.id.content_frame, tabFragment.newInstance());
-             transaction.commit();
-             cameraButton.setVisibility(View.VISIBLE);
-         }else if (id == R.id.drawer_myPage){
-             transaction.replace(R.id.content_frame, MyPageFragment.newInstance());
-             transaction.commit();
-             cameraButton.setVisibility(View.INVISIBLE);
-         }else if (id == R.id.drawer_accountSetting){
-             Intent intent = new Intent();
-             intent.setClass(MainActivity.this, Login.class);
-             startActivity(intent);
-         }
-         else if (id == R.id.nav_gallery) {
-             Intent intent = new Intent();
-             intent.setClass(MainActivity.this, TestActivity.class);
-             startActivity(intent);
-         }
-         else if (id == R.id.nav_share) {
+        if (id == R.id.drawer_searchPage) {
+            transaction.replace(R.id.content_frame, TabFragment.newInstance());
+            transaction.commit();
+            cameraButton.setVisibility(View.VISIBLE);
+        } else if (id == R.id.drawer_myPage) {
+            transaction.replace(R.id.content_frame, MyPageFragment.newInstance());
+            transaction.commit();
+            cameraButton.setVisibility(View.INVISIBLE);
+        } else if (id == R.id.drawer_accountSetting) {
+            Intent intent = new Intent();
+            intent.setClass(MainActivity.this, Login.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_gallery) {
+            Intent intent = new Intent();
+            intent.setClass(MainActivity.this, TestActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
-             transaction.replace(R.id.content_frame, oneFragment.newInstance("one", "one"));
-             transaction.commit();
+            transaction.replace(R.id.content_frame, oneFragment.newInstance("one", "one"));
+            transaction.commit();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
