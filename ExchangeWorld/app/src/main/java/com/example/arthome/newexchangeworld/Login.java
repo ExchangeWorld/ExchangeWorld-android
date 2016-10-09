@@ -38,6 +38,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
@@ -145,7 +146,7 @@ public class Login extends AppCompatActivity {
                 postModel.setDescription(params[2]);
                 postModel.setName(params[1]);
                 String jsonString = new Gson().toJson(postModel);
-                HttpEntity entity = new StringEntity(jsonString);
+                HttpEntity entity = new StringEntity(jsonString, HTTP.UTF_8);
                 post.setEntity(entity);
                 HttpResponse response = client.execute(post);
                 entity = response.getEntity();
