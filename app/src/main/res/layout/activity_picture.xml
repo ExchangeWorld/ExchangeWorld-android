@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.example.arthome.newexchangeworld.pictureActivity">
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+
+
+        android:id="@+id/PostLayout">
+
+
+
+        <LinearLayout
+            android:id="@+id/nameLayout"
+            android:orientation="horizontal"
+            android:layout_below="@+id/postButton"
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+
+            <TextView
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:text="名稱"
+                android:id="@+id/nameTitle"
+                android:singleLine="false"
+                android:gravity="bottom" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/nameText"
+                android:editable="true"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:maxLength="100"
+                android:singleLine="true"
+                android:inputType="text"
+                android:imeOptions="actionDone"
+                android:gravity="bottom" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@+id/nameLayout"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:id="@+id/classLayout">
+
+            <TextView
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:text="類別"
+                android:id="@+id/classTitle"
+                android:gravity="center_vertical" />
+
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/classSpinner"
+                android:gravity="bottom" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:id="@+id/describeLayout"
+            android:layout_below="@+id/classLayout"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
+
+            <TextView
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:text="敘述"
+                android:id="@+id/describeTitle"
+                android:gravity="top" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="textMultiLine"
+                android:ems="10"
+                android:id="@+id/describeText"
+                android:gravity="top"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <GridView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/postView"
+            android:layout_below="@+id/describeLayout"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:verticalSpacing="5dp"
+            android:numColumns="2"/>
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="POST"
+            android:id="@+id/postButton"
+            android:gravity="center_vertical|center_horizontal" />
+
+    </RelativeLayout>
+
+    <GridView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/GalleryView"
+        android:horizontalSpacing="4dp"
+        android:verticalSpacing="2dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/buttonLayout"
+        android:numColumns="3" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+
+
+        android:id="@+id/buttonLayout">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:text="Camera"
+            android:id="@+id/cameraButton"
+            android:layout_weight="0.3"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignRight="@+id/GalleryView"
+            android:layout_alignEnd="@+id/GalleryView" />
+
+        <Button
+            android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:text="NEXT"
+            android:id="@+id/nextButton" />
+    </LinearLayout>
+
+</RelativeLayout>
