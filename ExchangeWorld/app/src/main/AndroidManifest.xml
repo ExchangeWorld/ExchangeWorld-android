@@ -46,7 +46,7 @@
             android:name=".SearchTab.PostActivity"
             android:label="@string/title_activity_post"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".PostActivity"></activity>
+        <activity android:name=".PostActivity" />
     </application>
 
 </manifest>

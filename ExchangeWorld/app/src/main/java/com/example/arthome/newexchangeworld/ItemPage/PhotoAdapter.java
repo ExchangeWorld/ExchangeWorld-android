@@ -14,6 +14,7 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.arthome.newexchangeworld.R;
 import com.example.arthome.newexchangeworld.pictureActivity;
@@ -24,6 +25,11 @@ public class PhotoAdapter extends BaseAdapter{
     private Context context;
     private List coll;
     private int picWidth;
+    private boolean [] CheckedPic;
+    private class Viewholder {
+        ImageView imageView;
+        CheckBox checkBox;
+    }
 
 
     public PhotoAdapter(Context context, List coll) {
@@ -31,17 +37,18 @@ public class PhotoAdapter extends BaseAdapter{
         super();
         this.context = context;
         this.coll = coll;
-
+        CheckedPic = new boolean[coll.size()];
     }
 
 
     public View getView(final int position, View convertView, ViewGroup parent) {
 
+        final Viewholder viewholder = new Viewholder();
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowview = inflater.inflate(R.layout.item_photo, parent, false);
         layout = (ViewGroup) rowview.findViewById(R.id.photo_layout);
-        ImageView imageView = (ImageView) rowview.findViewById(R.id.imageView1);
-        final CheckBox checkbox = (CheckBox) rowview.findViewById(R.id.checkBox);
+        viewholder.imageView = (ImageView) rowview.findViewById(R.id.imageView1);
+        viewholder.checkBox = (CheckBox) rowview.findViewById(R.id.checkBox);
 
 
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
@@ -51,7 +58,7 @@ public class PhotoAdapter extends BaseAdapter{
         picWidth = (int) (screenWidth - px - 20*3) / 3; // 一行顯示四個縮圖
 
         layout.setLayoutParams(new GridView.LayoutParams(picWidth, picWidth));
-        imageView.setId(position);
+        viewholder.imageView.setId(position);
         // Bitmap bm = BitmapFactory.decodeFile((String)coll.get(position));
         // Bitmap newBit = Bitmap.createScaledBitmap(bm, newWidth, newWidth,
         // true);
@@ -61,11 +68,16 @@ public class PhotoAdapter extends BaseAdapter{
                         .parseLong((String) coll.get(position)),
                 MediaStore.Images.Thumbnails.MICRO_KIND, null);
 
-        imageView.setImageBitmap(bm);
-        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+        viewholder.imageView.setImageBitmap(bm);
+        viewholder.imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+
+        if(CheckedPic[position])
+            viewholder.checkBox.setChecked(true);
+        else
+            viewholder.checkBox.setChecked(false);
 
         //點擊照片
-        imageView.setOnClickListener(new OnClickListener() {
+        viewholder.imageView.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -74,11 +86,13 @@ public class PhotoAdapter extends BaseAdapter{
         //                .show();
 
           //      ((pictureActivity)context).setImageView(position);
-                if (checkbox.isChecked()) {
-                    checkbox.setChecked(false);
+                if (viewholder.checkBox.isChecked()) {
+                    viewholder.checkBox.setChecked(false);
+                    CheckedPic[position] = false;
           //          checked.set(position, false);
                 } else {
-                    checkbox.setChecked(true);
+                    viewholder.checkBox.setChecked(true);
+                    CheckedPic[position] = true;
          //           checked.set(position, true);
                 }
             }
@@ -105,6 +119,10 @@ public class PhotoAdapter extends BaseAdapter{
     public long getItemId(int position) {
         // TODO Auto-generated method stub
         return position;
+    }
+
+    public boolean getCheckedPic(int position){
+        return CheckedPic[position];
     }
 
 

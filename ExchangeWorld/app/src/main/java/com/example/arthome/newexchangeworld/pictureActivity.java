@@ -9,8 +9,10 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,11 +20,15 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.arthome.newexchangeworld.ItemPage.PhotoAdapter;
 import com.example.arthome.newexchangeworld.ItemPage.PostAdapter;
 
 import java.io.File;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,14 +40,19 @@ public class pictureActivity extends AppCompatActivity {
 
     private DisplayMetrics mPhone;
     private final static int CAMERA = 2;
+    private final static int EDIT = 0;
+    private final static int POST = 1;
+    private int poststate;
     private PhotoAdapter photoAdapter;
     private PostAdapter postAdapter;
     private List<String> thumbs;  //存放縮圖的id
     private List<String> imagePaths;  //存放圖片的路徑
+    private List<String> selectedPic;
     private List<String> postthumbs;
     private GridView gallery;
     private Button cameraButton;
     private Button nextButton;
+    private Button postButton;
     private GridView postgallery;
     private EditText nameText;
     private EditText describeText;
@@ -71,6 +82,7 @@ public class pictureActivity extends AppCompatActivity {
         nameText = (EditText)findViewById(R.id.nameText);
         classSpinner = (Spinner)findViewById(R.id.classSpinner);
         describeText = (EditText)findViewById(R.id.describeText);
+        postButton = (Button)findViewById(R.id.postButton);
         postgallery.setVisibility(View.GONE);
         nameTitle.setVisibility(View.GONE);
         nameText.setVisibility(View.GONE);
@@ -78,8 +90,11 @@ public class pictureActivity extends AppCompatActivity {
         classSpinner.setVisibility(View.GONE);
         describeTitle.setVisibility(View.GONE);
         describeText.setVisibility(View.GONE);
+        postButton.setVisibility(View.GONE);
         classList = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,classType);
         classSpinner.setAdapter(classList);
+        poststate = EDIT;
+        setPic();
   //     ContentResolver cr = getContentResolver();
 
         cameraButton.setOnClickListener(new View.OnClickListener() {
@@ -90,7 +105,7 @@ public class pictureActivity extends AppCompatActivity {
                 Uri uri = getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI,value);*/
                 Intent intent = new Intent(ACTION_IMAGE_CAPTURE);
                 SimpleDateFormat tmpTime = new SimpleDateFormat("yyyyMMdd_HHmmss");
-                File tmpfile = new File(Environment.getExternalStorageDirectory(), tmpTime.format(new Date()) + ".jpg");
+                File tmpfile = new File("/sdcard/DCIM", tmpTime.format(new Date()) + ".jpg");
                 Uri uri = Uri.fromFile(tmpfile);
                 intent.putExtra(EXTRA_OUTPUT, uri);
                 startActivityForResult(intent, CAMERA);
@@ -107,13 +122,19 @@ public class pictureActivity extends AppCompatActivity {
                 classSpinner.setVisibility(View.VISIBLE);
                 describeTitle.setVisibility(View.VISIBLE);
                 describeText.setVisibility(View.VISIBLE);
+                postButton.setVisibility(View.VISIBLE);
                 nextButton.setVisibility(View.GONE);
                 cameraButton.setVisibility(View.GONE);
                 gallery.setVisibility(View.GONE);
+                poststate = POST;
 
                 postthumbs = new ArrayList<String>();
+                selectedPic = new ArrayList<String>();
                 for(int i = 0;i<photoAdapter.getCount();i++) {
-                        postthumbs.add((String)photoAdapter.getItem(i));
+                    if(photoAdapter.getCheckedPic(i)) {
+                        postthumbs.add((String) photoAdapter.getItem(i));
+                        selectedPic.add( imagePaths.get(i));
+                    }
                 }
                 postAdapter = new PostAdapter(pictureActivity.this, postthumbs);
                 postgallery.setAdapter(postAdapter);
@@ -121,7 +142,58 @@ public class pictureActivity extends AppCompatActivity {
 
             }
         });
+
+        postButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                File mFile = new File("/sdcard/ExchangeWorld");
+                if(!mFile.exists())
+                    mFile.mkdirs();
+                try{
+                    FileWriter fw = new FileWriter("/sdcard/ExchangeWorld/PostData.txt", false);
+                    BufferedWriter bw = new BufferedWriter(fw); //將BufferedWeiter與FileWrite物件做連結
+                    bw.write("Name = " + nameText.getText().toString());
+                    bw.newLine();
+                    bw.write("Class = " + classSpinner.getSelectedItem().toString());
+                    bw.newLine();
+                    bw.write("Description = " + describeText.getText().toString());
+                    bw.newLine();
+                    bw.write("Picture = ");
+                    bw.newLine();
+                    for(int i = 0;i<selectedPic.size();i++) {
+                        bw.write(selectedPic.get(i));
+                        bw.newLine();
+                    }
+                    bw.close();
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
+                finish();
+            }
+        });
     }
+
+
+    @Override
+    public void onBackPressed() {
+        if(poststate==POST) {
+            postgallery.setVisibility(View.GONE);
+            nameTitle.setVisibility(View.GONE);
+            nameText.setVisibility(View.GONE);
+            classTitle.setVisibility(View.GONE);
+            classSpinner.setVisibility(View.GONE);
+            describeTitle.setVisibility(View.GONE);
+            describeText.setVisibility(View.GONE);
+            postButton.setVisibility(View.GONE);
+            nextButton.setVisibility(View.VISIBLE);
+            cameraButton.setVisibility(View.VISIBLE);
+            gallery.setVisibility(View.VISIBLE);
+            poststate = EDIT;
+        }
+        else
+            super.onBackPressed();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -147,9 +219,7 @@ public class pictureActivity extends AppCompatActivity {
         cameraButton.setVisibility(View.GONE);
         gallery.setVisibility(View.GONE);
     }*/
-    @Override
-    protected void onStart() {
-        super.onStart();
+    protected void setPic() {
         String[] projection = { MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA };
         Cursor cursor = managedQuery(Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null);
         thumbs = new ArrayList<String>();
