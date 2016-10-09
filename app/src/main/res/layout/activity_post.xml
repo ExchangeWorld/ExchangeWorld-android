@@ -9,18 +9,100 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.arthome.newexchangeworld.PostActivity">
 
-    <ImageView
+    <LinearLayout
+        android:id="@+id/nameLayout"
+        android:orientation="horizontal"
+        android:layout_below="@+id/postButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/postPhoto"
-        android:layout_alignParentTop="true"
-        android:layout_above="@+id/nameText" />
+        android:layout_height="50dp" >
 
-    <TextView
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:text="名稱"
+            android:id="@+id/nameTitle"
+            android:singleLine="false"
+            android:gravity="bottom" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/nameText"
+            android:editable="true"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:maxLength="100"
+            android:singleLine="true"
+            android:inputType="text"
+            android:imeOptions="actionDone"
+            android:gravity="bottom" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:text="White something here"
-        android:id="@+id/nameText"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/classLayout"
+        android:layout_below="@+id/nameLayout" >
+
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:text="類別"
+            android:id="@+id/classTitle"
+            android:gravity="center_vertical" />
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/classSpinner"
+            android:gravity="bottom" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:id="@+id/describLayout"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/classLayout" >
+
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:text="敘述"
+            android:id="@+id/describTitle"
+            android:gravity="top" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="textMultiLine"
+            android:ems="10"
+            android:id="@+id/describText"
+            android:gravity="top"
+            android:singleLine="true" />
+    </LinearLayout>
+
+    <GridView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/postGallery"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:verticalSpacing="5dp"
+        android:numColumns="2"
+        android:layout_below="@+id/describLayout" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="POST"
+        android:id="@+id/postButton"
+        android:gravity="center_vertical|center_horizontal" />
 </RelativeLayout>
