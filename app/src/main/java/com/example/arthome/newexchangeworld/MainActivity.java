@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -26,9 +27,30 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
+import com.example.arthome.newexchangeworld.Models.AuthenticationModel;
+import com.example.arthome.newexchangeworld.Models.FaceBookUser;
 import com.example.arthome.newexchangeworld.Models.PostModel;
+import com.facebook.Profile;
+import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+
+
+import com.facebook.FacebookSdk;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
+import io.realm.Realm;
 
 
 public class MainActivity extends AppCompatActivity
@@ -57,8 +79,11 @@ public class MainActivity extends AppCompatActivity
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        FacebookSdk.sdkInitialize(this);
+        Realm.init(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         FloatingActionButton cameraButton = (FloatingActionButton) findViewById(R.id.cameraFab);
 
@@ -88,6 +113,67 @@ public class MainActivity extends AppCompatActivity
             transaction.replace(R.id.content_frame, tabFragment);
             transaction.commit();
             cameraButton.setVisibility(View.VISIBLE);
+        }
+
+        if(Profile.getCurrentProfile()!=null) {
+            String id = Profile.getCurrentProfile().getId();
+            System.out.println(">>>main id= " + id);
+            if (RealmManager.INSTANCE.retrieveUser(Profile.getCurrentProfile().getId()) == null) {
+                User user = new User();
+                user.setFacebookID(Profile.getCurrentProfile().getId());
+                user.setFacebookName(Profile.getCurrentProfile().getName());
+
+                RealmManager.INSTANCE.createUser(user);
+            } else {
+                User user = RealmManager.INSTANCE.retrieveUser(Profile.getCurrentProfile().getId());
+                //TODO  檢查日期 隔天才需要再拿一次EXchangeWORLD TOKEN
+                new getTokenTask().execute(user.getFacebookID());
+
+                System.out.println(">>>找到user name is " + user.getFacebookName());
+                System.out.println(">>>找到user EXToken is " + user.getExToken());
+            }
+        }
+    }
+
+    public class getTokenTask extends AsyncTask<String,String,String> {
+
+        private AuthenticationModel authenticationModel;
+
+        @Override
+        protected String doInBackground(String... params) {
+            FaceBookUser user = new FaceBookUser();
+            user.setIdentity(params[0]);        //傳入FB ID
+            String body = new Gson().toJson(user);
+            System.out.println(">>>body="+body);
+            HttpClient client = new DefaultHttpClient();
+            HttpPost post = new HttpPost("http://exwd.csie.org:43002/api/authenticate/login");
+            post.addHeader("content-type","application/json");
+            try {
+                HttpEntity entity = new StringEntity(body);
+                post.setEntity(entity);
+                HttpResponse response = client.execute(post);
+                entity = response.getEntity();
+                String jsonString = EntityUtils.toString(entity);
+                System.out.println(">>>return String=" + jsonString);
+                authenticationModel = new Gson().fromJson(jsonString, AuthenticationModel.class);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (ClientProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return authenticationModel.getToken();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+//            EXtoken = s;
+            User user = RealmManager.INSTANCE.retrieveUser(Profile.getCurrentProfile().getId());
+            user.setExToken(s);
+            RealmManager.INSTANCE.createUser(user);
+//            new postTask().execute(s,itemName,itemDescription);
         }
     }
 
@@ -126,7 +212,8 @@ public class MainActivity extends AppCompatActivity
             MapFragment mapFragment = tabFragment.getMapFragment();
             PostModel postModel = (PostModel) intent.getExtras().getSerializable("postInfo");
             System.out.println(">>>post "+postModel.getName());
-            mapFragment.setDraggableMarker();
+            mapFragment.setPostModelDetail(postModel);
+            mapFragment.setUploadView(true);
         }
     }
 

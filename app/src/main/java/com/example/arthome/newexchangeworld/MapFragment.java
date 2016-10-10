@@ -29,6 +29,8 @@ import android.widget.Toast;
 
 import com.example.arthome.newexchangeworld.ItemPage.ItemDetailActivity;
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
+import com.example.arthome.newexchangeworld.Models.PostModel;
+import com.facebook.Profile;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
@@ -47,6 +49,15 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -54,6 +65,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -67,11 +79,13 @@ import static android.support.v4.content.ContextCompat.checkSelfPermission;
 /**
  * A fragment that launches other parts of the demo application.
  */
-public class MapFragment extends Fragment {
+public class MapFragment extends Fragment implements View.OnClickListener {
 
     private GoogleMap mMap;
     private Button cancelButton, uploadButton;
     private Marker draggableMarker;
+    private PostModel postModelDetail;
+    String exToken;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -79,6 +93,9 @@ public class MapFragment extends Fragment {
         View view = inflater.inflate(R.layout.map, container, false);
         cancelButton = (Button) view.findViewById(R.id.map_cancel_button);
         uploadButton = (Button) view.findViewById(R.id.map_upload_button);
+
+        cancelButton.setOnClickListener(this);
+        uploadButton.setOnClickListener(this);
 
         SupportMapFragment mSupportMapFragment;
 
@@ -115,6 +132,13 @@ public class MapFragment extends Fragment {
                     }
                 }
             });
+        }
+
+        if (Profile.getCurrentProfile() != null) {
+            User user = RealmManager.INSTANCE.retrieveUser(Profile.getCurrentProfile().getId());
+            exToken = user.getExToken();
+            System.out.println(">>>map找到user name is " + user.getFacebookName());
+            System.out.println(">>>map找到user EXToken is " + user.getExToken());
         }
         return view;
     }
@@ -177,6 +201,20 @@ public class MapFragment extends Fragment {
 
     public void move(LatLng latlng, int zoomSize) {
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, zoomSize));
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.map_cancel_button:
+                setUploadView(false);
+                break;
+            case R.id.map_upload_button:
+                postModelDetail.setPosition_x((float) draggableMarker.getPosition().longitude);
+                postModelDetail.setPosition_y((float) draggableMarker.getPosition().latitude);
+                new postTask().execute(postModelDetail);
+                break;
+        }
     }
 
     public class downloadGoodsAPI extends AsyncTask<String, String, List<GoodsModel>> {
@@ -319,6 +357,11 @@ public class MapFragment extends Fragment {
         });
     }
 
+
+    public void setPostModelDetail(PostModel postModelDetail) {
+        this.postModelDetail = postModelDetail;
+    }
+
     private class InfoWindowRefresher implements com.squareup.picasso.Callback {
         private Marker markerToRefresh;
 
@@ -353,9 +396,63 @@ public class MapFragment extends Fragment {
         return BitmapDescriptorFactory.fromBitmap(bm);
     }
 
-    public void setDraggableMarker() {
+    private void setDraggableMarker() {
 //        LatLng sydney = new LatLng(24.989042, 121.546373);
         LatLng myLocation = new LatLng(mMap.getMyLocation().getLatitude(), mMap.getMyLocation().getLongitude());
         draggableMarker = mMap.addMarker(new MarkerOptions().position(myLocation).title("長按並拖曳定位").draggable(true));
+    }
+
+    public void setUploadView(boolean isUpload){
+        if(isUpload){
+            cancelButton.setVisibility(View.VISIBLE);
+            uploadButton.setVisibility(View.VISIBLE);
+            setDraggableMarker();
+        }else {
+            //TODO 一直上傳的話marker會越來越多 只是看不到
+            draggableMarker.setVisible(false);
+            cancelButton.setVisibility(View.GONE);
+            uploadButton.setVisibility(View.GONE);
+        }
+    }
+
+    public class postTask extends AsyncTask<PostModel, String, Integer> {
+
+        private int statusCode;
+
+        @Override
+        protected Integer doInBackground(PostModel... params) {
+
+            HttpClient client = new DefaultHttpClient();
+            HttpPost post = new HttpPost("http://exwd.csie.org:43002/api/goods?token=" + exToken);
+            post.addHeader("content-type", "application/json");
+            try {
+                PostModel postModel = params[0];
+                String jsonString = new Gson().toJson(postModel);
+                HttpEntity entity = new StringEntity(jsonString, HTTP.UTF_8);
+                post.setEntity(entity);
+                HttpResponse response = client.execute(post);
+                entity = response.getEntity();
+                jsonString = EntityUtils.toString(entity);
+                System.out.println(">>>return String=" + jsonString);
+                statusCode = response.getStatusLine().getStatusCode();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (ClientProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return statusCode;
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            super.onPostExecute(integer);
+            if (integer == 201) {  //post success
+                Toast.makeText(getContext(), "Posted", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "Post fail", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

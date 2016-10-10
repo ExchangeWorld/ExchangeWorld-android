@@ -121,10 +121,11 @@ public class Login extends AppCompatActivity {
             public void onClick(View v) {
                 itemName = itemNameEditText.getText().toString();
                 itemDescription = itemDescriptionEditText.getText().toString();
-               new getTokenTask().execute();
+               new getTokenTask().execute(Fbtoken.getUserId());
             }
         });
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
@@ -181,7 +182,8 @@ public class Login extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
             FaceBookUser user = new FaceBookUser();
-            user.setIdentity(Fbtoken.getUserId());
+//            user.setIdentity(Fbtoken.getUserId());
+            user.setIdentity(params[0]);
             String body = new Gson().toJson(user);
             System.out.println(">>>body="+body);
             HttpClient client = new DefaultHttpClient();
@@ -209,7 +211,8 @@ public class Login extends AppCompatActivity {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             EXtoken = s;
-            new postTask().execute(s,itemName,itemDescription);
+
+//            new postTask().execute(s,itemName,itemDescription);
         }
     }
 }
