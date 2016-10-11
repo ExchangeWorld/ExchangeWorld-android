@@ -9,6 +9,10 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -43,10 +47,9 @@ public class pictureActivity extends AppCompatActivity {
     private final static int CAMERA = 2;
     private int poststate;
     private PhotoAdapter photoAdapter;
-    private PostAdapter postAdapter;
     private List<String> thumbs;  //存放縮圖的id
     private List<String> imagePaths;  //存放圖片的路徑
-    private GridView gallery;
+    private RecyclerView gallery;
     private Button cameraButton;
     private Button nextButton;
     private ArrayList<String> selectedPic;
@@ -65,8 +68,13 @@ public class pictureActivity extends AppCompatActivity {
         setContentView(R.layout.activity_picture);
         cameraButton = (Button) findViewById(R.id.cameraButton);
         nextButton = (Button)findViewById(R.id.nextButton);
-        gallery = (GridView) findViewById(R.id.GalleryView);
+        gallery = (RecyclerView) findViewById(R.id.GalleryView);
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL);
+        gallery.setLayoutManager(layoutManager);
         setPic();
+        nextButton.setEnabled(false);
+
+
   //     ContentResolver cr = getContentResolver();
 
         cameraButton.setOnClickListener(new View.OnClickListener() {
@@ -92,7 +100,7 @@ public class pictureActivity extends AppCompatActivity {
                 Intent intent = new Intent();
                 intent.setClass(pictureActivity.this,PostActivity.class);
                 Bundle bundle = new Bundle();
-                for(int i = 0;i<photoAdapter.getCount();i++) {
+                for(int i = 0;i<photoAdapter.getItemCount();i++) {
                     if(photoAdapter.getCheckedPic(i)) {
                         postthumbs.add((String)photoAdapter.getItem(i));
                         selectedPic.add(imagePaths.get(i));
@@ -106,6 +114,12 @@ public class pictureActivity extends AppCompatActivity {
             }
         });
 
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
 
     }
 
@@ -147,7 +161,7 @@ public class pictureActivity extends AppCompatActivity {
             imagePaths.add(filepath);
         }
         cursor.close();
-        photoAdapter = new PhotoAdapter(pictureActivity.this, thumbs);
+        photoAdapter = new PhotoAdapter(thumbs);
         gallery.setAdapter(photoAdapter);
         photoAdapter.notifyDataSetChanged();
     }

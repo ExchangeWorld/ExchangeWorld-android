@@ -43,7 +43,7 @@ public class PostAdapter extends BaseAdapter{
         float dd = dm.density;
         float px = 25 * dd;
         float screenWidth = dm.widthPixels;
-        int newWidth = (int) (screenWidth - px - 40*2) / 2; // 一行顯示四個縮圖
+        int newWidth = (int) (screenWidth - px ) / 2; // 一行顯示四個縮圖
 
         layout.setLayoutParams(new GridView.LayoutParams(newWidth, newWidth));
         imageView.setId(position);
