@@ -113,6 +113,10 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder>{
         return (boolean)CheckedPic.get(position);
     }
 
+    public void addThumb(String s){
+        coll.add(s);
+    }
+
     public void setPictureClickListener(PictureClickListener p){
         pictureClickListener = p;
     }

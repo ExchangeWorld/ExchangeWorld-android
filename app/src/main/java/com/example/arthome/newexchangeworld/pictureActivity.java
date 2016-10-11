@@ -54,8 +54,7 @@ public class pictureActivity extends AppCompatActivity {
     private Button nextButton;
     private ArrayList<String> selectedPic;
     private ArrayList<String> postthumbs;
-
-
+    final private  String[] projection = { MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA };
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -74,7 +73,6 @@ public class pictureActivity extends AppCompatActivity {
    //     setPic();
         nextButton.setEnabled(false);
 
-        String[] projection = { MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA };
         Cursor cursor = managedQuery(Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null);
         thumbs = new ArrayList<String>();
         imagePaths = new ArrayList<String>();
@@ -97,7 +95,7 @@ public class pictureActivity extends AppCompatActivity {
             }
         });
         gallery.setAdapter(photoAdapter);
-        photoAdapter.notifyDataSetChanged();
+     //   photoAdapter.notifyDataSetChanged();
 
 
 
@@ -143,17 +141,19 @@ public class pictureActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
       if (data != null) {
             if ((requestCode == CAMERA)) {
+                Cursor c =  managedQuery(Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null);
+                c.moveToPosition(c.getCount()-1) ;
+                int id = c.getInt(c.getColumnIndex(MediaStore.Images.Media._ID));// ID
+                photoAdapter.addThumb(id + "");
+                String filepath = c.getString(c.getColumnIndex(MediaStore.Images.Media.DATA));//抓路徑
+                imagePaths.add(filepath);
+              //  photoAdapter.notifyDataSetChanged();
           /*      Bitmap mbmp = (Bitmap) data.getExtras().getParcelable("data");
                 CameraV.setImageBitmap(mbmp);
                 CameraV.setScaleType(ImageView.ScaleType.FIT_XY);
