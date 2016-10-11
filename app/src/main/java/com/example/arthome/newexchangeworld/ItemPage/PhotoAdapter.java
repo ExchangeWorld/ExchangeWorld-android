@@ -24,6 +24,8 @@ import com.example.arthome.newexchangeworld.pictureActivity;
 
 
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder>{
+    public interface PictureClickListener{void onPictureClick(View v);};
+    private PictureClickListener pictureClickListener;
     private Context context;
     private List coll;
     private int picWidth;
@@ -32,25 +34,24 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder>{
         ImageView imageView;
         CheckBox checkBox;
         ViewGroup viewGroup;
-        boolean isChecked;
-        public ViewHolder(View v){
-            super(v);
-            viewGroup = (ViewGroup)v.findViewById(R.id.photo_layout);
-            imageView = (ImageView) v.findViewById(R.id.imageView1);
-            checkBox = (CheckBox) v.findViewById(R.id.checkBox);
-            isChecked =false;
+        public ViewHolder(View itemView){
+            super(itemView);
+            viewGroup = (ViewGroup)itemView.findViewById(R.id.photo_layout);
+            imageView = (ImageView) itemView.findViewById(R.id.imageView1);
+            checkBox = (CheckBox) itemView.findViewById(R.id.checkBox);
             imageView.setOnClickListener(this);
         }
         @Override
         public void onClick(View v){
-            if(isChecked){
+            if(checkBox.isChecked()) {
                 checkBox.setChecked(false);
-                isChecked = false;
+                CheckedPic.set((int)imageView.getTag(),false);
             }
-            else{
+            else {
                 checkBox.setChecked(true);
-                isChecked = true;
+                CheckedPic.set((int)imageView.getTag(),true);
             }
+            pictureClickListener.onPictureClick(itemView);
         }
     }
 
@@ -88,6 +89,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder>{
         holder.imageView.setId(position);
         holder.imageView.setImageBitmap(bm);
         holder.viewGroup.setLayoutParams(params);
+        holder.imageView.setTag(position);
 
     }
 
@@ -101,68 +103,18 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder>{
     }
 
 
-  /*  public View getView(final int position, View convertView, ViewGroup parent) {
-
-        // Bitmap bm = BitmapFactory.decodeFile((String)coll.get(position));
-        // Bitmap newBit = Bitmap.createScaledBitmap(bm, newWidth, newWidth,
-        // true);
-
-        if(CheckedPic[position])
-            viewholder.checkBox.setChecked(true);
-        else
-            viewholder.checkBox.setChecked(false);
-
-        //點擊照片
-        viewholder.imageView.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-        //        Toast.makeText(context, "index:" + position, Toast.LENGTH_SHORT)
-        //                .show();
-
-          //      ((pictureActivity)context).setImageView(position);
-                if (viewholder.checkBox.isChecked()) {
-                    viewholder.checkBox.setChecked(false);
-                    CheckedPic[position] = false;
-          //          checked.set(position, false);
-                } else {
-                    viewholder.checkBox.setChecked(true);
-                    CheckedPic[position] = true;
-         //           checked.set(position, true);
-                }
-            }
-
-        });
-
-
-        return rowview;
-    }
-
-    @Override
-    public int getCount() {
-        // TODO Auto-generated method stub
-        return coll.size();
-    }
-*/
 
     public Object getItem(int arg0) {
         // TODO Auto-generated method stub
         return coll.get(arg0);
     }
-/*
-    @Override
-    public long getItemId(int position) {
-        // TODO Auto-generated method stub
-        return position;
-    }
-*/
+
     public boolean getCheckedPic(int position){
         return (boolean)CheckedPic.get(position);
     }
 
+    public void setPictureClickListener(PictureClickListener p){
+        pictureClickListener = p;
+    }
 
- /*   public boolean getState(int position) {
-        return checked.get(position);
-    }*/
 }

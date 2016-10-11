@@ -71,8 +71,34 @@ public class pictureActivity extends AppCompatActivity {
         gallery = (RecyclerView) findViewById(R.id.GalleryView);
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL);
         gallery.setLayoutManager(layoutManager);
-        setPic();
+   //     setPic();
         nextButton.setEnabled(false);
+
+        String[] projection = { MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA };
+        Cursor cursor = managedQuery(Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null);
+        thumbs = new ArrayList<String>();
+        imagePaths = new ArrayList<String>();
+        for (int i = cursor.getCount() - 1; i >= 0; i--) {
+            cursor.moveToPosition(i);
+            int id = cursor.getInt(cursor.getColumnIndex(MediaStore.Images.Media._ID));// ID
+            thumbs.add(id + "");
+            String filepath = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));//抓路徑
+            imagePaths.add(filepath);
+        }
+        cursor.close();
+        photoAdapter = new PhotoAdapter(thumbs);
+        photoAdapter.setPictureClickListener(new PhotoAdapter.PictureClickListener(){
+            @Override
+            public void onPictureClick(View v){
+                if(!photoAdapter.isEmpty())
+                    nextButton.setEnabled(true);
+                else
+                    nextButton.setEnabled(false);
+            }
+        });
+        gallery.setAdapter(photoAdapter);
+        photoAdapter.notifyDataSetChanged();
+
 
 
   //     ContentResolver cr = getContentResolver();
@@ -148,23 +174,6 @@ public class pictureActivity extends AppCompatActivity {
         cameraButton.setVisibility(View.GONE);
         gallery.setVisibility(View.GONE);
     }*/
-    protected void setPic() {
-        String[] projection = { MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA };
-        Cursor cursor = managedQuery(Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null);
-        thumbs = new ArrayList<String>();
-        imagePaths = new ArrayList<String>();
-        for (int i = cursor.getCount() - 1; i >= 0; i--) {
-            cursor.moveToPosition(i);
-            int id = cursor.getInt(cursor.getColumnIndex(MediaStore.Images.Media._ID));// ID
-            thumbs.add(id + "");
-            String filepath = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));//抓路徑
-            imagePaths.add(filepath);
-        }
-        cursor.close();
-        photoAdapter = new PhotoAdapter(thumbs);
-        gallery.setAdapter(photoAdapter);
-        photoAdapter.notifyDataSetChanged();
-    }
 
     @Override
     public void onBackPressed(){

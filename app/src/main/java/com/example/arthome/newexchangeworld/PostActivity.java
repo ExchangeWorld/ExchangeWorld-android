@@ -3,6 +3,8 @@ package com.example.arthome.newexchangeworld;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -21,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PostActivity extends AppCompatActivity {
-    private GridView postgallery;
+    private RecyclerView postgallery;
     private EditText nameText;
     private EditText describeText;
     private Spinner classSpinner;
@@ -41,7 +43,9 @@ public class PostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_post);
         postPic = new ArrayList<String>();
         postthumbs = new ArrayList<String>();
-        postgallery = (GridView)findViewById(R.id.postGallery);
+        postgallery = (RecyclerView)findViewById(R.id.postGallery);
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+        postgallery.setLayoutManager(layoutManager);
         nameText = (EditText)findViewById(R.id.nameText);
         describeText = (EditText)findViewById(R.id.describText);
         classSpinner = (Spinner)findViewById(R.id.classSpinner);
@@ -54,7 +58,7 @@ public class PostActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         postPic = bundle.getStringArrayList("imagePaths");
         postthumbs = bundle.getStringArrayList("thumb");
-        postAdapter = new PostAdapter(PostActivity.this, postthumbs);
+        postAdapter = new PostAdapter(postthumbs);
         postgallery.setAdapter(postAdapter);
         postAdapter.notifyDataSetChanged();
 
