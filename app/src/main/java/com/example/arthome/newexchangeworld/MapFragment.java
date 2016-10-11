@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
@@ -21,12 +22,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.arthome.newexchangeworld.ItemPage.ItemDetailActivity;
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
+import com.example.arthome.newexchangeworld.Models.PostModel;
+import com.facebook.Profile;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -43,6 +49,15 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -50,6 +65,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -59,16 +75,28 @@ import java.util.List;
 import java.util.Map;
 
 import static android.support.v4.content.ContextCompat.checkSelfPermission;
+
 /**
  * A fragment that launches other parts of the demo application.
  */
-public class MapFragment extends Fragment {
+public class MapFragment extends Fragment implements View.OnClickListener {
 
     private GoogleMap mMap;
+    private Button cancelButton, uploadButton;
+    private Marker draggableMarker;
+    private PostModel postModelDetail;
+    String exToken;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.map, container, false);
+        cancelButton = (Button) view.findViewById(R.id.map_cancel_button);
+        uploadButton = (Button) view.findViewById(R.id.map_upload_button);
+
+        cancelButton.setOnClickListener(this);
+        uploadButton.setOnClickListener(this);
+
         SupportMapFragment mSupportMapFragment;
 
         mSupportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapwhere);
@@ -84,18 +112,18 @@ public class MapFragment extends Fragment {
                 @Override
                 public void onMapReady(GoogleMap googleMap) {
                     if (googleMap != null) {
-                        mMap =googleMap;
+                        mMap = googleMap;
                         googleMap.getUiSettings().setAllGesturesEnabled(true);
 
-                        if(ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.ACCESS_COARSE_LOCATION)==PackageManager.PERMISSION_GRANTED
-                                && ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED) {
+                        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                                && ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                             mMap.setMyLocationEnabled(true);
                         } //check location permission
 
                         LatLng sydney = new LatLng(-34, 151);
                         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
                         sydney = new LatLng(24.989042, 121.546373);
-                        mMap.addMarker(new MarkerOptions().position(sydney).title("世新大學").draggable(true));
+//                        mMap.addMarker(new MarkerOptions().position(sydney).title("世新大學").draggable(true));
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 18));
                         mMap.setOnInfoWindowClickListener(myInfoWindowClickListener());
                         mMap.setOnMarkerClickListener(myMarkerClickListener());
@@ -105,7 +133,14 @@ public class MapFragment extends Fragment {
                 }
             });
         }
-        return inflater.inflate(R.layout.map, container, false);
+
+        if (Profile.getCurrentProfile() != null) {
+            User user = RealmManager.INSTANCE.retrieveUser(Profile.getCurrentProfile().getId());
+            exToken = user.getExToken();
+            System.out.println(">>>map找到user name is " + user.getFacebookName());
+            System.out.println(">>>map找到user EXToken is " + user.getExToken());
+        }
+        return view;
     }
 
     @NonNull
@@ -113,14 +148,14 @@ public class MapFragment extends Fragment {
         return new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                if(allMarkersMap.containsKey(marker)) {
+                if (allMarkersMap.containsKey(marker)) {
                     marker.showInfoWindow();
                     LatLng latLng = marker.getPosition();
                     //latLng = new LatLng(latLng.latitude, latLng.longitude);
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                     mMap.moveCamera(CameraUpdateFactory.scrollBy(0, -200));//move
-                }else {
-                    Toast.makeText(getContext(),"not custom click",Toast.LENGTH_SHORT).show();
+                } else {
+
                 }
                 return true; // if return true, will not do default(move to center and show infowindow)
             }
@@ -139,7 +174,7 @@ public class MapFragment extends Fragment {
         };
     }
 
-    private GoogleMap.OnMarkerDragListener myMarkerDragListener(){
+    private GoogleMap.OnMarkerDragListener myMarkerDragListener() {
         return new GoogleMap.OnMarkerDragListener() {
             @Override
             public void onMarkerDragStart(Marker marker) {
@@ -153,7 +188,7 @@ public class MapFragment extends Fragment {
 
             @Override
             public void onMarkerDragEnd(Marker marker) {
-                Toast.makeText(getContext(),marker.getPosition().latitude+"\n"+marker.getPosition().longitude,Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), marker.getPosition().latitude + "\n" + marker.getPosition().longitude, Toast.LENGTH_SHORT).show();
             }
         };
     }
@@ -163,11 +198,26 @@ public class MapFragment extends Fragment {
 
         return fragment;
     }
-    public void move(LatLng latlng,int zoomSize){
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng,zoomSize));
+
+    public void move(LatLng latlng, int zoomSize) {
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, zoomSize));
     }
 
-    public class downloadGoodsAPI extends AsyncTask<String,String,List<GoodsModel>> {
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.map_cancel_button:
+                setUploadView(false);
+                break;
+            case R.id.map_upload_button:
+                postModelDetail.setPosition_x((float) draggableMarker.getPosition().longitude);
+                postModelDetail.setPosition_y((float) draggableMarker.getPosition().latitude);
+                new postTask().execute(postModelDetail);
+                break;
+        }
+    }
+
+    public class downloadGoodsAPI extends AsyncTask<String, String, List<GoodsModel>> {
 
         @Override
         protected List<GoodsModel> doInBackground(String... params) {
@@ -193,16 +243,16 @@ public class MapFragment extends Fragment {
                     buffer.append(line);
                 }
                 String sJson;
-                sJson= buffer.toString();
+                sJson = buffer.toString();
 
-                JSONArray jsonArray= null; //try and catch?
+                JSONArray jsonArray = null; //try and catch?
                 try {
                     jsonArray = new JSONArray(sJson);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 GoodsModel goodsModel = null;
-                for(int i=0;i<jsonArray.length();i++){
+                for (int i = 0; i < jsonArray.length(); i++) {
                     Gson gson = new Gson();
                     try {
                         goodsModel = gson.fromJson(jsonArray.get(i).toString(), GoodsModel.class);
@@ -212,7 +262,7 @@ public class MapFragment extends Fragment {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    if(goodsModel!=null) {
+                    if (goodsModel != null) {
                         //Log.i("oscart",Integer.toString(i)+goodsModel.getName());
                         goodsModelList.add(goodsModel);
                     }
@@ -223,10 +273,10 @@ public class MapFragment extends Fragment {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                if(connection != null) {
+                if (connection != null) {
                     connection.disconnect();
                 }
-                if(reader != null){
+                if (reader != null) {
                     try {
                         reader.close();
                     } catch (IOException e) {
@@ -242,22 +292,24 @@ public class MapFragment extends Fragment {
             super.onPostExecute(result);
             //mText.setText(result.toString());
             //TODO need to set data to list
-            if(result != null){
+            if (result != null) {
                 setGoodsMap(result);
             }
         }
     }
-    Map<Marker,GoodsModel > allMarkersMap = new HashMap<Marker, GoodsModel>();  //hash map for infowindow
+
+    Map<Marker, GoodsModel> allMarkersMap = new HashMap<Marker, GoodsModel>();  //hash map for infowindow
     ImageView user_image;
-    public void setGoodsMap(List<GoodsModel> listGoodsModel){
+
+    public void setGoodsMap(List<GoodsModel> listGoodsModel) {
         BitmapDescriptor icon;
-        for(int i=0;i<listGoodsModel.size();i++){
+        for (int i = 0; i < listGoodsModel.size(); i++) {
             double lat = listGoodsModel.get(i).getPosition_x();
             double lng = listGoodsModel.get(i).getPosition_y();
             String title = listGoodsModel.get(i).getName();
             LatLng sydney = new LatLng(lng, lat); //check if x is lat or x is lng
             Log.i("oscart", title + " " + Double.toString(lat));
-            switch (listGoodsModel.get(i).getCategory()){//TODO add all category
+            switch (listGoodsModel.get(i).getCategory()) {//TODO add all category
                 case "Textbooks":
                     icon = getBitmapDescriptor(R.drawable.category_textbooks);
                     break;
@@ -295,15 +347,21 @@ public class MapFragment extends Fragment {
                 goods_textView.setText(good.getName());
                 if (marker.isInfoWindowShown()) { //TODO bug, have to click twice to show pic
                     Picasso.with(getContext()).load(good.getPhoto_path()).into(goods_image);
-                    Log.i("oscart","shown");
+                    Log.i("oscart", "shown");
                 } else { // if it's the first time, load the image with the callback set
-                    Picasso.with(getContext()).load(good.getPhoto_path()).into(goods_image,new InfoWindowRefresher(marker));
+                    Picasso.with(getContext()).load(good.getPhoto_path()).into(goods_image, new InfoWindowRefresher(marker));
                     Log.i("oscart", "not shown");
                 }
                 return view;
             }
         });
     }
+
+
+    public void setPostModelDetail(PostModel postModelDetail) {
+        this.postModelDetail = postModelDetail;
+    }
+
     private class InfoWindowRefresher implements com.squareup.picasso.Callback {
         private Marker markerToRefresh;
 
@@ -313,7 +371,7 @@ public class MapFragment extends Fragment {
 
         @Override
         public void onSuccess() {
-            if(markerToRefresh != null &&markerToRefresh.isInfoWindowShown()) {
+            if (markerToRefresh != null && markerToRefresh.isInfoWindowShown()) {
                 Log.i("oscart", "success");
                 markerToRefresh.showInfoWindow();
             }
@@ -329,8 +387,8 @@ public class MapFragment extends Fragment {
     //google marker cant add vector image
     private BitmapDescriptor getBitmapDescriptor(int id) {
         Drawable vectorDrawable = ContextCompat.getDrawable(getContext(), id);
-        int h =  vectorDrawable.getIntrinsicHeight();
-        int w =  vectorDrawable.getIntrinsicWidth();
+        int h = vectorDrawable.getIntrinsicHeight();
+        int w = vectorDrawable.getIntrinsicWidth();
         vectorDrawable.setBounds(0, 0, 80, 80);//set to size
         Bitmap bm = Bitmap.createBitmap(80, 80, Bitmap.Config.ARGB_8888);//set to size
         Canvas canvas = new Canvas(bm);
@@ -338,6 +396,63 @@ public class MapFragment extends Fragment {
         return BitmapDescriptorFactory.fromBitmap(bm);
     }
 
+    private void setDraggableMarker() {
+//        LatLng sydney = new LatLng(24.989042, 121.546373);
+        LatLng myLocation = new LatLng(mMap.getMyLocation().getLatitude(), mMap.getMyLocation().getLongitude());
+        draggableMarker = mMap.addMarker(new MarkerOptions().position(myLocation).title("長按並拖曳定位").draggable(true));
+    }
 
+    public void setUploadView(boolean isUpload){
+        if(isUpload){
+            cancelButton.setVisibility(View.VISIBLE);
+            uploadButton.setVisibility(View.VISIBLE);
+            setDraggableMarker();
+        }else {
+            //TODO 一直上傳的話marker會越來越多 只是看不到
+            draggableMarker.setVisible(false);
+            cancelButton.setVisibility(View.GONE);
+            uploadButton.setVisibility(View.GONE);
+        }
+    }
 
+    public class postTask extends AsyncTask<PostModel, String, Integer> {
+
+        private int statusCode;
+
+        @Override
+        protected Integer doInBackground(PostModel... params) {
+
+            HttpClient client = new DefaultHttpClient();
+            HttpPost post = new HttpPost("http://exwd.csie.org:43002/api/goods?token=" + exToken);
+            post.addHeader("content-type", "application/json");
+            try {
+                PostModel postModel = params[0];
+                String jsonString = new Gson().toJson(postModel);
+                HttpEntity entity = new StringEntity(jsonString, HTTP.UTF_8);
+                post.setEntity(entity);
+                HttpResponse response = client.execute(post);
+                entity = response.getEntity();
+                jsonString = EntityUtils.toString(entity);
+                System.out.println(">>>return String=" + jsonString);
+                statusCode = response.getStatusLine().getStatusCode();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (ClientProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return statusCode;
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            super.onPostExecute(integer);
+            if (integer == 201) {  //post success
+                Toast.makeText(getContext(), "Posted", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "Post fail", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 }

@@ -12,6 +12,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.arthome.newexchangeworld.ItemPage.PostAdapter;
+import com.example.arthome.newexchangeworld.Models.PostModel;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -83,9 +84,15 @@ public class PostActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                PostModel postModel = new PostModel(nameText.getText().toString(),
+                        postPic.get(0),
+                        describeText.getText().toString(),
+                        classSpinner.getSelectedItem().toString()
+                        );
                 Intent i = new Intent(PostActivity.this,MainActivity.class);
+                i.putExtra("postInfo",postModel);
+                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
-                PostActivity.this.finish();
             }
         });
     }

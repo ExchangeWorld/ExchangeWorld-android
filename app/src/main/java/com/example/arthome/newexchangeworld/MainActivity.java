@@ -9,18 +9,14 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.multidex.MultiDex;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -28,23 +24,44 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
-import android.widget.Toast;
 
+import com.example.arthome.newexchangeworld.Models.AuthenticationModel;
+import com.example.arthome.newexchangeworld.Models.FaceBookUser;
+import com.example.arthome.newexchangeworld.Models.PostModel;
+import com.facebook.Profile;
+import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener  {
+import com.facebook.FacebookSdk;
 
-    public void camera(View view){
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
+import io.realm.Realm;
+
+
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
+
+    private TabFragment tabFragment = TabFragment.newInstance();
+
+    public void camera(View view) {
         Intent intent = new Intent();
         intent.setClass(MainActivity.this, pictureActivity.class);
         startActivity(intent);
-        MainActivity.this.finish();
     }
 
 /*    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -62,15 +79,18 @@ public class MainActivity extends AppCompatActivity
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        FacebookSdk.sdkInitialize(this);
+        Realm.init(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         FloatingActionButton cameraButton = (FloatingActionButton) findViewById(R.id.cameraFab);
 
         //for download image
         // Create global configuration and initialize ImageLoader with this config
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
-        .build();
+                .build();
         ImageLoader.getInstance().init(config);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -84,15 +104,76 @@ public class MainActivity extends AppCompatActivity
 
         //for circle head view
         View headerView = navigationView.getHeaderView(0); // for Navigation findViewById
-        ImageView  im = (ImageView) headerView.findViewById(R.id.imageView2);
-        Bitmap myhead = BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.myhead);
+        ImageView im = (ImageView) headerView.findViewById(R.id.imageView2);
+        Bitmap myhead = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.myhead);
         im.setImageBitmap(getCroppedBitmap(myhead));
 
         if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.content_frame, tabFragment.newInstance());
+            transaction.replace(R.id.content_frame, tabFragment);
             transaction.commit();
             cameraButton.setVisibility(View.VISIBLE);
+        }
+
+        if(Profile.getCurrentProfile()!=null) {
+            String id = Profile.getCurrentProfile().getId();
+            System.out.println(">>>main id= " + id);
+            if (RealmManager.INSTANCE.retrieveUser(Profile.getCurrentProfile().getId()) == null) {
+                User user = new User();
+                user.setFacebookID(Profile.getCurrentProfile().getId());
+                user.setFacebookName(Profile.getCurrentProfile().getName());
+
+                RealmManager.INSTANCE.createUser(user);
+            } else {
+                User user = RealmManager.INSTANCE.retrieveUser(Profile.getCurrentProfile().getId());
+                //TODO  檢查日期 隔天才需要再拿一次EXchangeWORLD TOKEN
+                new getTokenTask().execute(user.getFacebookID());
+
+                System.out.println(">>>找到user name is " + user.getFacebookName());
+                System.out.println(">>>找到user EXToken is " + user.getExToken());
+            }
+        }
+    }
+
+    public class getTokenTask extends AsyncTask<String,String,String> {
+
+        private AuthenticationModel authenticationModel;
+
+        @Override
+        protected String doInBackground(String... params) {
+            FaceBookUser user = new FaceBookUser();
+            user.setIdentity(params[0]);        //傳入FB ID
+            String body = new Gson().toJson(user);
+            System.out.println(">>>body="+body);
+            HttpClient client = new DefaultHttpClient();
+            HttpPost post = new HttpPost("http://exwd.csie.org:43002/api/authenticate/login");
+            post.addHeader("content-type","application/json");
+            try {
+                HttpEntity entity = new StringEntity(body);
+                post.setEntity(entity);
+                HttpResponse response = client.execute(post);
+                entity = response.getEntity();
+                String jsonString = EntityUtils.toString(entity);
+                System.out.println(">>>return String=" + jsonString);
+                authenticationModel = new Gson().fromJson(jsonString, AuthenticationModel.class);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (ClientProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return authenticationModel.getToken();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+//            EXtoken = s;
+            User user = RealmManager.INSTANCE.retrieveUser(Profile.getCurrentProfile().getId());
+            user.setExToken(s);
+            RealmManager.INSTANCE.createUser(user);
+//            new postTask().execute(s,itemName,itemDescription);
         }
     }
 
@@ -105,9 +186,9 @@ public class MainActivity extends AppCompatActivity
             if (frag.isVisible()) {
                 FragmentManager childFm = frag.getChildFragmentManager();
                 if (childFm.getBackStackEntryCount() > 0) {
-                    for (Fragment childfragnested: childFm.getFragments()) {
+                    for (Fragment childfragnested : childFm.getFragments()) {
                         FragmentManager childFmNestManager = childfragnested.getFragmentManager();
-                        if(childfragnested.isVisible()) {
+                        if (childfragnested.isVisible()) {
                             childFmNestManager.popBackStack();
                             return;
                         }
@@ -118,11 +199,25 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        }else{
+        } else {
             super.onBackPressed();
         }
     }
-/*              three dot setting on toolbar
+
+    @Override
+    protected void onNewIntent(Intent intent) { //從post Activity回到Main會call
+        super.onNewIntent(intent);
+        if (intent.getFlags() == Intent.FLAG_ACTIVITY_CLEAR_TOP){
+
+            MapFragment mapFragment = tabFragment.getMapFragment();
+            PostModel postModel = (PostModel) intent.getExtras().getSerializable("postInfo");
+            System.out.println(">>>post "+postModel.getName());
+            mapFragment.setPostModelDetail(postModel);
+            mapFragment.setUploadView(true);
+        }
+    }
+
+    /*              three dot setting on toolbar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -153,29 +248,27 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         FloatingActionButton cameraButton = (FloatingActionButton) findViewById(R.id.cameraFab);
-         if (id == R.id.drawer_searchPage){
-             transaction.replace(R.id.content_frame, tabFragment.newInstance());
-             transaction.commit();
-             cameraButton.setVisibility(View.VISIBLE);
-         }else if (id == R.id.drawer_myPage){
-             transaction.replace(R.id.content_frame, MyPageFragment.newInstance());
-             transaction.commit();
-             cameraButton.setVisibility(View.INVISIBLE);
-         }else if (id == R.id.drawer_accountSetting){
-             Intent intent = new Intent();
-             intent.setClass(MainActivity.this, Login.class);
-             startActivity(intent);
-         }
-         else if (id == R.id.nav_gallery) {
-             Intent intent = new Intent();
-             intent.setClass(MainActivity.this, TestActivity.class);
-             startActivity(intent);
-         }
-         else if (id == R.id.nav_share) {
+        if (id == R.id.drawer_searchPage) {
+            transaction.replace(R.id.content_frame, TabFragment.newInstance());
+            transaction.commit();
+            cameraButton.setVisibility(View.VISIBLE);
+        } else if (id == R.id.drawer_myPage) {
+            transaction.replace(R.id.content_frame, MyPageFragment.newInstance());
+            transaction.commit();
+            cameraButton.setVisibility(View.INVISIBLE);
+        } else if (id == R.id.drawer_accountSetting) {
+            Intent intent = new Intent();
+            intent.setClass(MainActivity.this, Login.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_gallery) {
+            Intent intent = new Intent();
+            intent.setClass(MainActivity.this, TestActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
-             transaction.replace(R.id.content_frame, oneFragment.newInstance("one", "one"));
-             transaction.commit();
+            transaction.replace(R.id.content_frame, oneFragment.newInstance("one", "one"));
+            transaction.commit();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

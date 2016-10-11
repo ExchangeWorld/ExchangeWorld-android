@@ -1,15 +1,31 @@
 package com.example.arthome.newexchangeworld.Models;
 
+import java.io.Serializable;
+
 /**
  * Created by SSD on 2016/8/14.
  */
-public class PostModel {
+public class PostModel implements Serializable {
     String name;
     String photo_path = "[\"http://exwd.csie.org/images/87ea5379d1d295841e1b34c0227524a5e56e61e2e993aa16617d47346e4f14ee.jpeg\"]";
     String description;
-    float position_x = 121;
-    float position_y =24;
+    float position_x = 121;     //long
+    float position_y = 24;      //lan
     String category = "Books";
+
+    public PostModel() {
+        photo_path = "[\"http://exwd.csie.org/images/87ea5379d1d295841e1b34c0227524a5e56e61e2e993aa16617d47346e4f14ee.jpeg\"]";
+        position_x = 121;     //long
+        position_y = 24;      //lan
+        category = "Books";
+    }
+
+    public PostModel(String name, String photo_path, String description, String category) {
+        this.name = name;
+        this.photo_path = photo_path;
+        this.description = description;
+        this.category = category;
+    }
 
     public String getName() {
         return name;
