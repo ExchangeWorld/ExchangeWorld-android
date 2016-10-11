@@ -87,10 +87,10 @@ public class pictureActivity extends AppCompatActivity {
         }
         cursor.close();
         photoAdapter = new PhotoAdapter(thumbs);
-        photoAdapter.setPictureClickListener(new PhotoAdapter.PictureClickListener(){
+        photoAdapter.setPictureClickListener(new PhotoAdapter.PictureClickListener() {
             @Override
-            public void onPictureClick(View v){
-                if(!photoAdapter.isEmpty())
+            public void onPictureClick(View v) {
+                if (!photoAdapter.isEmpty())
                     nextButton.setEnabled(true);
                 else
                     nextButton.setEnabled(false);
@@ -154,6 +154,7 @@ public class pictureActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
       if (data != null) {
             if ((requestCode == CAMERA)) {
+                
           /*      Bitmap mbmp = (Bitmap) data.getExtras().getParcelable("data");
                 CameraV.setImageBitmap(mbmp);
                 CameraV.setScaleType(ImageView.ScaleType.FIT_XY);
