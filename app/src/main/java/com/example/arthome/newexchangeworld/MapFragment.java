@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.location.Criteria;
@@ -18,6 +19,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +32,7 @@ import android.widget.Toast;
 import com.example.arthome.newexchangeworld.ItemPage.ItemDetailActivity;
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.example.arthome.newexchangeworld.Models.PostModel;
+import com.example.arthome.newexchangeworld.Models.UploadImageModel;
 import com.facebook.Profile;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -53,8 +56,10 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
@@ -62,6 +67,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -212,6 +218,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             case R.id.map_upload_button:
                 postModelDetail.setPosition_x((float) draggableMarker.getPosition().longitude);
                 postModelDetail.setPosition_y((float) draggableMarker.getPosition().latitude);
+                new  uploadImageTask().execute(postModelDetail);
                 new postTask().execute(postModelDetail);
                 break;
         }
@@ -360,6 +367,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
 
     public void setPostModelDetail(PostModel postModelDetail) {
         this.postModelDetail = postModelDetail;
+        System.out.println("Base64 is:\n"+convertPathTOBase(postModelDetail.getPhoto_path()));
     }
 
     private class InfoWindowRefresher implements com.squareup.picasso.Callback {
@@ -454,5 +462,58 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                 Toast.makeText(getContext(), "Post fail", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    public class uploadImageTask extends AsyncTask<PostModel, String, Integer> {
+
+        private int statusCode;
+
+        @Override
+        protected Integer doInBackground(PostModel... params) {
+
+            HttpClient client = new DefaultHttpClient();
+            HttpPost post = new HttpPost("http://exwd.csie.org:43002/api/upload/image?token=" + exToken);
+            post.addHeader("content-type", "application/json");
+            try {
+                PostModel postModel = params[0];
+                //TODO 這邊可能要改成傳path就好 不用PostModel
+                UploadImageModel uploadImageModel = new UploadImageModel(convertPathTOBase(postModel.getPhoto_path()));
+                String jsonString = new Gson().toJson(uploadImageModel);
+                HttpEntity entity = new StringEntity(jsonString, HTTP.UTF_8);
+                post.setEntity(entity);
+                HttpResponse response = client.execute(post);
+                entity = response.getEntity();
+                jsonString = EntityUtils.toString(entity);
+                System.out.println(">>>上傳照片中 ");
+                System.out.println(">>>上傳照片 return String=" + jsonString);
+                statusCode = response.getStatusLine().getStatusCode();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (ClientProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return statusCode;
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            super.onPostExecute(integer);
+            if (integer == 200) {  //post success
+                Toast.makeText(getContext(), "上傳完畢", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "上傳失敗", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private String convertPathTOBase(String path){
+        Bitmap bm = BitmapFactory.decodeFile(path);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG, 30, baos); //bm is the bitmap object
+        byte[] byteImage = baos.toByteArray();
+        String encodedImage = Base64.encodeToString(byteImage, Base64.DEFAULT);
+        return "data:image/jpeg;base64,"+encodedImage;
     }
 }
