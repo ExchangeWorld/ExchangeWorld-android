@@ -219,7 +219,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                 postModelDetail.setPosition_x((float) draggableMarker.getPosition().longitude);
                 postModelDetail.setPosition_y((float) draggableMarker.getPosition().latitude);
                 new  uploadImageTask().execute(postModelDetail);
-                new postTask().execute(postModelDetail);
+                setUploadView(false);
                 break;
         }
     }
@@ -416,8 +416,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             uploadButton.setVisibility(View.VISIBLE);
             setDraggableMarker();
         }else {
-            //TODO 一直上傳的話marker會越來越多 只是看不到
-            draggableMarker.setVisible(false);
+            draggableMarker.remove();
             cancelButton.setVisibility(View.GONE);
             uploadButton.setVisibility(View.GONE);
         }
@@ -464,12 +463,12 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public class uploadImageTask extends AsyncTask<PostModel, String, Integer> {
+    public class uploadImageTask extends AsyncTask<PostModel, String, AsyncWrapper> {
 
-        private int statusCode;
+        private AsyncWrapper asyncWrapper;
 
         @Override
-        protected Integer doInBackground(PostModel... params) {
+        protected AsyncWrapper doInBackground(PostModel... params) {
 
             HttpClient client = new DefaultHttpClient();
             HttpPost post = new HttpPost("http://exwd.csie.org:43002/api/upload/image?token=" + exToken);
@@ -484,9 +483,12 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                 HttpResponse response = client.execute(post);
                 entity = response.getEntity();
                 jsonString = EntityUtils.toString(entity);
-                System.out.println(">>>上傳照片中 ");
-                System.out.println(">>>上傳照片 return String=" + jsonString);
-                statusCode = response.getStatusLine().getStatusCode();
+
+
+                postModel.setPhoto_path(jsonString);
+                asyncWrapper = new AsyncWrapper();
+                asyncWrapper.setPostModel(postModel);
+                asyncWrapper.setStatusCode(response.getStatusLine().getStatusCode());
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             } catch (ClientProtocolException e) {
@@ -494,16 +496,16 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return statusCode;
+            return asyncWrapper;
         }
 
         @Override
-        protected void onPostExecute(Integer integer) {
-            super.onPostExecute(integer);
-            if (integer == 200) {  //post success
-                Toast.makeText(getContext(), "上傳完畢", Toast.LENGTH_SHORT).show();
+        protected void onPostExecute(AsyncWrapper asyncWrapper) {
+            super.onPostExecute(asyncWrapper);
+            if (asyncWrapper.getStatusCode() == 200) {  //post success
+                new postTask().execute(asyncWrapper.getPostModel());
             } else {
-                Toast.makeText(getContext(), "上傳失敗", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "上傳圖片失敗", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -511,9 +513,9 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     private String convertPathTOBase(String path){
         Bitmap bm = BitmapFactory.decodeFile(path);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.JPEG, 30, baos); //bm is the bitmap object
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
         byte[] byteImage = baos.toByteArray();
-        String encodedImage = Base64.encodeToString(byteImage, Base64.DEFAULT);
-        return "data:image/jpeg;base64,"+encodedImage;
+        String encodedImage = Base64.encodeToString(byteImage, Base64.NO_WRAP); //NO_WRAP才不會出現換行
+        return encodedImage;
     }
 }
