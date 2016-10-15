@@ -1,19 +1,16 @@
 package com.example.arthome.newexchangeworld.ItemPage;
 
-import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.example.arthome.newexchangeworld.R;
 import com.google.gson.Gson;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.squareup.picasso.Picasso;
 
 public class ItemDetailActivity extends AppCompatActivity {
 
@@ -40,8 +37,8 @@ public class ItemDetailActivity extends AppCompatActivity {
                 Log.i("oscart",json);
 
                 setUpUIView();
-                ImageLoader imageLoader = ImageLoader.getInstance();
-                imageLoader.displayImage(goodsModel.getPhoto_path(),goodsImage);
+
+                Picasso.with(this).load(goodsModel.getPhoto_path()).into(goodsImage);
                 ownerName.setText(goodsModel.getOwner().getName());
                 goodsDescription.setText(goodsModel.getDescription());
                 goodsName.setText(goodsModel.getName());

@@ -9,25 +9,26 @@ import io.realm.annotations.PrimaryKey;
 
 public class User extends RealmObject {
     @PrimaryKey
-    String facebookID;
-    String facebookName;
-    String exToken;
+    private String identity;      //If it's with FB, fb_id as identity
+    private String userName;
+    private String photoPath;
+    private String exToken;
 
 
-    public String getFacebookID() {
-        return facebookID;
+    public String getIdentity() {
+        return identity;
     }
 
-    public void setFacebookID(String facebookID) {
-        this.facebookID = facebookID;
+    public void setIdentity(String identity) {
+        this.identity = identity;
     }
 
-    public String getFacebookName() {
-        return facebookName;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setFacebookName(String facebookName) {
-        this.facebookName = facebookName;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getExToken() {
@@ -38,4 +39,12 @@ public class User extends RealmObject {
         this.exToken = exToken;
     }
 
+
+    public String getPhotoPath() {
+        return photoPath;
+    }
+
+    public void setPhotoPath(String photoPath) {
+        this.photoPath = photoPath;
+    }
 }

@@ -3,7 +3,6 @@ package com.example.arthome.newexchangeworld;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
@@ -12,7 +11,6 @@ import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TabLayout;
 import android.support.multidex.MultiDex;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -26,17 +24,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.example.arthome.newexchangeworld.ExchangeAPI.RestClient;
 import com.example.arthome.newexchangeworld.Models.AuthenticationModel;
 import com.example.arthome.newexchangeworld.Models.FaceBookUser;
 import com.example.arthome.newexchangeworld.Models.PostModel;
+import com.example.arthome.newexchangeworld.Models.UserModel;
 import com.facebook.Profile;
 import com.google.gson.Gson;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 
 import com.facebook.FacebookSdk;
+import com.squareup.picasso.Picasso;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -57,6 +57,9 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private TabFragment tabFragment = TabFragment.newInstance();
+    private ImageView userPhoto;
+    private TextView userName;
+    private TextView userLocation;
 
     public void camera(View view) {
         Intent intent = new Intent();
@@ -87,11 +90,6 @@ public class MainActivity extends AppCompatActivity
 
         FloatingActionButton cameraButton = (FloatingActionButton) findViewById(R.id.cameraFab);
 
-        //for download image
-        // Create global configuration and initialize ImageLoader with this config
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
-                .build();
-        ImageLoader.getInstance().init(config);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -104,9 +102,11 @@ public class MainActivity extends AppCompatActivity
 
         //for circle head view
         View headerView = navigationView.getHeaderView(0); // for Navigation findViewById
-        ImageView im = (ImageView) headerView.findViewById(R.id.imageView2);
-        Bitmap myhead = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.myhead);
-        im.setImageBitmap(getCroppedBitmap(myhead));
+        userPhoto = (ImageView) headerView.findViewById(R.id.nav_user_image_view);
+        userName = (TextView) headerView.findViewById(R.id.nav_user_name);
+        userLocation = (TextView) headerView.findViewById(R.id.nav_user_location);
+//        Bitmap myhead = BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.myhead);
+//        userPhoto.setImageBitmap(getCroppedBitmap(myhead));
 
         if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -114,26 +114,33 @@ public class MainActivity extends AppCompatActivity
             transaction.commit();
             cameraButton.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
         if(Profile.getCurrentProfile()!=null) {
             String id = Profile.getCurrentProfile().getId();
             System.out.println(">>>main id= " + id);
             if (RealmManager.INSTANCE.retrieveUser(Profile.getCurrentProfile().getId()) == null) {
                 User user = new User();
-                user.setFacebookID(Profile.getCurrentProfile().getId());
-                user.setFacebookName(Profile.getCurrentProfile().getName());
+                user.setIdentity(Profile.getCurrentProfile().getId());
+                user.setUserName(Profile.getCurrentProfile().getName());
 
                 RealmManager.INSTANCE.createUser(user);
             } else {
                 User user = RealmManager.INSTANCE.retrieveUser(Profile.getCurrentProfile().getId());
                 //TODO  檢查日期 隔天才需要再拿一次EXchangeWORLD TOKEN
-                new getTokenTask().execute(user.getFacebookID());
+                new getTokenTask().execute(user.getIdentity());
 
-                System.out.println(">>>找到user name is " + user.getFacebookName());
-                System.out.println(">>>找到user EXToken is " + user.getExToken());
+                Picasso.with(this).load(user.getPhotoPath()).transform(new CircleTransform()).into(userPhoto);
+                userName.setText(user.getUserName());
             }
         }
     }
+
+
 
     public class getTokenTask extends AsyncTask<String,String,String> {
 

@@ -15,10 +15,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.arthome.newexchangeworld.ExchangeAPI.RestClient;
 import com.example.arthome.newexchangeworld.Models.AuthenticationModel;
 import com.example.arthome.newexchangeworld.Models.FaceBookUser;
-import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.example.arthome.newexchangeworld.Models.PostModel;
+import com.example.arthome.newexchangeworld.Models.UserModel;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -31,13 +32,11 @@ import com.google.gson.Gson;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
@@ -45,9 +44,12 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class Login extends AppCompatActivity {
@@ -58,6 +60,7 @@ public class Login extends AppCompatActivity {
     private EditText itemDescriptionEditText;
     private CallbackManager callbackManager;
     private AccessToken Fbtoken;
+    private String fbID;
     private String EXtoken;
     private String itemName;
     private String itemDescription;
@@ -97,12 +100,14 @@ public class Login extends AppCompatActivity {
             public void onSuccess(LoginResult loginResult) {
                 Profile profile = Profile.getCurrentProfile();
                 System.out.println(">>>onSuccess");
-//                textView.setText("token = +"+loginResult.getAccessToken().getToken()
-//                        +"\n" + profile.getName()+"\n" + profile.getProfilePictureUri(100,100));
                 System.out.println(">>>"+loginResult.getAccessToken().getToken());
                 System.out.println(">>>hash="+loginResult.getAccessToken().getToken().hashCode());
                 System.out.println(">>>id="+loginResult.getAccessToken().getUserId());
                 Fbtoken = loginResult.getAccessToken();
+                fbID = Fbtoken.getUserId();
+                System.out.println(">>onSuccess "+fbID);
+                new getTokenTask().execute(fbID);
+                getAndSaveUserInfo(0,fbID);
             }
 
             @Override
@@ -211,9 +216,33 @@ public class Login extends AppCompatActivity {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             EXtoken = s;
-
+            User realmUser = RealmManager.INSTANCE.retrieveUser(fbID);
+            realmUser.setExToken(EXtoken);
+            RealmManager.INSTANCE.createUser(realmUser);
 //            new postTask().execute(s,itemName,itemDescription);
         }
+    }
+    void getAndSaveUserInfo(int uid, String strIdentity){
+        Call<UserModel> getUserInfo = new RestClient().getExchangeService().getUserInfo(uid,strIdentity);
+        getUserInfo.enqueue(new Callback<UserModel>() {
+            @Override
+            public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+                if(response.code()==200){
+                    UserModel userModel = response.body();
+                    User realmUser = RealmManager.INSTANCE.retrieveUser(userModel.getIdentity());
+                    realmUser.setIdentity(userModel.getIdentity());
+                    realmUser.setUserName(userModel.getName());
+                    realmUser.setPhotoPath(userModel.getPhoto_path());
+                    System.out.println(">>>Saved!!!"+userModel.getName());
+                    RealmManager.INSTANCE.createUser(realmUser);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserModel> call, Throwable t) {
+                System.out.println(">>>fail "+t);
+            }
+        });
     }
 }
 
