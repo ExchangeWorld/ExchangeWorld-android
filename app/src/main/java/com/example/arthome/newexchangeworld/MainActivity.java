@@ -69,6 +69,8 @@ public class MainActivity extends AppCompatActivity
         int permission = ActivityCompat.checkSelfPermission(MainActivity.this,READ_EXTERNAL_STORAGE);
         if(permission!= PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(MainActivity.this,new String[]{READ_EXTERNAL_STORAGE,WRITE_EXTERNAL_STORAGE},0);
+        else
+            toGallery();
 
     }
 
@@ -189,14 +191,16 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public void toGallery(){
+        Intent intent = new Intent();
+        intent.setClass(MainActivity.this, pictureActivity.class);
+        startActivity(intent);
+        MainActivity.this.finish();
+    }
     @Override
     public void onRequestPermissionsResult(int requestCode,String[] permission,int [] grantResult) {
-        if(requestCode==0){
-            Intent intent = new Intent();
-            intent.setClass(MainActivity.this, pictureActivity.class);
-            startActivity(intent);
-            MainActivity.this.finish();
-        }
+        if(requestCode==0)
+            toGallery();
     }
     @Override
     public void onBackPressed() {

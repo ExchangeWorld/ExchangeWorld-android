@@ -51,19 +51,20 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(ViewHolder holder,int position){
-        Bitmap bm = MediaStore.Images.Thumbnails.getThumbnail(context
-                        .getApplicationContext().getContentResolver(), Long
-                        .parseLong((String) coll.get(position)),
-                MediaStore.Images.Thumbnails.MICRO_KIND, null);
+        BitmapFactory.Options option = new BitmapFactory.Options();
+        option.inPurgeable = true;
+        option.inSampleSize = 5;
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
         float dd = dm.density;
         float px = 25 * dd;
         float screenWidth = dm.widthPixels;
         int picWidth = (int) (screenWidth - px) / 2; // 一行顯示四個縮圖
+        Bitmap bm = BitmapFactory.decodeFile(coll.get(position).toString(), option);
         ViewGroup.LayoutParams params = holder.imageView.getLayoutParams();
         params.height = picWidth;
         params.width = picWidth;
         holder.imageView.setId(position);
+        holder.imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         holder.imageView.setImageBitmap(bm);
         holder.viewGroup.setLayoutParams(params);
     }

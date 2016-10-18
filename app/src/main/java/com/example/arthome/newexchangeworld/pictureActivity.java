@@ -53,7 +53,6 @@ public class pictureActivity extends AppCompatActivity {
    // private final static int CAMERA = 2;
     private int poststate;
     private PhotoAdapter photoAdapter;
-    private List<String> thumbs;  //存放縮圖的id
     private List<String> imagePaths;  //存放圖片的路徑
     private RecyclerView gallery;
     private Button cameraButton;
@@ -79,28 +78,7 @@ public class pictureActivity extends AppCompatActivity {
    //     setPic();
         nextButton.setEnabled(false);
 
-        Cursor cursor = managedQuery(Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null);
-        thumbs = new ArrayList<String>();
-        imagePaths = new ArrayList<String>();
-        for (int i = cursor.getCount() - 1; i >= 0; i--) {
-            cursor.moveToPosition(i);
-            int id = cursor.getInt(cursor.getColumnIndex(MediaStore.Images.Media._ID));// ID
-            thumbs.add(id + "");
-            String filepath = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));//抓路徑
-            imagePaths.add(filepath);
-        }
-        cursor.close();
-        photoAdapter = new PhotoAdapter(thumbs);
-        photoAdapter.setPictureClickListener(new PhotoAdapter.PictureClickListener() {
-            @Override
-            public void onPictureClick(View v) {
-                if (!photoAdapter.isEmpty())
-                    nextButton.setEnabled(true);
-                else
-                    nextButton.setEnabled(false);
-            }
-        });
-        gallery.setAdapter(photoAdapter);
+
      //   photoAdapter.notifyDataSetChanged();
 
 
@@ -116,6 +94,8 @@ public class pictureActivity extends AppCompatActivity {
                 int permission = ActivityCompat.checkSelfPermission(pictureActivity.this, CAMERA);
                 if(permission != PackageManager.PERMISSION_GRANTED)
                     ActivityCompat.requestPermissions(pictureActivity.this,new String[] {CAMERA},REQUEST_CAMERA);
+                else
+                    takePic();
 
             }
         });
@@ -129,12 +109,9 @@ public class pictureActivity extends AppCompatActivity {
                 intent.setClass(pictureActivity.this,PostActivity.class);
                 Bundle bundle = new Bundle();
                 for(int i = 0;i<photoAdapter.getItemCount();i++) {
-                    if(photoAdapter.getCheckedPic(i)) {
-                        postthumbs.add((String)photoAdapter.getItem(i));
-                        selectedPic.add(imagePaths.get(i));
-                    }
+                    if (photoAdapter.getCheckedPic(i))
+                        selectedPic.add((String) photoAdapter.getItem(i));
                 }
-                bundle.putStringArrayList("thumb",  postthumbs);
                 bundle.putStringArrayList("imagePaths",  selectedPic);
                 intent.putExtras(bundle);
                 startActivity(intent);
@@ -145,29 +122,31 @@ public class pictureActivity extends AppCompatActivity {
 
     }
 
+    public void takePic(){
+        Intent intent = new Intent(ACTION_IMAGE_CAPTURE);
+        SimpleDateFormat tmpTime = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        String filename = tmpTime.format(new Date())+".jpg";
+        String filepath = Environment.getExternalStorageDirectory().toString();
+        File tmpfile = new File(Environment.getExternalStorageDirectory(), filename);
+        Uri uri = Uri.fromFile(tmpfile);
+        intent.putExtra(EXTRA_OUTPUT, uri);
+        intent.putExtra("Picturename",filepath+filename);
+        startActivityForResult(intent, 1);
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode,String[] permission,int [] grantResult) {
-        if(requestCode==REQUEST_CAMERA){
-            Intent intent = new Intent(ACTION_IMAGE_CAPTURE);
-            SimpleDateFormat tmpTime = new SimpleDateFormat("yyyyMMdd_HHmmss");
-            File tmpfile = new File("/sdcard/DCIM", tmpTime.format(new Date()) + ".jpg");
-            Uri uri = Uri.fromFile(tmpfile);
-            intent.putExtra(EXTRA_OUTPUT, uri);
-            startActivityForResult(intent, 1);
-        }
+        if(requestCode==REQUEST_CAMERA)
+            takePic();
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
       if (data != null) {
             if ((requestCode == 1)) {
-                Cursor c =  managedQuery(Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null);
-                c.moveToPosition(c.getCount()-1) ;
-                int id = c.getInt(c.getColumnIndex(MediaStore.Images.Media._ID));// ID
-                photoAdapter.addThumb(id + "");
-                String filepath = c.getString(c.getColumnIndex(MediaStore.Images.Media.DATA));//抓路徑
-                imagePaths.add(filepath);
+                String picname = "";
+                data.putExtra("Picturename",picname);
+                imagePaths.add(picname);
               //  photoAdapter.notifyDataSetChanged();
           /*      Bitmap mbmp = (Bitmap) data.getExtras().getParcelable("data");
                 CameraV.setImageBitmap(mbmp);
@@ -195,6 +174,30 @@ public class pictureActivity extends AppCompatActivity {
         Intent i = new Intent(pictureActivity.this,MainActivity.class);
         startActivity(i);
         pictureActivity.this.finish();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        Cursor cursor = managedQuery(Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null);
+        imagePaths = new ArrayList<String>();
+        for (int i = cursor.getCount() - 1; i >= 0; i--) {
+            cursor.moveToPosition(i);
+            String filepath = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));//抓路徑
+            imagePaths.add(filepath);
+        }
+        photoAdapter = new PhotoAdapter(imagePaths);
+        photoAdapter.setPictureClickListener(new PhotoAdapter.PictureClickListener() {
+            @Override
+            public void onPictureClick(View v) {
+                if (!photoAdapter.isEmpty())
+                    nextButton.setEnabled(true);
+                else
+                    nextButton.setEnabled(false);
+            }
+        });
+        gallery.setAdapter(photoAdapter);
+        photoAdapter.notifyDataSetChanged();
     }
 }
 

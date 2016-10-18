@@ -13,8 +13,8 @@ public class UserModel {
     String created_at;
     String updated_at;
     GoodsModel[] goods;
-    FollowedModel[] follows_followed;
-    FollowerModel[] follows_follower;
+    followedModel[] follows_followed;
+    followerModel[] follows_follower;
     NoModel [] star_starring_user;  //TODO 這邊不確定是啥 先隨便套用
 
 
@@ -90,19 +90,19 @@ public class UserModel {
         this.goods = goods;
     }
 
-    public FollowedModel[] getFollows_followed() {
+    public followedModel[] getFollows_followed() {
         return follows_followed;
     }
 
-    public void setFollows_followed(FollowedModel[] follows_followed) {
+    public void setFollows_followed(followedModel[] follows_followed) {
         this.follows_followed = follows_followed;
     }
 
-    public FollowerModel[] getFollows_follower() {
+    public followerModel[] getFollows_follower() {
         return follows_follower;
     }
 
-    public void setFollows_follower(FollowerModel[] follows_follower) {
+    public void setFollows_follower(followerModel[] follows_follower) {
         this.follows_follower = follows_follower;
     }
 

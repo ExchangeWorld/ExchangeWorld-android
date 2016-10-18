@@ -6,6 +6,7 @@ import java.util.List;
 import android.app.ActionBar;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -74,10 +75,9 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(ViewHolder holder,int position){
-        Bitmap bm = MediaStore.Images.Thumbnails.getThumbnail(context
-                        .getApplicationContext().getContentResolver(), Long
-                        .parseLong((String) coll.get(position)),
-                MediaStore.Images.Thumbnails.MICRO_KIND, null);
+        BitmapFactory.Options option = new BitmapFactory.Options();
+        option.inPurgeable = true;
+        option.inSampleSize = 5;
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
         float dd = dm.density;
         float px = 25 * dd;
@@ -86,7 +86,9 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder>{
         ViewGroup.LayoutParams params = holder.imageView.getLayoutParams();
         params.height = picWidth;
         params.width = picWidth;
+        Bitmap bm = BitmapFactory.decodeFile(coll.get(position).toString(), option);
         holder.imageView.setId(position);
+        holder.imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         holder.imageView.setImageBitmap(bm);
         holder.viewGroup.setLayoutParams(params);
         holder.imageView.setTag(position);

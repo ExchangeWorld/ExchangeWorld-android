@@ -57,8 +57,7 @@ public class PostActivity extends AppCompatActivity {
         classSpinner.setAdapter(classList);
         Bundle bundle = getIntent().getExtras();
         postPic = bundle.getStringArrayList("imagePaths");
-        postthumbs = bundle.getStringArrayList("thumb");
-        postAdapter = new PostAdapter(postthumbs);
+        postAdapter = new PostAdapter(postPic);
         postgallery.setAdapter(postAdapter);
         postAdapter.notifyDataSetChanged();
 
