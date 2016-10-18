@@ -2,6 +2,7 @@ package com.example.arthome.newexchangeworld;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -15,6 +16,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.multidex.MultiDex;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -32,6 +34,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.Toast;
+import static android.Manifest.permission.*;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -41,10 +44,10 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener  {
 
     public void camera(View view){
-        Intent intent = new Intent();
-        intent.setClass(MainActivity.this, pictureActivity.class);
-        startActivity(intent);
-        MainActivity.this.finish();
+        int permission = ActivityCompat.checkSelfPermission(MainActivity.this,READ_EXTERNAL_STORAGE);
+        if(permission!= PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(MainActivity.this,new String[]{READ_EXTERNAL_STORAGE,WRITE_EXTERNAL_STORAGE},0);
+
     }
 
 /*    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -96,6 +99,15 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,String[] permission,int [] grantResult) {
+        if(requestCode==0){
+            Intent intent = new Intent();
+            intent.setClass(MainActivity.this, pictureActivity.class);
+            startActivity(intent);
+            MainActivity.this.finish();
+        }
+    }
     @Override
     public void onBackPressed() {
         //// TODO: need fix to be better
