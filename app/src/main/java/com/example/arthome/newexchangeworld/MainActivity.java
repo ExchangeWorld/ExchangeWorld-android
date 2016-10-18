@@ -2,6 +2,7 @@ package com.example.arthome.newexchangeworld;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -14,6 +15,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.multidex.MultiDex;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -26,6 +28,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.ImageView;
+<<<<<<< HEAD
+=======
+import android.widget.Toast;
+import static android.Manifest.permission.*;
+>>>>>>> kimorod
 
 import com.example.arthome.newexchangeworld.Models.AuthenticationModel;
 import com.example.arthome.newexchangeworld.Models.FaceBookUser;
@@ -58,10 +65,11 @@ public class MainActivity extends AppCompatActivity
 
     private TabFragment tabFragment = TabFragment.newInstance();
 
-    public void camera(View view) {
-        Intent intent = new Intent();
-        intent.setClass(MainActivity.this, pictureActivity.class);
-        startActivity(intent);
+    public void camera(View view){
+        int permission = ActivityCompat.checkSelfPermission(MainActivity.this,READ_EXTERNAL_STORAGE);
+        if(permission!= PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(MainActivity.this,new String[]{READ_EXTERNAL_STORAGE,WRITE_EXTERNAL_STORAGE},0);
+
     }
 
 /*    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -177,6 +185,15 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,String[] permission,int [] grantResult) {
+        if(requestCode==0){
+            Intent intent = new Intent();
+            intent.setClass(MainActivity.this, pictureActivity.class);
+            startActivity(intent);
+            MainActivity.this.finish();
+        }
+    }
     @Override
     public void onBackPressed() {
         //// TODO: need fix to be better

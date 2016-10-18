@@ -6,6 +6,10 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
         android:id="@+id/imageView2"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"

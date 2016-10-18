@@ -1,6 +1,7 @@
 package com.example.arthome.newexchangeworld;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,6 +9,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import static android.Manifest.permission.*;
 
 import com.example.arthome.newexchangeworld.ItemPage.PhotoAdapter;
 import com.example.arthome.newexchangeworld.ItemPage.PostAdapter;
@@ -38,13 +41,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.jar.Manifest;
 
+import static android.Manifest.permission.CAMERA;
 import static android.provider.MediaStore.*;
 
 public class pictureActivity extends AppCompatActivity {
 
+    private static final int REQUEST_CAMERA = 0;
     private DisplayMetrics mPhone;
-    private final static int CAMERA = 2;
+   // private final static int CAMERA = 2;
     private int poststate;
     private PhotoAdapter photoAdapter;
     private List<String> thumbs;  //存放縮圖的id
@@ -54,8 +60,7 @@ public class pictureActivity extends AppCompatActivity {
     private Button nextButton;
     private ArrayList<String> selectedPic;
     private ArrayList<String> postthumbs;
-
-
+    final private  String[] projection = { MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA };
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -74,7 +79,6 @@ public class pictureActivity extends AppCompatActivity {
    //     setPic();
         nextButton.setEnabled(false);
 
-        String[] projection = { MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA };
         Cursor cursor = managedQuery(Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null);
         thumbs = new ArrayList<String>();
         imagePaths = new ArrayList<String>();
@@ -97,7 +101,7 @@ public class pictureActivity extends AppCompatActivity {
             }
         });
         gallery.setAdapter(photoAdapter);
-        photoAdapter.notifyDataSetChanged();
+     //   photoAdapter.notifyDataSetChanged();
 
 
 
@@ -109,12 +113,10 @@ public class pictureActivity extends AppCompatActivity {
              /*   ContentValues value = new ContentValues();
                 value.put(Images.Media.MIME_TYPE, "image/jpeg");
                 Uri uri = getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI,value);*/
-                Intent intent = new Intent(ACTION_IMAGE_CAPTURE);
-                SimpleDateFormat tmpTime = new SimpleDateFormat("yyyyMMdd_HHmmss");
-                File tmpfile = new File("/sdcard/DCIM", tmpTime.format(new Date()) + ".jpg");
-                Uri uri = Uri.fromFile(tmpfile);
-                intent.putExtra(EXTRA_OUTPUT, uri);
-                startActivityForResult(intent, CAMERA);
+                int permission = ActivityCompat.checkSelfPermission(pictureActivity.this, CAMERA);
+                if(permission != PackageManager.PERMISSION_GRANTED)
+                    ActivityCompat.requestPermissions(pictureActivity.this,new String[] {CAMERA},REQUEST_CAMERA);
+
             }
         });
 
@@ -143,18 +145,30 @@ public class pictureActivity extends AppCompatActivity {
 
     }
 
+
     @Override
-    protected void onStart() {
-        super.onStart();
-
+    public void onRequestPermissionsResult(int requestCode,String[] permission,int [] grantResult) {
+        if(requestCode==REQUEST_CAMERA){
+            Intent intent = new Intent(ACTION_IMAGE_CAPTURE);
+            SimpleDateFormat tmpTime = new SimpleDateFormat("yyyyMMdd_HHmmss");
+            File tmpfile = new File("/sdcard/DCIM", tmpTime.format(new Date()) + ".jpg");
+            Uri uri = Uri.fromFile(tmpfile);
+            intent.putExtra(EXTRA_OUTPUT, uri);
+            startActivityForResult(intent, 1);
+        }
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
       if (data != null) {
-            if ((requestCode == CAMERA)) {
-                
+            if ((requestCode == 1)) {
+                Cursor c =  managedQuery(Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null);
+                c.moveToPosition(c.getCount()-1) ;
+                int id = c.getInt(c.getColumnIndex(MediaStore.Images.Media._ID));// ID
+                photoAdapter.addThumb(id + "");
+                String filepath = c.getString(c.getColumnIndex(MediaStore.Images.Media.DATA));//抓路徑
+                imagePaths.add(filepath);
+              //  photoAdapter.notifyDataSetChanged();
           /*      Bitmap mbmp = (Bitmap) data.getExtras().getParcelable("data");
                 CameraV.setImageBitmap(mbmp);
                 CameraV.setScaleType(ImageView.ScaleType.FIT_XY);
