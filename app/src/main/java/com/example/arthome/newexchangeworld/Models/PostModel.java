@@ -40,7 +40,7 @@ public class PostModel implements Serializable {
     }
 
     public void setPhoto_path(String photo_path) {
-        this.photo_path = photo_path;
+        this.photo_path = "[\""+photo_path+"\"]";
     }
 
     public String getDescription() {

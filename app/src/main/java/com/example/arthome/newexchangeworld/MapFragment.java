@@ -4,20 +4,17 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,19 +27,14 @@ import android.widget.Toast;
 import com.example.arthome.newexchangeworld.ItemPage.ItemDetailActivity;
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.example.arthome.newexchangeworld.Models.PostModel;
+import com.example.arthome.newexchangeworld.Models.UploadImageModel;
 import com.facebook.Profile;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -62,6 +54,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -73,8 +66,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static android.support.v4.content.ContextCompat.checkSelfPermission;
 
 /**
  * A fragment that launches other parts of the demo application.
@@ -137,7 +128,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         if (Profile.getCurrentProfile() != null) {
             User user = RealmManager.INSTANCE.retrieveUser(Profile.getCurrentProfile().getId());
             exToken = user.getExToken();
-            System.out.println(">>>map找到user name is " + user.getFacebookName());
+            System.out.println(">>>map找到user name is " + user.getUserName());
             System.out.println(">>>map找到user EXToken is " + user.getExToken());
         }
         return view;
@@ -212,7 +203,8 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             case R.id.map_upload_button:
                 postModelDetail.setPosition_x((float) draggableMarker.getPosition().longitude);
                 postModelDetail.setPosition_y((float) draggableMarker.getPosition().latitude);
-                new postTask().execute(postModelDetail);
+                new  uploadImageTask().execute(postModelDetail);
+                setUploadView(false);
                 break;
         }
     }
@@ -360,6 +352,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
 
     public void setPostModelDetail(PostModel postModelDetail) {
         this.postModelDetail = postModelDetail;
+        System.out.println("Base64 is:\n"+convertPathTOBase(postModelDetail.getPhoto_path()));
     }
 
     private class InfoWindowRefresher implements com.squareup.picasso.Callback {
@@ -408,8 +401,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             uploadButton.setVisibility(View.VISIBLE);
             setDraggableMarker();
         }else {
-            //TODO 一直上傳的話marker會越來越多 只是看不到
-            draggableMarker.setVisible(false);
+            draggableMarker.remove();
             cancelButton.setVisibility(View.GONE);
             uploadButton.setVisibility(View.GONE);
         }
@@ -454,5 +446,61 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                 Toast.makeText(getContext(), "Post fail", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    public class uploadImageTask extends AsyncTask<PostModel, String, AsyncWrapper> {
+
+        private AsyncWrapper asyncWrapper;
+
+        @Override
+        protected AsyncWrapper doInBackground(PostModel... params) {
+
+            HttpClient client = new DefaultHttpClient();
+            HttpPost post = new HttpPost("http://exwd.csie.org:43002/api/upload/image?token=" + exToken);
+            post.addHeader("content-type", "application/json");
+            try {
+                PostModel postModel = params[0];
+                //TODO 這邊可能要改成傳path就好 不用PostModel
+                UploadImageModel uploadImageModel = new UploadImageModel(convertPathTOBase(postModel.getPhoto_path()));
+                String jsonString = new Gson().toJson(uploadImageModel);
+                HttpEntity entity = new StringEntity(jsonString, HTTP.UTF_8);
+                post.setEntity(entity);
+                HttpResponse response = client.execute(post);
+                entity = response.getEntity();
+                jsonString = EntityUtils.toString(entity);
+
+
+                postModel.setPhoto_path(jsonString);
+                asyncWrapper = new AsyncWrapper();
+                asyncWrapper.setPostModel(postModel);
+                asyncWrapper.setStatusCode(response.getStatusLine().getStatusCode());
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (ClientProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return asyncWrapper;
+        }
+
+        @Override
+        protected void onPostExecute(AsyncWrapper asyncWrapper) {
+            super.onPostExecute(asyncWrapper);
+            if (asyncWrapper.getStatusCode() == 200) {  //post success
+                new postTask().execute(asyncWrapper.getPostModel());
+            } else {
+                Toast.makeText(getContext(), "上傳圖片失敗", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private String convertPathTOBase(String path){
+        Bitmap bm = BitmapFactory.decodeFile(path);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
+        byte[] byteImage = baos.toByteArray();
+        String encodedImage = Base64.encodeToString(byteImage, Base64.NO_WRAP); //NO_WRAP才不會出現換行
+        return encodedImage;
     }
 }

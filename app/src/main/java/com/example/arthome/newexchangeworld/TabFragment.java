@@ -87,7 +87,7 @@ public class TabFragment extends Fragment implements AreaFragment.AreaSelectedLi
 
     public MapFragment getMapFragment(){
         MapFragment mapF = (MapFragment) getChildFragmentManager().findFragmentByTag("android:switcher:" + R.id.Viewpager + ":0");
-            return mapF;
+        return mapF;
     }
 
     class myTabPagerAdapter extends FragmentPagerAdapter {
