@@ -10,17 +10,11 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.example.arthome.newexchangeworld.pictureActivity">
 
-    <GridView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/GalleryView"
-        android:horizontalSpacing="4dp"
-        android:verticalSpacing="2dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
         android:layout_below="@+id/buttonLayout"
-        android:numColumns="3" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <LinearLayout
         android:orientation="horizontal"
