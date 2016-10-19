@@ -200,7 +200,6 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent();
         intent.setClass(MainActivity.this, pictureActivity.class);
         startActivity(intent);
-        MainActivity.this.finish();
     }
     @Override
     public void onRequestPermissionsResult(int requestCode,String[] permission,int [] grantResult) {
