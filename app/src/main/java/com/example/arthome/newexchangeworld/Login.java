@@ -47,6 +47,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 
+import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -106,7 +107,10 @@ public class Login extends AppCompatActivity {
                 Fbtoken = loginResult.getAccessToken();
                 fbID = Fbtoken.getUserId();
                 System.out.println(">>onSuccess "+fbID);
-                new getTokenTask().execute(fbID);
+                if(RealmManager.INSTANCE.retrieveUser().size()==0) {
+                    RealmManager.INSTANCE.createUser(new User());
+                }
+                getToken(fbID);
                 getAndSaveUserInfo(0,fbID);
             }
 
@@ -126,7 +130,6 @@ public class Login extends AppCompatActivity {
             public void onClick(View v) {
                 itemName = itemNameEditText.getText().toString();
                 itemDescription = itemDescriptionEditText.getText().toString();
-               new getTokenTask().execute(Fbtoken.getUserId());
             }
         });
     }
@@ -180,56 +183,36 @@ public class Login extends AppCompatActivity {
         }
     }
 
-    public class getTokenTask extends AsyncTask<String,String,String>{
-
-        private AuthenticationModel authenticationModel;
-
-        @Override
-        protected String doInBackground(String... params) {
-            FaceBookUser user = new FaceBookUser();
-//            user.setIdentity(Fbtoken.getUserId());
-            user.setIdentity(params[0]);
-            String body = new Gson().toJson(user);
-            System.out.println(">>>body="+body);
-            HttpClient client = new DefaultHttpClient();
-            HttpPost post = new HttpPost("http://exwd.csie.org:43002/api/authenticate/login");
-            post.addHeader("content-type","application/json");
-            try {
-                HttpEntity entity = new StringEntity(body);
-                post.setEntity(entity);
-                HttpResponse response = client.execute(post);
-                entity = response.getEntity();
-                String jsonString = EntityUtils.toString(entity);
-                System.out.println(">>>return String=" + jsonString);
-                authenticationModel = new Gson().fromJson(jsonString, AuthenticationModel.class);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            } catch (ClientProtocolException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+    private void getToken(String identity) {
+        FaceBookUser faceBookUser = new FaceBookUser();
+        faceBookUser.setIdentity(identity);
+        Call<AuthenticationModel> call = new RestClient().getExchangeService().getToken(faceBookUser);
+        call.enqueue(new Callback<AuthenticationModel>() {
+            @Override
+            public void onResponse(Call<AuthenticationModel> call, Response<AuthenticationModel> response) {
+                if(response.code()==201&&response.body().getAuthentication().equals("success")){
+                    User realmUser = RealmManager.INSTANCE.retrieveUser().get(0);
+                    realmUser.setExToken(response.body().getToken());
+                    RealmManager.INSTANCE.createUser(realmUser);
+                }else
+                    Toast.makeText(getBaseContext(),"取得Token失敗",Toast.LENGTH_SHORT).show();
             }
-            return authenticationModel.getToken();
-        }
 
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            EXtoken = s;
-            User realmUser = RealmManager.INSTANCE.retrieveUser(fbID);
-            realmUser.setExToken(EXtoken);
-            RealmManager.INSTANCE.createUser(realmUser);
-//            new postTask().execute(s,itemName,itemDescription);
-        }
+            @Override
+            public void onFailure(Call<AuthenticationModel> call, Throwable t) {
+                Toast.makeText(getBaseContext(),"取得Token失敗",Toast.LENGTH_SHORT).show();
+            }
+        });
     }
-    void getAndSaveUserInfo(int uid, String strIdentity){
+
+    private void getAndSaveUserInfo(int uid, String strIdentity){
         Call<UserModel> getUserInfo = new RestClient().getExchangeService().getUserInfo(uid,strIdentity);
         getUserInfo.enqueue(new Callback<UserModel>() {
             @Override
             public void onResponse(Call<UserModel> call, Response<UserModel> response) {
                 if(response.code()==200){
                     UserModel userModel = response.body();
-                    User realmUser = RealmManager.INSTANCE.retrieveUser(userModel.getIdentity());
+                    User realmUser = RealmManager.INSTANCE.retrieveUser().get(0);
                     realmUser.setIdentity(userModel.getIdentity());
                     realmUser.setUserName(userModel.getName());
                     realmUser.setPhotoPath(userModel.getPhoto_path());

@@ -67,6 +67,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.realm.RealmResults;
+
 /**
  * A fragment that launches other parts of the demo application.
  */
@@ -126,7 +128,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         }
 
         if (Profile.getCurrentProfile() != null) {
-            User user = RealmManager.INSTANCE.retrieveUser(Profile.getCurrentProfile().getId());
+            User user = RealmManager.INSTANCE.retrieveUser().get(0);
             exToken = user.getExToken();
             System.out.println(">>>map找到user name is " + user.getUserName());
             System.out.println(">>>map找到user EXToken is " + user.getExToken());
@@ -352,7 +354,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
 
     public void setPostModelDetail(PostModel postModelDetail) {
         this.postModelDetail = postModelDetail;
-        System.out.println("Base64 is:\n"+convertPathTOBase(postModelDetail.getPhoto_path()));
+//        System.out.println("Base64 is:\n"+convertPathTOBase(postModelDetail.getPhoto_path()));
     }
 
     private class InfoWindowRefresher implements com.squareup.picasso.Callback {

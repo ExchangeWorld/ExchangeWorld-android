@@ -30,14 +30,15 @@ public enum RealmManager {
         return realm.copyFromRealm(results);
     }
 
-    public User retrieveUser(final String identity) {
-        User result = realm.where(User.class).equalTo("identity", identity)
-                .findFirst();
-        return (result == null) ? null : realm.copyFromRealm(result);
+    public List<User> retrieveUser() {
+        RealmResults<User> result = realm.where(User.class).findAll();
+        return realm.copyFromRealm(result);
     }
 
     public void deleteUser(final String identity) {
-        final RealmResults<User> results = realm.where(User.class).equalTo("identity", identity)
+//        final RealmResults<User> results = realm.where(User.class).equalTo("identity", identity)
+//                .findAll();
+        final RealmResults<User> results = realm.where(User.class)
                 .findAll();
         realm.executeTransaction(new Realm.Transaction() {
             @Override

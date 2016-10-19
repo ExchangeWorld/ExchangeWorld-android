@@ -51,6 +51,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class MainActivity extends AppCompatActivity
@@ -123,19 +127,20 @@ public class MainActivity extends AppCompatActivity
         if(Profile.getCurrentProfile()!=null) {
             String id = Profile.getCurrentProfile().getId();
             System.out.println(">>>main id= " + id);
-            if (RealmManager.INSTANCE.retrieveUser(Profile.getCurrentProfile().getId()) == null) {
+            if (RealmManager.INSTANCE.retrieveUser().size() == 0) {
                 User user = new User();
                 user.setIdentity(Profile.getCurrentProfile().getId());
                 user.setUserName(Profile.getCurrentProfile().getName());
 
                 RealmManager.INSTANCE.createUser(user);
             } else {
-                User user = RealmManager.INSTANCE.retrieveUser(Profile.getCurrentProfile().getId());
+                User user = RealmManager.INSTANCE.retrieveUser().get(0);
                 //TODO  檢查日期 隔天才需要再拿一次EXchangeWORLD TOKEN
-                new getTokenTask().execute(user.getIdentity());
+//                new getTokenTask().execute(user.getIdentity());
 
                 Picasso.with(this).load(user.getPhotoPath()).transform(new CircleTransform()).into(userPhoto);
                 userName.setText(user.getUserName());
+
             }
         }
     }
@@ -177,7 +182,7 @@ public class MainActivity extends AppCompatActivity
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 //            EXtoken = s;
-            User user = RealmManager.INSTANCE.retrieveUser(Profile.getCurrentProfile().getId());
+            User user = RealmManager.INSTANCE.retrieveUser().get(0);
             user.setExToken(s);
             RealmManager.INSTANCE.createUser(user);
 //            new postTask().execute(s,itemName,itemDescription);

@@ -9,6 +9,7 @@ import io.realm.annotations.PrimaryKey;
 
 public class User extends RealmObject {
     @PrimaryKey
+    private String localUser = "me";
     private String identity;      //If it's with FB, fb_id as identity
     private String userName;
     private String photoPath;

@@ -6,6 +6,7 @@ package com.example.arthome.newexchangeworld.Models;
 public class FaceBookUser {
     private Boolean fb = true;
     private String identity;
+    private String password ="";
 
     public Boolean getFb() {
         return fb;
