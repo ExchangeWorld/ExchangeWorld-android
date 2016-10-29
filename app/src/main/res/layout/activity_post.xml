@@ -99,7 +99,7 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="POST"
+        android:text="前往地圖定位"
         android:id="@+id/postButton"
         android:gravity="center_vertical|center_horizontal" />
 </RelativeLayout>
