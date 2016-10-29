@@ -212,7 +212,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                 postModelDetail.setPosition_x((float) draggableMarker.getPosition().longitude);
                 postModelDetail.setPosition_y((float) draggableMarker.getPosition().latitude);
 //                new  uploadImageTask().execute(postModelDetail);
-                Call<ResponseBody> call = new RestClient().getExchangeService().upLoadImage(user.getExToken(),
+                Call<ResponseBody> call = new RestClient().getExchangeService().upLoadImage("9f278b0349195e6ab8864105026e059b93118884",
                         new UploadImageModel(convertPathTOBase(postModelDetail.getPhoto_path())));
                 call.enqueue(new Callback<ResponseBody>() {
                     @Override
