@@ -2,8 +2,12 @@ package com.example.arthome.newexchangeworld.ExchangeAPI;
 
 import com.example.arthome.newexchangeworld.Models.AuthenticationModel;
 import com.example.arthome.newexchangeworld.Models.FaceBookUser;
+import com.example.arthome.newexchangeworld.Models.GoodsModel;
+import com.example.arthome.newexchangeworld.Models.PostModel;
+import com.example.arthome.newexchangeworld.Models.UploadImageModel;
 import com.example.arthome.newexchangeworld.Models.UserModel;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -21,4 +25,12 @@ public interface ExchangeService {
 
     @POST("api/authenticate/login")
     Call<AuthenticationModel> getToken(@Body FaceBookUser faceBookUser);
+
+    //http://exwd.csie.org:43002/api/upload/image?token=
+    @POST("api/upload/image")
+    Call<ResponseBody> upLoadImage(@Query("token") String strToken, @Body UploadImageModel uploadImageModel);
+
+    //api/goods/post?token=
+    @POST("api/goods/post")     //暫時不管ResponseType 故用ResponseBody即可
+    Call<ResponseBody> upLoadGoods(@Query("token") String strToken, @Body PostModel postModel);
 }

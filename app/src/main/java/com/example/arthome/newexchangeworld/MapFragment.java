@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.arthome.newexchangeworld.ExchangeAPI.RestClient;
 import com.example.arthome.newexchangeworld.ItemPage.ItemDetailActivity;
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.example.arthome.newexchangeworld.Models.PostModel;
@@ -68,6 +69,10 @@ import java.util.List;
 import java.util.Map;
 
 import io.realm.RealmResults;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A fragment that launches other parts of the demo application.
@@ -79,6 +84,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     private Marker draggableMarker;
     private PostModel postModelDetail;
     String exToken;
+    private User user;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -128,7 +134,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         }
 
         if (Profile.getCurrentProfile() != null) {
-            User user = RealmManager.INSTANCE.retrieveUser().get(0);
+            user = RealmManager.INSTANCE.retrieveUser().get(0);
             exToken = user.getExToken();
             System.out.println(">>>map找到user name is " + user.getUserName());
             System.out.println(">>>map找到user EXToken is " + user.getExToken());
@@ -198,14 +204,36 @@ public class MapFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.map_cancel_button:
                 setUploadView(false);
                 break;
             case R.id.map_upload_button:
                 postModelDetail.setPosition_x((float) draggableMarker.getPosition().longitude);
                 postModelDetail.setPosition_y((float) draggableMarker.getPosition().latitude);
-                new  uploadImageTask().execute(postModelDetail);
+//                new  uploadImageTask().execute(postModelDetail);
+                Call<ResponseBody> call = new RestClient().getExchangeService().upLoadImage("9f278b0349195e6ab8864105026e059b93118884",
+                        new UploadImageModel(convertPathTOBase(postModelDetail.getPhoto_path())));
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.code() == 200) {   //上傳成功
+                            try {
+                                postModelDetail.setPhoto_path(response.body().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else if (response.code() == 403) {
+                            Toast.makeText(getContext(), "Token過期 上傳圖片失敗", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Toast.makeText(getContext(), "上傳圖片失敗 onFailure", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
                 setUploadView(false);
                 break;
         }
@@ -397,12 +425,12 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         draggableMarker = mMap.addMarker(new MarkerOptions().position(myLocation).title("長按並拖曳定位").draggable(true));
     }
 
-    public void setUploadView(boolean isUpload){
-        if(isUpload){
+    public void setUploadView(boolean isUpload) {
+        if (isUpload) {
             cancelButton.setVisibility(View.VISIBLE);
             uploadButton.setVisibility(View.VISIBLE);
             setDraggableMarker();
-        }else {
+        } else {
             draggableMarker.remove();
             cancelButton.setVisibility(View.GONE);
             uploadButton.setVisibility(View.GONE);
@@ -497,7 +525,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private String convertPathTOBase(String path){
+    private String convertPathTOBase(String path) {
         Bitmap bm = BitmapFactory.decodeFile(path);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
