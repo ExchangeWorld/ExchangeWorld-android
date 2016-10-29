@@ -26,6 +26,7 @@
         android:checked="false"
         android:clickable="false"
         android:contextClickable="false"
-        android:enabled="false" />
+        android:enabled="false"
+        android:buttonTint="#ffffff" />
 
 </RelativeLayout>
