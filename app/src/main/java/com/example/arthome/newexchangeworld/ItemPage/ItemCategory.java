@@ -8,7 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.arthome.newexchangeworld.Constant;
 import com.example.arthome.newexchangeworld.R;
+import com.example.arthome.newexchangeworld.util.StringTool;
 
 /**
  * Created by arthome on 2016/5/31.
@@ -30,65 +32,39 @@ public class ItemCategory extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        //Toast.makeText(getContext(),Integer.toString(v.getId())+" pressed",Toast.LENGTH_SHORT).show();
-        FragmentTransaction transaction;
-        Bundle bundle;
-        Fragment fragment;
         switch (v.getId()) {
             case R.id.category_3c:
-                //TODO find fragment then transition
-                //Fragment page = getParentFragment().getChildFragmentManager().findFragmentByTag("android:switcher:" + R.id.Viewpager + ":1");
-                //if(page!=null){
-                //Toast.makeText(getContext(),"good",Toast.LENGTH_SHORT).show();
-                //pass the download_url to fragment
-                bundle = new Bundle();
-                bundle.putString("URL", "http://exwd.csie.org:43002/api/goods/search");
-                fragment = ItemFragment.newInstance();
-                fragment.setArguments(bundle);
-
-                transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.item_container, fragment).addToBackStack(null);
-                transaction.commit();
-                //}
-                //else {
-                //    Toast.makeText(getContext(),"bad",Toast.LENGTH_SHORT).show();
-                //}
-
+                setBundleAndTranscation(Constant.CATEGORY_3C);
                 break;
             case R.id.category_others:
-                bundle = new Bundle();
-                bundle.putString("URL", "http://exwd.csie.org:43002/api/goods/search?category=Others");
-                fragment = ItemFragment.newInstance();
-                fragment.setArguments(bundle);
-
-                transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.item_container, fragment).addToBackStack(null);
-                transaction.commit();
+                setBundleAndTranscation(Constant.CATEGORY_OTHERS);
             case R.id.category_cosmetic:
+                setBundleAndTranscation(Constant.CATEGORY_COSMETIC);
                 break;
             case R.id.category_clothes:
+                setBundleAndTranscation(Constant.CATEGORY_CLOTHES);
                 break;
             case R.id.category_textbooks:
-                bundle = new Bundle();
-                bundle.putString("URL", "http://exwd.csie.org:43002/api/goods/search?category=Textbooks");
-                fragment = ItemFragment.newInstance();
-                fragment.setArguments(bundle);
-
-                transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.item_container, fragment).addToBackStack(null);
-                transaction.commit();
+                setBundleAndTranscation(Constant.CATEGORY_TEXTBOOKS);
                 break;
             case R.id.category_books:
-                bundle = new Bundle();
-                bundle.putString("URL", "http://exwd.csie.org:43002/api/goods/search?category=books");
-                fragment = ItemFragment.newInstance();
-                fragment.setArguments(bundle);
-
-                transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.item_container, fragment).addToBackStack(null);
-                transaction.commit();
+                setBundleAndTranscation(Constant.CATEGORY_BOOKS);
                 break;
         }
+    }
+
+    private void setBundleAndTranscation(String category) {
+        Bundle bundle;
+        Fragment fragment;
+        FragmentTransaction transaction;
+        bundle = new Bundle();
+        bundle.putString(Constant.INTENT_CATEGORY, category);
+        fragment = ItemFragment.newInstance();
+        fragment.setArguments(bundle);
+
+        transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.item_container, fragment).addToBackStack(null);
+        transaction.commit();
     }
 
     private void findUIviewOnClick() {

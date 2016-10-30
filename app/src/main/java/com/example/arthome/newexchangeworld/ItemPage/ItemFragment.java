@@ -15,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.arthome.newexchangeworld.Constant;
+import com.example.arthome.newexchangeworld.ExchangeAPI.RestClient;
 import com.example.arthome.newexchangeworld.MainActivity;
 import com.google.android.gms.maps.MapFragment;
 import com.google.gson.Gson;
@@ -36,21 +38,28 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 /**
  * Created by arthome on 2016/4/10.
  */
-public class ItemFragment extends Fragment{
+public class ItemFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private ItemAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<String> items = new ArrayList<>();
+    private ProgressDialog progressDialog;
 
-    public ItemFragment(){
+    public ItemFragment() {
 
-    };
+    }
 
-    public static ItemFragment newInstance(){
+    ;
+
+    public static ItemFragment newInstance() {
         ItemFragment fragment = new ItemFragment();
         return fragment;
     }
@@ -68,12 +77,48 @@ public class ItemFragment extends Fragment{
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //get which url to download
-        Bundle bundle = getArguments();
-        String url = bundle.getString("URL");
+
         //原本的initView
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        new downloadAPI().execute(url);
+
+        //列數為2
+        int spanCount = 2;
+        mLayoutManager = new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog = ProgressDialog.show(getContext(), "Loading", "Please wait", true);
+
+        //get which url to download
+        Bundle bundle = getArguments();
+        String category = bundle.getString(Constant.INTENT_CATEGORY);
+
+        Call<List<GoodsModel>> downloadCategoryGoods = new RestClient().getExchangeService().downloadCategoryGoods(category);
+        downloadCategoryGoods.enqueue(new Callback<List<GoodsModel>>() {
+            @Override
+            public void onResponse(Call<List<GoodsModel>> call, final Response<List<GoodsModel>> response) {
+                if (response.code() == 200) {
+                    mAdapter = new ItemAdapter(response.body());
+                    mAdapter.setMyViewHolderClicks(new ItemAdapter.MyViewHolderClicks() {
+                        @Override
+                        public void onGoodsClick(View itemView, int position) {
+                            GoodsModel goodsModel = response.body().get(position);
+                            Intent intent = new Intent(getActivity(), ItemDetailActivity.class);
+                            intent.putExtra("goodModel", new Gson().toJson(goodsModel));
+                            startActivity(intent);
+                        }
+                    });
+                    mRecyclerView.setAdapter(mAdapter);
+                    progressDialog.dismiss();
+                } else
+                    Toast.makeText(getContext(), "下載物品失敗 status code錯誤", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<List<GoodsModel>> call, Throwable t) {
+                Toast.makeText(getContext(), "下載物品失敗 onFailure", Toast.LENGTH_SHORT).show();
+            }
+        });
        /*
         //列數為2
         int spanCount = 2;
@@ -88,14 +133,14 @@ public class ItemFragment extends Fragment{
     */
     }
 
-    public class downloadAPI extends AsyncTask<String,String,List<GoodsModel>> {
+    public class downloadAPI extends AsyncTask<String, String, List<GoodsModel>> {
 
         private ProgressDialog progressDialog = new ProgressDialog(getContext());
 
         @Override
         protected void onPreExecute() {
             //progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog = ProgressDialog.show(getContext(),"Loading","Please wait",true);
+            progressDialog = ProgressDialog.show(getContext(), "Loading", "Please wait", true);
             super.onPreExecute();
         }
 
@@ -123,16 +168,16 @@ public class ItemFragment extends Fragment{
                     buffer.append(line);
                 }
                 String sJson;
-                sJson= buffer.toString();
+                sJson = buffer.toString();
 
-                JSONArray jsonArray= null; //try and catch?
+                JSONArray jsonArray = null; //try and catch?
                 try {
                     jsonArray = new JSONArray(sJson);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 GoodsModel goodsModel = null;
-                for(int i=0;i<jsonArray.length();i++){
+                for (int i = 0; i < jsonArray.length(); i++) {
                     Gson gson = new Gson();
                     try {
                         goodsModel = gson.fromJson(jsonArray.get(i).toString(), GoodsModel.class);
@@ -142,7 +187,7 @@ public class ItemFragment extends Fragment{
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    if(goodsModel!=null) {
+                    if (goodsModel != null) {
                         //Log.i("oscart",Integer.toString(i)+goodsModel.getName());
                         goodsModelList.add(goodsModel);
                     }
@@ -154,10 +199,10 @@ public class ItemFragment extends Fragment{
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                if(connection != null) {
+                if (connection != null) {
                     connection.disconnect();
                 }
-                if(reader != null){
+                if (reader != null) {
                     try {
                         reader.close();
                     } catch (IOException e) {
@@ -174,7 +219,7 @@ public class ItemFragment extends Fragment{
             super.onPostExecute(result);
             //mText.setText(result.toString());
             //TODO need to set data to list
-            if(result != null){
+            if (result != null) {
                 //列數為2
                 int spanCount = 2;
                 mLayoutManager = new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL);
@@ -183,7 +228,6 @@ public class ItemFragment extends Fragment{
                 mAdapter.setMyViewHolderClicks(new ItemAdapter.MyViewHolderClicks() {
                     @Override
                     public void onGoodsClick(View itemView, int position) {
-                        //Toast.makeText(getContext(),Integer.toString(position)+"clicked",Toast.LENGTH_SHORT);
                         GoodsModel goodsModel = result.get(position);
                         Intent intent = new Intent(getActivity(), ItemDetailActivity.class);
                         intent.putExtra("goodModel", new Gson().toJson(goodsModel));

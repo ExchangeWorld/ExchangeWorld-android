@@ -38,4 +38,9 @@ public interface ExchangeService {
 
     @GET("api/goods/search")
     Call<List<GoodsModel>> downloadGoods();
+
+    //http://exwd.csie.org:43002/api/goods/search?category={}
+    @GET("api/goods/search")
+    Call<List<GoodsModel>> downloadCategoryGoods(@Query("category") String strCategory);
+
 }
