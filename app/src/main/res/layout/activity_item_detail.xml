@@ -5,14 +5,11 @@
     android:layout_height="match_parent"
     tools:context="com.example.arthome.newexchangeworld.ItemPage.ItemDetailActivity">
 
-
-    <ImageView
-        android:id="@+id/goods_image_detail"
-        android:layout_width="400dp"
+    <android.support.v7.widget.RecyclerView android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true" />
+        android:id="@+id/item_detail_recycler_view"
+        />
+
 
     <TextView
         android:id="@+id/goods_name_detail"
@@ -20,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/goods_image_detail"
+        android:layout_below="@+id/item_detail_recycler_view"
         android:layout_marginLeft="46dp"
         android:layout_marginStart="46dp"
         android:layout_marginTop="18dp"

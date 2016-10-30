@@ -7,10 +7,10 @@ import java.util.List;
  * Created by arthome on 2016/10/30.
  */
 
-public enum  StringTool {
+public enum StringTool {
     INSTANCE;
 
-    public String getFirstPhotoURL(String arrayString){
+    public String getFirstPhotoURL(String arrayString) {
         arrayString = arrayString.substring(2, arrayString.length() - 2);   //去掉前後中括號
         if (arrayString.indexOf("\",\"") > 0) {     //多於兩個URL則取第一個
             arrayString = arrayString.substring(0, arrayString.indexOf("\",\""));
@@ -18,18 +18,20 @@ public enum  StringTool {
         return arrayString;
     }
 
-    public List<String> getAllPhotoURL(String arrayString){
+    public List<String> getAllPhotoURL(String arrayString) {
         List<String> urlList = new ArrayList<>();
-        arrayString = arrayString.substring(2, arrayString.length() - 2);   //去掉前後中括號
 
-        int dotPostion = arrayString.indexOf("\",\"");
-        while (dotPostion > 0){         //若一直有找到, 則取第一個URL加入list
-            urlList.add(arrayString.substring(0, dotPostion));
-            arrayString = arrayString.substring(dotPostion+3, arrayString.length());
-            dotPostion = arrayString.indexOf("\",\"");
+        if (arrayString.indexOf("[\"") == 0)    // [" 位置在字串開頭 0
+            arrayString = arrayString.substring(2, arrayString.length() - 2);   //去掉前後中括號
+
+        int dotPosition = arrayString.indexOf("\",\"");
+        while (dotPosition > 0) {         //若一直有找到, 則取第一個URL加入list
+            urlList.add(arrayString.substring(0, dotPosition));
+            arrayString = arrayString.substring(dotPosition + 3, arrayString.length());
+            dotPosition = arrayString.indexOf("\",\"");
         }
         urlList.add(arrayString);   //將剩下的最後一個url加入list
-        for(int i =0 ;i<urlList.size();i++){
+        for (int i = 0; i < urlList.size(); i++) {
         }
 
         return urlList;

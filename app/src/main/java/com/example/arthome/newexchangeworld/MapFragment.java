@@ -328,11 +328,6 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     public void setGoodsMap(List<GoodsModel> listGoodsModel) {
         BitmapDescriptor icon;
         for (int i = 0; i < listGoodsModel.size(); i++) {
-            String goods_imageUrl = listGoodsModel.get(i).getPhoto_path();
-            goods_imageUrl = StringTool.INSTANCE.getFirstPhotoURL(goods_imageUrl);
-            listGoodsModel.get(i).setPhoto_path(goods_imageUrl);
-
-
             double lat = listGoodsModel.get(i).getPosition_x();
             double lng = listGoodsModel.get(i).getPosition_y();
             String title = listGoodsModel.get(i).getName();
@@ -375,11 +370,11 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                 user_textView.setText(good.getOwner().getName());
                 goods_textView.setText(good.getName());
                 if (marker.isInfoWindowShown()) {
-                    Picasso.with(getContext()).load(good.getPhoto_path()).into(goods_image);
-                    Log.i("oscart", "shown");
+                    Picasso.with(getContext()).load(StringTool.INSTANCE.getFirstPhotoURL(good.getPhoto_path())
+                    ).into(goods_image);
                 } else { // if it's the first time, load the image with the callback set
-                    Picasso.with(getContext()).load(good.getPhoto_path()).into(goods_image, new InfoWindowRefresher(marker));
-                    Log.i("oscart", "not shown");
+                    Picasso.with(getContext()).load(StringTool.INSTANCE.getFirstPhotoURL(good.getPhoto_path())
+                    ).into(goods_image, new InfoWindowRefresher(marker));
                 }
                 return view;
             }
