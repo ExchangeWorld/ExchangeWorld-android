@@ -7,6 +7,8 @@ import com.example.arthome.newexchangeworld.Models.PostModel;
 import com.example.arthome.newexchangeworld.Models.UploadImageModel;
 import com.example.arthome.newexchangeworld.Models.UserModel;
 
+import java.util.List;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -33,4 +35,7 @@ public interface ExchangeService {
     //api/goods/post?token=
     @POST("api/goods/post")     //暫時不管ResponseType 故用ResponseBody即可
     Call<ResponseBody> upLoadGoods(@Query("token") String strToken, @Body PostModel postModel);
+
+    @GET("api/goods/search")
+    Call<List<GoodsModel>> downloadGoods();
 }

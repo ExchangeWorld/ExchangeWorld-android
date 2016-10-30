@@ -29,6 +29,7 @@ import com.example.arthome.newexchangeworld.ItemPage.ItemDetailActivity;
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.example.arthome.newexchangeworld.Models.PostModel;
 import com.example.arthome.newexchangeworld.Models.UploadImageModel;
+import com.example.arthome.newexchangeworld.util.StringTool;
 import com.facebook.Profile;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -127,7 +128,8 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                         mMap.setOnInfoWindowClickListener(myInfoWindowClickListener());
                         mMap.setOnMarkerClickListener(myMarkerClickListener());
                         mMap.setOnMarkerDragListener(myMarkerDragListener());
-                        new downloadGoodsAPI().execute("http://exwd.csie.org:43002/api/goods/search");
+//                        new downloadGoodsAPI().execute("http://exwd.csie.org:43002/api/goods/search");
+                        downloadGoods();    //下載物品&設定地圖上的icon
                     }
                 }
             });
@@ -326,6 +328,11 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     public void setGoodsMap(List<GoodsModel> listGoodsModel) {
         BitmapDescriptor icon;
         for (int i = 0; i < listGoodsModel.size(); i++) {
+            String goods_imageUrl = listGoodsModel.get(i).getPhoto_path();
+            goods_imageUrl = StringTool.INSTANCE.getFirstPhotoURL(goods_imageUrl);
+            listGoodsModel.get(i).setPhoto_path(goods_imageUrl);
+
+
             double lat = listGoodsModel.get(i).getPosition_x();
             double lng = listGoodsModel.get(i).getPosition_y();
             String title = listGoodsModel.get(i).getName();
@@ -532,5 +539,25 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         byte[] byteImage = baos.toByteArray();
         String encodedImage = Base64.encodeToString(byteImage, Base64.NO_WRAP); //NO_WRAP才不會出現換行
         return encodedImage;
+    }
+
+    public void downloadGoods() {
+        Call<List<GoodsModel>> downloadGoodsCall = new RestClient().getExchangeService().downloadGoods();
+        downloadGoodsCall.enqueue(new Callback<List<GoodsModel>>() {
+            @Override
+            public void onResponse(Call<List<GoodsModel>> call, Response<List<GoodsModel>> response) {
+                if (response.code() == 200) {
+                    List<GoodsModel> goodsModelList = response.body();
+                    setGoodsMap(goodsModelList);
+                } else {
+                    Toast.makeText(getContext(), "下載物品失敗 status Code錯誤", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<GoodsModel>> call, Throwable t) {
+                Toast.makeText(getContext(), "下載物品失敗 onFailure", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
