@@ -152,7 +152,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                     LatLng latLng = marker.getPosition();
                     //latLng = new LatLng(latLng.latitude, latLng.longitude);
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                    mMap.moveCamera(CameraUpdateFactory.scrollBy(0, -200));//move
+                    mMap.moveCamera(CameraUpdateFactory.scrollBy(0, -250));//move
                 } else {
 
                 }
@@ -356,7 +356,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             }
 
             @Override
-            public View getInfoContents(Marker marker) {    //TODO finish infowindow
+            public View getInfoContents(Marker marker) {
                 Log.i("oscart", marker.getId() + marker.getTitle());
                 View view = getActivity().getLayoutInflater().inflate(R.layout.item_goods, null);
                 TextView goods_textView = (TextView) view.findViewById(R.id.id_goods_name);
@@ -367,7 +367,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                 GoodsModel good = allMarkersMap.get(marker);
                 user_textView.setText(good.getOwner().getName());
                 goods_textView.setText(good.getName());
-                if (marker.isInfoWindowShown()) { //TODO bug, have to click twice to show pic
+                if (marker.isInfoWindowShown()) {
                     Picasso.with(getContext()).load(good.getPhoto_path()).into(goods_image);
                     Log.i("oscart", "shown");
                 } else { // if it's the first time, load the image with the callback set

@@ -34,14 +34,13 @@ public class ItemDetailActivity extends AppCompatActivity {
             if(bundle != null) {
                 String json = bundle.getString("goodModel");
                 GoodsModel goodsModel = new Gson().fromJson(json, GoodsModel.class);
-                Log.i("oscart",json);
 
                 setUpUIView();
 
                 Picasso.with(this).load(goodsModel.getPhoto_path()).into(goodsImage);
                 ownerName.setText(goodsModel.getOwner().getName());
-                goodsDescription.setText(goodsModel.getDescription());
                 goodsName.setText(goodsModel.getName());
+                goodsDescription.setText(goodsModel.getDescription());
             }
         }
 
