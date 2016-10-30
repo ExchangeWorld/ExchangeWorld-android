@@ -1,5 +1,7 @@
 package com.example.arthome.newexchangeworld;
 
+import java.util.Date;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -9,12 +11,19 @@ import io.realm.annotations.PrimaryKey;
 
 public class User extends RealmObject {
     @PrimaryKey
-    private String localUser = "me";
     private String identity;      //If it's with FB, fb_id as identity
     private String userName;
     private String photoPath;
     private String exToken;
+    private Date lastTokenDate;
 
+    public Date getLastTokenDate() {
+        return lastTokenDate;
+    }
+
+    public void setLastTokenDate(Date lastTokenDate) {
+        this.lastTokenDate = lastTokenDate;
+    }
 
     public String getIdentity() {
         return identity;

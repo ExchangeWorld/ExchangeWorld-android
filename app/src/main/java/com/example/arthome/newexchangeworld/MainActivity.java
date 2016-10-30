@@ -35,6 +35,8 @@ import com.example.arthome.newexchangeworld.Models.AuthenticationModel;
 import com.example.arthome.newexchangeworld.Models.FaceBookUser;
 import com.example.arthome.newexchangeworld.Models.PostModel;
 import com.example.arthome.newexchangeworld.Models.UserModel;
+import com.example.arthome.newexchangeworld.util.CommonAPI;
+import com.example.arthome.newexchangeworld.util.DateTool;
 import com.facebook.Profile;
 import com.google.gson.Gson;
 
@@ -53,6 +55,7 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -116,8 +119,6 @@ public class MainActivity extends AppCompatActivity
         userPhoto = (ImageView) headerView.findViewById(R.id.nav_user_image_view);
         userName = (TextView) headerView.findViewById(R.id.nav_user_name);
         userLocation = (TextView) headerView.findViewById(R.id.nav_user_location);
-//        Bitmap myhead = BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.myhead);
-//        userPhoto.setImageBitmap(getCroppedBitmap(myhead));
 
         if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -142,57 +143,13 @@ public class MainActivity extends AppCompatActivity
                 RealmManager.INSTANCE.createUser(user);
             } else {
                 User user = RealmManager.INSTANCE.retrieveUser().get(0);
-                //TODO  檢查日期 隔天才需要再拿一次EXchangeWORLD TOKEN
-//                new getTokenTask().execute(user.getIdentity());
-
+                if(!DateTool.INSTANCE.isSameDay(user.getLastTokenDate(), new Date())){  //Token過期 重新取得
+                    CommonAPI.INSTANCE.getExToken(user.getIdentity(), this);
+                    user = RealmManager.INSTANCE.retrieveUser().get(0);
+                }
                 Picasso.with(this).load(user.getPhotoPath()).transform(new CircleTransform()).into(userPhoto);
                 userName.setText(user.getUserName());
-
             }
-        }
-    }
-
-
-
-    public class getTokenTask extends AsyncTask<String,String,String> {
-
-        private AuthenticationModel authenticationModel;
-
-        @Override
-        protected String doInBackground(String... params) {
-            FaceBookUser user = new FaceBookUser();
-            user.setIdentity(params[0]);        //傳入FB ID
-            String body = new Gson().toJson(user);
-            System.out.println(">>>body="+body);
-            HttpClient client = new DefaultHttpClient();
-            HttpPost post = new HttpPost("http://exwd.csie.org:43002/api/authenticate/login");
-            post.addHeader("content-type","application/json");
-            try {
-                HttpEntity entity = new StringEntity(body);
-                post.setEntity(entity);
-                HttpResponse response = client.execute(post);
-                entity = response.getEntity();
-                String jsonString = EntityUtils.toString(entity);
-                System.out.println(">>>return String=" + jsonString);
-                authenticationModel = new Gson().fromJson(jsonString, AuthenticationModel.class);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            } catch (ClientProtocolException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return authenticationModel.getToken();
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-//            EXtoken = s;
-            User user = RealmManager.INSTANCE.retrieveUser().get(0);
-            user.setExToken(s);
-            RealmManager.INSTANCE.createUser(user);
-//            new postTask().execute(s,itemName,itemDescription);
         }
     }
 
@@ -246,29 +203,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /*              three dot setting on toolbar
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            Toast.makeText(getApplicationContext(), "Setting pressed", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }*/
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
