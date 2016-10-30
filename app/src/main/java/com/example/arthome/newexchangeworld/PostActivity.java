@@ -1,5 +1,7 @@
 package com.example.arthome.newexchangeworld;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,7 +28,7 @@ public class PostActivity extends AppCompatActivity {
     private RecyclerView postgallery;
     private EditText nameText;
     private EditText describeText;
-    private Spinner classSpinner;
+    private TextView classText;
     private TextView nameTitle;
     private TextView classTitle;
     private TextView describeTitle;
@@ -48,19 +50,31 @@ public class PostActivity extends AppCompatActivity {
         postgallery.setLayoutManager(layoutManager);
         nameText = (EditText)findViewById(R.id.nameText);
         describeText = (EditText)findViewById(R.id.describText);
-        classSpinner = (Spinner)findViewById(R.id.classSpinner);
+        classText = (TextView)findViewById(R.id.classText);
         nameTitle = (TextView)findViewById(R.id.nameTitle);
         classTitle = (TextView)findViewById(R.id.classTitle);
         describeTitle = (TextView)findViewById(R.id.describTitle);
         postButton = (Button)findViewById(R.id.postButton);
-        classList = new ArrayAdapter<String>(PostActivity.this, android.R.layout.simple_spinner_item, classType);
-        classSpinner.setAdapter(classList);
         Bundle bundle = getIntent().getExtras();
         postPic = bundle.getStringArrayList("imagePaths");
         postAdapter = new PostAdapter(postPic);
         postgallery.setAdapter(postAdapter);
         postAdapter.notifyDataSetChanged();
 
+        classText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                AlertDialog.Builder classList = new AlertDialog.Builder(PostActivity.this);
+                classList.setTitle("選擇類別");
+                classList.setItems(classType, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which){
+                        classText.setText(classType[which]);
+                    }
+                });
+                classList.show();
+            }
+        });
         postButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,7 +86,7 @@ public class PostActivity extends AppCompatActivity {
                     BufferedWriter bw = new BufferedWriter(fw); //將BufferedWeiter與FileWrite物件做連結
                     bw.write("Name = " + nameText.getText().toString());
                     bw.newLine();
-                    bw.write("Class = " + classSpinner.getSelectedItem().toString());
+                    bw.write("Class = " + classText.getText().toString());
                     bw.newLine();
                     bw.write("Description = " + describeText.getText().toString());
                     bw.newLine();
@@ -89,10 +103,10 @@ public class PostActivity extends AppCompatActivity {
                 PostModel postModel = new PostModel(nameText.getText().toString(),
                         postPic.get(0),
                         describeText.getText().toString(),
-                        classSpinner.getSelectedItem().toString()
-                        );
-                Intent i = new Intent(PostActivity.this,MainActivity.class);
-                i.putExtra("postInfo",postModel);
+                        classText.getText().toString()
+                );
+                Intent i = new Intent(PostActivity.this, MainActivity.class);
+                i.putExtra("postInfo", postModel);
                 i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
             }

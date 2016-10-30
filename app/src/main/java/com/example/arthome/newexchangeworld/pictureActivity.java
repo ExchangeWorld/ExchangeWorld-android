@@ -147,27 +147,9 @@ public class pictureActivity extends AppCompatActivity {
                 String picname = "";
                 data.putExtra("Picturename",picname);
                 imagePaths.add(picname);
-              //  photoAdapter.notifyDataSetChanged();
-          /*      Bitmap mbmp = (Bitmap) data.getExtras().getParcelable("data");
-                CameraV.setImageBitmap(mbmp);
-                CameraV.setScaleType(ImageView.ScaleType.FIT_XY);
-                postText.setVisibility(View.VISIBLE);
-                CameraV.setVisibility(View.VISIBLE);
-                cameraButton.setVisibility(View.GONE);
-                gallery.setVisibility(View.GONE);*/
             }
         }
     }
-
- /*   public void setImageView(int position){
-        Bitmap bm = BitmapFactory.decodeFile(imagePaths.get(position));
-        CameraV.setImageBitmap(bm);
-        CameraV.setScaleType(ImageView.ScaleType.FIT_XY);
-        postText.setVisibility(View.VISIBLE);
-        CameraV.setVisibility(View.VISIBLE);
-        cameraButton.setVisibility(View.GONE);
-        gallery.setVisibility(View.GONE);
-    }*/
 
     @Override
     public void onBackPressed(){
