@@ -103,7 +103,7 @@ public class PostActivity extends AppCompatActivity {
                 PostModel postModel = new PostModel(nameText.getText().toString(),
                         postPic.get(0),
                         describeText.getText().toString(),
-                        classText.getText().toString()
+                        "Books"         //TODO 這邊要叫陳弘弦改
                 );
                 Intent i = new Intent(PostActivity.this, MainActivity.class);
                 i.putExtra("postInfo", postModel);

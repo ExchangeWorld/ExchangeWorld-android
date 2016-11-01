@@ -12,8 +12,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.arthome.newexchangeworld.Constant;
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.example.arthome.newexchangeworld.R;
+import com.example.arthome.newexchangeworld.util.CategoryTool;
+import com.example.arthome.newexchangeworld.util.StringTool;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -24,23 +27,26 @@ import java.util.List;
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.myViewHolder> {
     private static MyViewHolderClicks myViewHolderClicks;
-    public interface MyViewHolderClicks{
+
+    public interface MyViewHolderClicks {
         void onGoodsClick(View itemView, int position);
     }
-    public void setMyViewHolderClicks(MyViewHolderClicks ViewHolderClicks){
+
+    public void setMyViewHolderClicks(MyViewHolderClicks ViewHolderClicks) {
         myViewHolderClicks = ViewHolderClicks;
     }
 
-    //private ArrayList<String> items = new ArrayList<>();
-    private List<GoodsModel> goodsModel ;
+    private List<GoodsModel> goodsModel;
+
     public ItemAdapter(List<GoodsModel> goodsModel) {
         this.goodsModel = goodsModel;
     }
+
     private Context context;
 
     @Override
     public myViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        context=parent.getContext();
+        context = parent.getContext();
         View view = LayoutInflater.from(context).inflate(R.layout.item_goods, parent, false);
         //for  MyViewHolderClicks
         myViewHolder viewHolder = new myViewHolder(view);
@@ -55,16 +61,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.myViewHolder> 
     @Override
     public void onBindViewHolder(myViewHolder viewHolder, int position) { //change list_item name here
         //  String info = items.get(position);
-            viewHolder.goods_textView.setText(goodsModel.get(position).getName());
-            Picasso.with(context).load(goodsModel.get(position).getPhoto_path()).into(viewHolder.goods_image);
-            switch (goodsModel.get(position).getCategory()) {
-                case "Books":
-                    viewHolder.category_image.setImageResource(R.drawable.ic_book);
-                    break;
-                default:
-                    break;
-            }
-            viewHolder.user_textView.setText(goodsModel.get(position).getOwner().getName());
+        viewHolder.goods_textView.setText(goodsModel.get(position).getName());
+        Picasso.with(context).load(StringTool.INSTANCE.getFirstPhotoURL(goodsModel.get(position).getPhoto_path()))
+                .into(viewHolder.goods_image);
+        viewHolder.category_image.setImageResource(
+                CategoryTool.INSTANCE.getCategoryDrawableID(goodsModel.get(position).getCategory()));
+        viewHolder.user_textView.setText(goodsModel.get(position).getOwner().getName());
     }
 
     @Override
@@ -72,13 +74,14 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.myViewHolder> 
         return goodsModel.size();
     }
 
-    static class myViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    static class myViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView goods_textView;
         private TextView user_textView;
         private ImageView category_image;
         private ImageView goods_image;
         private ImageView user_image;
         private CardView mCardView;
+
         public myViewHolder(View itemView) {
             super(itemView);
             SetUpUIViews();
@@ -86,20 +89,22 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.myViewHolder> 
             user_textView.setOnClickListener(this);
             user_image.setOnClickListener(this);
         }
+
         @Override
         public void onClick(View v) {
             // Triggers click upwards to the adapter on click
             if (myViewHolderClicks != null)
-                switch (v.getId()){
-                    case R.id.user_image :
-                    case R.id.id_user_name :
-                        Log.i("oscart","user clicked");  //TODO go to user page
+                switch (v.getId()) {
+                    case R.id.user_image:
+                    case R.id.id_user_name:
+                        Log.i("oscart", "user clicked");  //TODO go to user page
                         break;
                     default:
-                        myViewHolderClicks.onGoodsClick(itemView,getLayoutPosition());
+                        myViewHolderClicks.onGoodsClick(itemView, getLayoutPosition());
                 }
         }
-        public void SetUpUIViews(){
+
+        public void SetUpUIViews() {
             goods_textView = (TextView) itemView.findViewById(R.id.id_goods_name);
             user_textView = (TextView) itemView.findViewById(R.id.id_user_name);
             category_image = (ImageView) itemView.findViewById(R.id.category_image);

@@ -29,6 +29,7 @@ import com.example.arthome.newexchangeworld.ItemPage.ItemDetailActivity;
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.example.arthome.newexchangeworld.Models.PostModel;
 import com.example.arthome.newexchangeworld.Models.UploadImageModel;
+import com.example.arthome.newexchangeworld.util.StringTool;
 import com.facebook.Profile;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -73,6 +74,10 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * A fragment that launches other parts of the demo application.
@@ -127,7 +132,8 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                         mMap.setOnInfoWindowClickListener(myInfoWindowClickListener());
                         mMap.setOnMarkerClickListener(myMarkerClickListener());
                         mMap.setOnMarkerDragListener(myMarkerDragListener());
-                        new downloadGoodsAPI().execute("http://exwd.csie.org:43002/api/goods/search");
+//                        new downloadGoodsAPI().execute("http://exwd.csie.org:43002/api/goods/search");
+                        downloadGoods();    //下載物品&設定地圖上的icon
                     }
                 }
             });
@@ -152,7 +158,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                     LatLng latLng = marker.getPosition();
                     //latLng = new LatLng(latLng.latitude, latLng.longitude);
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                    mMap.moveCamera(CameraUpdateFactory.scrollBy(0, -200));//move
+                    mMap.moveCamera(CameraUpdateFactory.scrollBy(0, -250));//move
                 } else {
 
                 }
@@ -212,29 +218,72 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                 postModelDetail.setPosition_x((float) draggableMarker.getPosition().longitude);
                 postModelDetail.setPosition_y((float) draggableMarker.getPosition().latitude);
 //                new  uploadImageTask().execute(postModelDetail);
-                Call<ResponseBody> call = new RestClient().getExchangeService().upLoadImage(user.getExToken(),
-                        new UploadImageModel(convertPathTOBase(postModelDetail.getPhoto_path())));
-                call.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if (response.code() == 200) {   //上傳成功
-                            try {
-                                postModelDetail.setPhoto_path(response.body().string());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        } else if (response.code() == 403) {
-                            Toast.makeText(getContext(), "Token過期 上傳圖片失敗", Toast.LENGTH_SHORT).show();
-                        }
-                    }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Toast.makeText(getContext(), "上傳圖片失敗 onFailure", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                Observable<ResponseBody> call = new RestClient().getExchangeService().upLoadImageRxJava(user.getExToken(),
+                        new UploadImageModel(convertPathTOBase(postModelDetail.getPhoto_path())));
+                call.subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Subscriber<ResponseBody>() {
+                            @Override
+                            public void onCompleted() {
+                                System.out.println(">>>onCompleted");
+                                Call<ResponseBody> uploadGood = new RestClient().getExchangeService().upLoadGoods(user.getExToken(), postModelDetail);
+                                uploadGood.enqueue(new Callback<ResponseBody>() {
+                                    @Override
+                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                        if (response.code() == 201)
+                                            Toast.makeText(getContext(), "上傳成功", Toast.LENGTH_SHORT).show();
+                                        else
+                                            Toast.makeText(getContext(), "上傳失敗 status code錯誤", Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                        Toast.makeText(getContext(), "上傳物品失敗 onFailure", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Toast.makeText(getContext(), "上傳圖片失敗 onError", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onNext(ResponseBody responseBody) {
+                                try {
+                                    postModelDetail.setPhoto_path(responseBody.string());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+
+
+//                Call<ResponseBody> call = new RestClient().getExchangeService().upLoadImage(user.getExToken(),
+//                        new UploadImageModel(convertPathTOBase(postModelDetail.getPhoto_path())));
+//                call.enqueue(new Callback<ResponseBody>() {
+//                    @Override
+//                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                        if (response.code() == 200) {   //上傳成功
+//                            try {
+//                                postModelDetail.setPhoto_path(response.body().string());
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
+//                        } else if (response.code() == 403) {
+//                            Toast.makeText(getContext(), "Token過期 上傳圖片失敗", Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+//                        Toast.makeText(getContext(), "上傳圖片失敗 onFailure", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
 
                 setUploadView(false);
+
                 break;
         }
     }
@@ -356,7 +405,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             }
 
             @Override
-            public View getInfoContents(Marker marker) {    //TODO finish infowindow
+            public View getInfoContents(Marker marker) {
                 Log.i("oscart", marker.getId() + marker.getTitle());
                 View view = getActivity().getLayoutInflater().inflate(R.layout.item_goods, null);
                 TextView goods_textView = (TextView) view.findViewById(R.id.id_goods_name);
@@ -367,12 +416,12 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                 GoodsModel good = allMarkersMap.get(marker);
                 user_textView.setText(good.getOwner().getName());
                 goods_textView.setText(good.getName());
-                if (marker.isInfoWindowShown()) { //TODO bug, have to click twice to show pic
-                    Picasso.with(getContext()).load(good.getPhoto_path()).into(goods_image);
-                    Log.i("oscart", "shown");
+                if (marker.isInfoWindowShown()) {
+                    Picasso.with(getContext()).load(StringTool.INSTANCE.getFirstPhotoURL(good.getPhoto_path())
+                    ).into(goods_image);
                 } else { // if it's the first time, load the image with the callback set
-                    Picasso.with(getContext()).load(good.getPhoto_path()).into(goods_image, new InfoWindowRefresher(marker));
-                    Log.i("oscart", "not shown");
+                    Picasso.with(getContext()).load(StringTool.INSTANCE.getFirstPhotoURL(good.getPhoto_path())
+                    ).into(goods_image, new InfoWindowRefresher(marker));
                 }
                 return view;
             }
@@ -532,5 +581,25 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         byte[] byteImage = baos.toByteArray();
         String encodedImage = Base64.encodeToString(byteImage, Base64.NO_WRAP); //NO_WRAP才不會出現換行
         return encodedImage;
+    }
+
+    public void downloadGoods() {
+        Call<List<GoodsModel>> downloadGoodsCall = new RestClient().getExchangeService().downloadGoods();
+        downloadGoodsCall.enqueue(new Callback<List<GoodsModel>>() {
+            @Override
+            public void onResponse(Call<List<GoodsModel>> call, Response<List<GoodsModel>> response) {
+                if (response.code() == 200) {
+                    List<GoodsModel> goodsModelList = response.body();
+                    setGoodsMap(goodsModelList);
+                } else {
+                    Toast.makeText(getContext(), "下載物品失敗 status Code錯誤", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<GoodsModel>> call, Throwable t) {
+                Toast.makeText(getContext(), "下載物品失敗 onFailure", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
