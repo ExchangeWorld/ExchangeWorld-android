@@ -1,5 +1,6 @@
 package com.example.arthome.newexchangeworld.ItemPage;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,8 +21,10 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.arthome.newexchangeworld.R;
 import com.example.arthome.newexchangeworld.pictureActivity;
+import com.squareup.picasso.Picasso;
 
 
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder>{
@@ -46,11 +49,11 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder>{
         public void onClick(View v){
             if(checkBox.isChecked()) {
                 checkBox.setChecked(false);
-                CheckedPic.set((int)imageView.getTag(),false);
+                CheckedPic.set((int)imageView.getTag(R.string.app_name),false);
             }
             else {
                 checkBox.setChecked(true);
-                CheckedPic.set((int)imageView.getTag(),true);
+                CheckedPic.set((int)imageView.getTag(R.string.app_name),true);
             }
             pictureClickListener.onPictureClick(itemView);
         }
@@ -75,9 +78,9 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(ViewHolder holder,int position){
-        BitmapFactory.Options option = new BitmapFactory.Options();
+   /*BitmapFactory.Options option = new BitmapFactory.Options();
         option.inPurgeable = true;
-        option.inSampleSize = 5;
+        option.inSampleSize = 5;*/
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
         float dd = dm.density;
         float px = 25 * dd;
@@ -86,12 +89,13 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder>{
         ViewGroup.LayoutParams params = holder.imageView.getLayoutParams();
         params.height = picWidth;
         params.width = picWidth;
-        Bitmap bm = BitmapFactory.decodeFile(coll.get(position).toString(), option);
+     /*   Bitmap bm = BitmapFactory.decodeFile(coll.get(position).toString(), option);*/
         holder.imageView.setId(position);
-        holder.imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        holder.imageView.setImageBitmap(bm);
+  /*      holder.imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        holder.imageView.setImageBitmap(bm);*/
         holder.viewGroup.setLayoutParams(params);
-        holder.imageView.setTag(position);
+        holder.imageView.setTag(R.string.app_name,position);
+        Glide.with(context).load(new File(coll.get(position).toString())).centerCrop().into(holder.imageView);
 
     }
 
