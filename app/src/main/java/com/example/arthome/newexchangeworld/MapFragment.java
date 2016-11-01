@@ -74,6 +74,10 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * A fragment that launches other parts of the demo application.
@@ -214,29 +218,72 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                 postModelDetail.setPosition_x((float) draggableMarker.getPosition().longitude);
                 postModelDetail.setPosition_y((float) draggableMarker.getPosition().latitude);
 //                new  uploadImageTask().execute(postModelDetail);
-                Call<ResponseBody> call = new RestClient().getExchangeService().upLoadImage(user.getExToken(),
-                        new UploadImageModel(convertPathTOBase(postModelDetail.getPhoto_path())));
-                call.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if (response.code() == 200) {   //上傳成功
-                            try {
-                                postModelDetail.setPhoto_path(response.body().string());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        } else if (response.code() == 403) {
-                            Toast.makeText(getContext(), "Token過期 上傳圖片失敗", Toast.LENGTH_SHORT).show();
-                        }
-                    }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Toast.makeText(getContext(), "上傳圖片失敗 onFailure", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                Observable<ResponseBody> call = new RestClient().getExchangeService().upLoadImageRxJava(user.getExToken(),
+                        new UploadImageModel(convertPathTOBase(postModelDetail.getPhoto_path())));
+                call.subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Subscriber<ResponseBody>() {
+                            @Override
+                            public void onCompleted() {
+                                System.out.println(">>>onCompleted");
+                                Call<ResponseBody> uploadGood = new RestClient().getExchangeService().upLoadGoods(user.getExToken(), postModelDetail);
+                                uploadGood.enqueue(new Callback<ResponseBody>() {
+                                    @Override
+                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                        if (response.code() == 201)
+                                            Toast.makeText(getContext(), "上傳成功", Toast.LENGTH_SHORT).show();
+                                        else
+                                            Toast.makeText(getContext(), "上傳失敗 status code錯誤", Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                        Toast.makeText(getContext(), "上傳物品失敗 onFailure", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Toast.makeText(getContext(), "上傳圖片失敗 onError", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onNext(ResponseBody responseBody) {
+                                try {
+                                    postModelDetail.setPhoto_path(responseBody.string());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+
+
+//                Call<ResponseBody> call = new RestClient().getExchangeService().upLoadImage(user.getExToken(),
+//                        new UploadImageModel(convertPathTOBase(postModelDetail.getPhoto_path())));
+//                call.enqueue(new Callback<ResponseBody>() {
+//                    @Override
+//                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                        if (response.code() == 200) {   //上傳成功
+//                            try {
+//                                postModelDetail.setPhoto_path(response.body().string());
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
+//                        } else if (response.code() == 403) {
+//                            Toast.makeText(getContext(), "Token過期 上傳圖片失敗", Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+//                        Toast.makeText(getContext(), "上傳圖片失敗 onFailure", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
 
                 setUploadView(false);
+
                 break;
         }
     }

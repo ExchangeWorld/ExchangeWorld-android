@@ -3,6 +3,7 @@ package com.example.arthome.newexchangeworld.ExchangeAPI;
 import com.google.gson.Gson;
 
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -18,7 +19,9 @@ public class RestClient
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
+
 
         apiService = retrofit.create(ExchangeService.class);
     }
