@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -231,9 +232,10 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                                 uploadGood.enqueue(new Callback<ResponseBody>() {
                                     @Override
                                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                        if (response.code() == 201)
+                                        if (response.code() == 201) {
                                             Toast.makeText(getContext(), "上傳成功", Toast.LENGTH_SHORT).show();
-                                        else
+                                            downloadGoods();
+                                        }else
                                             Toast.makeText(getContext(), "上傳失敗 status code錯誤", Toast.LENGTH_SHORT).show();
                                     }
 
@@ -258,29 +260,6 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                                 }
                             }
                         });
-
-
-//                Call<ResponseBody> call = new RestClient().getExchangeService().upLoadImage(user.getExToken(),
-//                        new UploadImageModel(convertPathTOBase(postModelDetail.getPhoto_path())));
-//                call.enqueue(new Callback<ResponseBody>() {
-//                    @Override
-//                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-//                        if (response.code() == 200) {   //上傳成功
-//                            try {
-//                                postModelDetail.setPhoto_path(response.body().string());
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                            }
-//                        } else if (response.code() == 403) {
-//                            Toast.makeText(getContext(), "Token過期 上傳圖片失敗", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-//                        Toast.makeText(getContext(), "上傳圖片失敗 onFailure", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
 
                 setUploadView(false);
 
@@ -373,6 +352,10 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     ImageView user_image;
 
     public void setGoodsMap(List<GoodsModel> listGoodsModel) {
+        mMap.clear();   //清除所有marker
+        allMarkersMap.clear();
+
+
         BitmapDescriptor icon;
         for (int i = 0; i < listGoodsModel.size(); i++) {
             double lat = listGoodsModel.get(i).getPosition_x();
@@ -396,7 +379,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             }
             Marker marker = mMap.addMarker(new MarkerOptions().position(sydney).title(title).icon(icon));
             allMarkersMap.put(marker, listGoodsModel.get(i));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 15)); //for test, remove later
+//            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 15)); //for test, remove later
         }
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {//InfoWindow
             @Override
@@ -601,5 +584,30 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                 Toast.makeText(getContext(), "下載物品失敗 onFailure", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void marshmallowGPSPremissionCheck() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && getActivity().checkSelfPermission(
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && getActivity().checkSelfPermission(
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.ACCESS_FINE_LOCATION},
+                    Constant.PERMISSION_LOCATION);
+        } else {
+            //   gps functions.
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == Constant.PERMISSION_LOCATION
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            //  gps functionality
+        }
     }
 }

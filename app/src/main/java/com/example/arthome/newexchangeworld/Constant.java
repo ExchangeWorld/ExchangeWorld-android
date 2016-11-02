@@ -22,4 +22,7 @@ public class Constant {
     public static final String CATEGORY_3C = "3C";
     public static final String CATEGORY_TEXTBOOKS = "Textbooks";
     public static final String CATEGORY_BOOKS = "Books";
+
+    //permission
+    public static final int PERMISSION_LOCATION = 1001;
 }
