@@ -47,10 +47,14 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder>{
         }
         @Override
         public void onClick(View v){
-            if((boolean)CheckedPic.get((int)imageView.getTag(R.string.app_name)))
-                CheckedPic.set((int)imageView.getTag(R.string.app_name),false);
-            else
-                CheckedPic.set((int)imageView.getTag(R.string.app_name),true);
+            if((boolean)CheckedPic.get((int)imageView.getTag(R.string.app_name))) {
+                CheckedPic.set((int) imageView.getTag(R.string.app_name), false);
+                checkBox.setChecked(false);
+            }
+            else {
+                CheckedPic.set((int) imageView.getTag(R.string.app_name), true);
+                checkBox.setChecked(true);
+            }
             pictureClickListener.onPictureClick(itemView);
         }
     }
