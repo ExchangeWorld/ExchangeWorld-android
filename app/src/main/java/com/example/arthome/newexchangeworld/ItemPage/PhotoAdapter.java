@@ -47,14 +47,10 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder>{
         }
         @Override
         public void onClick(View v){
-            if(checkBox.isChecked()) {
-                checkBox.setChecked(false);
+            if((boolean)CheckedPic.get((int)imageView.getTag(R.string.app_name)))
                 CheckedPic.set((int)imageView.getTag(R.string.app_name),false);
-            }
-            else {
-                checkBox.setChecked(true);
+            else
                 CheckedPic.set((int)imageView.getTag(R.string.app_name),true);
-            }
             pictureClickListener.onPictureClick(itemView);
         }
     }
@@ -96,6 +92,10 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder>{
         holder.viewGroup.setLayoutParams(params);
         holder.imageView.setTag(R.string.app_name,position);
         Glide.with(context).load(new File(coll.get(position).toString())).centerCrop().into(holder.imageView);
+        if((boolean)CheckedPic.get(position))
+            holder.checkBox.setChecked(true);
+        else
+            holder.checkBox.setChecked(false);
 
     }
 
@@ -126,5 +126,6 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder>{
     public void setPictureClickListener(PictureClickListener p){
         pictureClickListener = p;
     }
+
 
 }

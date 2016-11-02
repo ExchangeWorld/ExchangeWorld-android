@@ -176,6 +176,7 @@ public class pictureActivity extends AppCompatActivity {
                     nextButton.setEnabled(true);
                 else
                     nextButton.setEnabled(false);
+                photoAdapter.notifyDataSetChanged();
             }
         });
         gallery.setAdapter(photoAdapter);
