@@ -27,7 +27,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.Toast;
+
 import static android.Manifest.permission.*;
+
 import android.widget.TextView;
 
 import com.example.arthome.newexchangeworld.ExchangeAPI.RestClient;
@@ -72,10 +74,10 @@ public class MainActivity extends AppCompatActivity
     private TextView userName;
     private TextView userLocation;
 
-    public void camera(View view){
-        int permission = ActivityCompat.checkSelfPermission(MainActivity.this,READ_EXTERNAL_STORAGE);
-        if(permission!= PackageManager.PERMISSION_GRANTED)
-            ActivityCompat.requestPermissions(MainActivity.this,new String[]{READ_EXTERNAL_STORAGE,WRITE_EXTERNAL_STORAGE},0);
+    public void camera(View view) {
+        int permission = ActivityCompat.checkSelfPermission(MainActivity.this, READ_EXTERNAL_STORAGE);
+        if (permission != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE}, 0);
         else
             toGallery();
 
@@ -132,7 +134,7 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
 
-        if(Profile.getCurrentProfile()!=null) {
+        if (Profile.getCurrentProfile() != null) {
             String id = Profile.getCurrentProfile().getId();
             System.out.println(">>>main id= " + id);
             if (RealmManager.INSTANCE.retrieveUser().size() == 0) {
@@ -143,9 +145,14 @@ public class MainActivity extends AppCompatActivity
                 RealmManager.INSTANCE.createUser(user);
             } else {
                 User user = RealmManager.INSTANCE.retrieveUser().get(0);
-                if(!DateTool.INSTANCE.isSameDay(user.getLastTokenDate(), new Date())){  //Token過期 重新取得
+                if (user.getLastTokenDate() == null) {
                     CommonAPI.INSTANCE.getExToken(user.getIdentity(), this);
                     user = RealmManager.INSTANCE.retrieveUser().get(0);
+                } else {
+                    if (!DateTool.INSTANCE.isSameDay(user.getLastTokenDate(), new Date())) {  //Token過期 重新取得
+                        CommonAPI.INSTANCE.getExToken(user.getIdentity(), this);
+                        user = RealmManager.INSTANCE.retrieveUser().get(0);
+                    }
                 }
                 Picasso.with(this).load(user.getPhotoPath()).transform(new CircleTransform()).into(userPhoto);
                 userName.setText(user.getUserName());
@@ -153,16 +160,18 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void toGallery(){
+    public void toGallery() {
         Intent intent = new Intent();
         intent.setClass(MainActivity.this, pictureActivity.class);
         startActivity(intent);
     }
+
     @Override
-    public void onRequestPermissionsResult(int requestCode,String[] permission,int [] grantResult) {
-        if(requestCode==0)
+    public void onRequestPermissionsResult(int requestCode, String[] permission, int[] grantResult) {
+        if (requestCode == 0)
             toGallery();
     }
+
     @Override
     public void onBackPressed() {
         //// TODO: need fix to be better
@@ -193,11 +202,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onNewIntent(Intent intent) { //從post Activity回到Main會call
         super.onNewIntent(intent);
-        if (intent.getFlags() == Intent.FLAG_ACTIVITY_CLEAR_TOP){
+        if (intent.getFlags() == Intent.FLAG_ACTIVITY_CLEAR_TOP) {
 
             MapFragment mapFragment = tabFragment.getMapFragment();
             PostModel postModel = (PostModel) intent.getExtras().getSerializable("postInfo");
-            System.out.println(">>>post "+postModel.getName());
+            System.out.println(">>>post " + postModel.getName());
             mapFragment.setPostModelDetail(postModel);
             mapFragment.setUploadView(true);
         }

@@ -99,6 +99,7 @@ public class Login extends AppCompatActivity {
                     RealmManager.INSTANCE.createUser(user);
                 }
                 CommonAPI.INSTANCE.getExToken(fbID,getApplicationContext());
+
                 getAndSaveUserInfo(0,fbID);
             }
 
