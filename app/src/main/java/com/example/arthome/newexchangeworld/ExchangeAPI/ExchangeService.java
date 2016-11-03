@@ -15,6 +15,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
@@ -53,5 +54,9 @@ public interface ExchangeService {
     //exwd.csie.org:43002/api/goods/of?owner_uid=2
     @GET("api/goods/of")
     Call<List<GoodsModel>> downloadMyGoods(@Query("owner_uid") int strOwnerUID);
+
+    //exwd.csie.org:43002/api/goods/delete?gid=131&token=1d1f66cb89bf2f19b6e12b35a6c36f8cd1388cdb
+    @DELETE("api/goods/delete")
+    Call<ResponseBody> deleteGoods(@Query("gid") int gid, @Query("token") String strToken);
 
 }

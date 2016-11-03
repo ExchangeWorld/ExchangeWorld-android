@@ -96,11 +96,10 @@ public class MyItemFragment extends Fragment {
                     mAdapter.setMyViewHolderClicks(new MyItemAdapter.MyViewHolderClicks() {
                         @Override
                         public void onGoodsClick(View itemView, int position) {
-//                            GoodsModel goodsModel = response.body().get(position);
-//                            Intent intent = new Intent(getActivity(), ItemDetailActivity.class);
-//                            intent.putExtra("goodModel", new Gson().toJson(goodsModel));
-//                            startActivity(intent);
-                            //TODO 開啟詳細資料
+                            GoodsModel goodsModel = response.body().get(position);
+                            Intent intent = new Intent(getActivity(), MyItemDetailActivity.class);
+                            intent.putExtra("goodModel", new Gson().toJson(goodsModel));
+                            startActivity(intent);
                         }
                     });
                     mRecyclerView.setAdapter(mAdapter);
