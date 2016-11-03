@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity
     private ImageView userPhoto;
     private TextView userName;
     private TextView userLocation;
+    private User user;
 
     public void camera(View view) {
         int permission = ActivityCompat.checkSelfPermission(MainActivity.this, READ_EXTERNAL_STORAGE);
@@ -114,31 +115,48 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-
-        if (Profile.getCurrentProfile() != null) {
-            String id = Profile.getCurrentProfile().getId();
-            System.out.println(">>>main id= " + id);
-            if (RealmManager.INSTANCE.retrieveUser().size() == 0) {
-                User user = new User();
-                user.setIdentity(Profile.getCurrentProfile().getId());
-                user.setUserName(Profile.getCurrentProfile().getName());
-
-                RealmManager.INSTANCE.createUser(user);
+        if(RealmManager.INSTANCE.retrieveUser().size()==0){
+            userPhoto.setImageResource(R.drawable.default_user);
+            userName.setText("請登入");
+        }else {
+            user = RealmManager.INSTANCE.retrieveUser().get(0);
+            if (user.getLastTokenDate() == null) {
+                CommonAPI.INSTANCE.getExToken(user.getIdentity(), this);
+                user = RealmManager.INSTANCE.retrieveUser().get(0);
             } else {
-                User user = RealmManager.INSTANCE.retrieveUser().get(0);
-                if (user.getLastTokenDate() == null) {
+                if (!DateTool.INSTANCE.isSameDay(user.getLastTokenDate(), new Date())) {  //Token過期 重新取得
                     CommonAPI.INSTANCE.getExToken(user.getIdentity(), this);
                     user = RealmManager.INSTANCE.retrieveUser().get(0);
-                } else {
-                    if (!DateTool.INSTANCE.isSameDay(user.getLastTokenDate(), new Date())) {  //Token過期 重新取得
-                        CommonAPI.INSTANCE.getExToken(user.getIdentity(), this);
-                        user = RealmManager.INSTANCE.retrieveUser().get(0);
-                    }
                 }
-                Picasso.with(this).load(user.getPhotoPath()).transform(new CircleTransform()).into(userPhoto);
-                userName.setText(user.getUserName());
             }
+            Picasso.with(this).load(user.getPhotoPath()).transform(new CircleTransform()).into(userPhoto);
+            userName.setText(user.getUserName());
         }
+
+//        if (Profile.getCurrentProfile() != null) {
+//            String id = Profile.getCurrentProfile().getId();
+//            System.out.println(">>>main id= " + id);
+//            if (RealmManager.INSTANCE.retrieveUser().size() == 0) {
+//                User user = new User();
+//                user.setIdentity(Profile.getCurrentProfile().getId());
+//                user.setUserName(Profile.getCurrentProfile().getName());
+//
+//                RealmManager.INSTANCE.createUser(user);
+//            } else {
+//                User user = RealmManager.INSTANCE.retrieveUser().get(0);
+//                if (user.getLastTokenDate() == null) {
+//                    CommonAPI.INSTANCE.getExToken(user.getIdentity(), this);
+//                    user = RealmManager.INSTANCE.retrieveUser().get(0);
+//                } else {
+//                    if (!DateTool.INSTANCE.isSameDay(user.getLastTokenDate(), new Date())) {  //Token過期 重新取得
+//                        CommonAPI.INSTANCE.getExToken(user.getIdentity(), this);
+//                        user = RealmManager.INSTANCE.retrieveUser().get(0);
+//                    }
+//                }
+//                Picasso.with(this).load(user.getPhotoPath()).transform(new CircleTransform()).into(userPhoto);
+//                userName.setText(user.getUserName());
+//            }
+//        }
     }
 
     public void toGallery() {

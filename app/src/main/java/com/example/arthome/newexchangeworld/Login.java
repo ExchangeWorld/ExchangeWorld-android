@@ -25,6 +25,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.Profile;
+import com.facebook.ProfileTracker;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
@@ -51,6 +52,7 @@ public class Login extends AppCompatActivity {
     private String EXtoken;
     private String itemName;
     private String itemDescription;
+    private ProfileTracker mProfileTracker;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,21 +88,26 @@ public class Login extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Profile profile = Profile.getCurrentProfile();
-                System.out.println(">>>onSuccess");
-                System.out.println(">>>"+loginResult.getAccessToken().getToken());
-                System.out.println(">>>hash="+loginResult.getAccessToken().getToken().hashCode());
-                System.out.println(">>>id="+loginResult.getAccessToken().getUserId());
-                Fbtoken = loginResult.getAccessToken();
-                fbID = Fbtoken.getUserId();
-                System.out.println(">>onSuccess "+fbID);
-                if(RealmManager.INSTANCE.retrieveUser().size()==0) {
-                    User user = new User();
-                    user.setIdentity(fbID);
-                    RealmManager.INSTANCE.createUser(user);
+                if(Profile.getCurrentProfile() == null) {
+                    System.out.println(">>>onSuccess");
+                    System.out.println(">>>" + loginResult.getAccessToken().getToken());
+                    System.out.println(">>>hash=" + loginResult.getAccessToken().getToken().hashCode());
+                    System.out.println(">>>id=" + loginResult.getAccessToken().getUserId());
+                    mProfileTracker = new ProfileTracker() {
+                        @Override
+                        protected void onCurrentProfileChanged(Profile oldProfile, Profile currentProfile) {
+                            if(currentProfile==null && RealmManager.INSTANCE.retrieveUser().size()!=0){   //使用者登出, 且手機資料庫尚有使用者資料
+                                RealmManager.INSTANCE.deleteAllUser();
+                            }else if(!(currentProfile==null)){
+                                User user = new User();
+                                user.setIdentity(currentProfile.getId());
+                                RealmManager.INSTANCE.createUser(user);
+                                CommonAPI.INSTANCE.getExToken(currentProfile.getId(), getApplicationContext());
+                                getAndSaveUserInfo(0, currentProfile.getId());
+                            }
+                        }
+                    };
                 }
-                CommonAPI.INSTANCE.getExToken(fbID,getApplicationContext());
-
-                getAndSaveUserInfo(0,fbID);
             }
 
             @Override
