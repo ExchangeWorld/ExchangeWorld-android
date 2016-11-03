@@ -140,7 +140,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             });
         }
 
-        if (Profile.getCurrentProfile() != null) {
+        if (RealmManager.INSTANCE.retrieveUser().size()!=0) {
             user = RealmManager.INSTANCE.retrieveUser().get(0);
             exToken = user.getExToken();
             System.out.println(">>>map找到user name is " + user.getUserName());
