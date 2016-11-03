@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -14,87 +15,116 @@
 
             <LinearLayout
                 android:orientation="horizontal"
+                android:layout_margin="4dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <com.example.arthome.newexchangeworld.CustomViews.CustomCategoryView android:layout_height="200dp"
-                    android:layout_width="200dp" />
+                android:layout_height="match_parent"
+                android:weightSum="2">
+                <com.example.arthome.newexchangeworld.CustomViews.CustomCategoryView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:id="@+id/category_books"
+                    custom:categoryName="書籍"
+                    custom:categoryImageID="@drawable/category_books"/>
+                <com.example.arthome.newexchangeworld.CustomViews.CustomCategoryView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:id="@+id/category_3c"
+                    custom:categoryName="3C用品"
+                    custom:categoryImageID="@drawable/category_3c"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"
+
+                android:weightSum="2">
+                <com.example.arthome.newexchangeworld.CustomViews.CustomCategoryView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:id="@+id/category_textbooks"
+                    custom:categoryName="教科書"
+                    custom:categoryImageID="@drawable/category_textbooks"/>
+                <com.example.arthome.newexchangeworld.CustomViews.CustomCategoryView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:id="@+id/category_clothes"
+                    custom:categoryName="潮流衣物"
+                    custom:categoryImageID="@drawable/category_clothes"/>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"
+
+                android:weightSum="2">
+                <com.example.arthome.newexchangeworld.CustomViews.CustomCategoryView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:id="@+id/category_cosmetic"
+                    custom:categoryName="美妝用品"
+                    custom:categoryImageID="@drawable/category_cosmetic"/>
+                <com.example.arthome.newexchangeworld.CustomViews.CustomCategoryView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:id="@+id/category_others"
+                    custom:categoryName="其他"
+                    custom:categoryImageID="@drawable/category_others"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"
+                android:weightSum="2">
+                <com.example.arthome.newexchangeworld.CustomViews.CustomCategoryView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:id="@+id/category_food"
+                    custom:categoryName="食物"
+                    custom:categoryImageID="@drawable/category_food"/>
+                <com.example.arthome.newexchangeworld.CustomViews.CustomCategoryView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:id="@+id/category_games"
+                    custom:categoryName="電玩遊戲"
+                    custom:categoryImageID="@drawable/category_games"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"
+                android:weightSum="2">
+                <com.example.arthome.newexchangeworld.CustomViews.CustomCategoryView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:id="@+id/category_houseware"
+                    custom:categoryName="家庭用品"
+                    custom:categoryImageID="@drawable/category_houseware"/>
+                <com.example.arthome.newexchangeworld.CustomViews.CustomCategoryView
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:id="@+id/category_sports"
+                    custom:categoryName="體育用品"
+                    custom:categoryImageID="@drawable/category_sports"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="書籍"
-        android:id="@+id/category_books"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="40dp"
-        android:layout_above="@+id/category_textbooks"
-        android:layout_marginBottom="30dp"
-        android:drawableTop="@drawable/category_books"
-        android:gravity="center"/>
-
-    <TextView
-        android:gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="3C用品"
-        android:id="@+id/category_3c"
-        android:layout_marginLeft="54dp"
-        android:drawableTop="@drawable/category_3c"
-        android:layout_alignTop="@+id/category_books"
-        android:layout_toRightOf="@+id/category_books"
-        android:layout_toEndOf="@+id/category_books"
-        android:layout_marginStart="54dp" />
-
-    <TextView
-        android:gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="教科書"
-        android:id="@+id/category_textbooks"
-        android:drawableTop="@drawable/category_textbooks"
-        android:layout_centerVertical="true"
-        android:layout_alignLeft="@+id/category_books"
-        android:layout_alignStart="@+id/category_books" />
-
-    <TextView
-        android:gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="潮流衣物"
-        android:id="@+id/category_clothes"
-        android:drawableTop="@drawable/category_clothes"
-        android:layout_centerVertical="true"
-        android:layout_alignLeft="@+id/category_3c"
-        android:layout_alignStart="@+id/category_3c" />
-
-    <TextView
-        android:gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="美妝用品"
-        android:id="@+id/category_cosmetic"
-        android:drawableTop="@drawable/category_cosmetic"
-        android:layout_alignParentBottom="true"
-        android:layout_alignLeft="@+id/category_textbooks"
-        android:layout_alignStart="@+id/category_textbooks" />
-
-    <TextView
-        android:gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="其他"
-        android:id="@+id/category_others"
-        android:drawableTop="@drawable/category_others"
-        android:layout_alignTop="@+id/category_cosmetic"
-        android:layout_alignLeft="@+id/category_clothes"
-        android:layout_alignStart="@+id/category_clothes" />
 </RelativeLayout>
