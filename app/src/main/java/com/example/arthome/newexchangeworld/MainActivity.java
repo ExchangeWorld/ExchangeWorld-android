@@ -32,38 +32,19 @@ import static android.Manifest.permission.*;
 
 import android.widget.TextView;
 
-import com.example.arthome.newexchangeworld.ExchangeAPI.RestClient;
-import com.example.arthome.newexchangeworld.Models.AuthenticationModel;
-import com.example.arthome.newexchangeworld.Models.FaceBookUser;
 import com.example.arthome.newexchangeworld.Models.PostModel;
-import com.example.arthome.newexchangeworld.Models.UserModel;
 import com.example.arthome.newexchangeworld.util.CommonAPI;
 import com.example.arthome.newexchangeworld.util.DateTool;
 import com.facebook.Profile;
-import com.google.gson.Gson;
 
 
 import com.facebook.FacebookSdk;
 import com.squareup.picasso.Picasso;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 import io.realm.Realm;
-import io.realm.RealmResults;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 
 public class MainActivity extends AppCompatActivity

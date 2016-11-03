@@ -144,6 +144,7 @@ public class Login extends AppCompatActivity {
                     realmUser.setIdentity(userModel.getIdentity());
                     realmUser.setUserName(userModel.getName());
                     realmUser.setPhotoPath(userModel.getPhoto_path());
+                    realmUser.setUid(userModel.getUid());
                     RealmManager.INSTANCE.createUser(realmUser);
                 }
             }

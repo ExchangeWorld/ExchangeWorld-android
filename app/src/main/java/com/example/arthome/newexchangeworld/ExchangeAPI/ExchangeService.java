@@ -50,4 +50,8 @@ public interface ExchangeService {
     @GET("api/goods/search")
     Call<List<GoodsModel>> downloadCategoryGoods(@Query("category") String strCategory);
 
+    //exwd.csie.org:43002/api/goods/of?owner_uid=2
+    @GET("api/goods/of")
+    Call<List<GoodsModel>> downloadMyGoods(@Query("owner_uid") int strOwnerUID);
+
 }
