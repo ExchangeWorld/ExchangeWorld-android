@@ -17,6 +17,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -34,7 +35,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder>{
     private List coll;
     private int picWidth;
     private List CheckedPic;
-    public class ViewHolder extends RecyclerView.ViewHolder implements OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder implements CompoundButton.OnCheckedChangeListener{
         ImageView imageView;
         CheckBox checkBox;
         ViewGroup viewGroup;
@@ -43,18 +44,24 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder>{
             viewGroup = (ViewGroup)itemView.findViewById(R.id.photo_layout);
             imageView = (ImageView) itemView.findViewById(R.id.imageView1);
             checkBox = (CheckBox) itemView.findViewById(R.id.checkBox);
-            imageView.setOnClickListener(this);
+            imageView.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if((boolean)CheckedPic.get((int)imageView.getTag(R.string.app_name)))
+                        checkBox.setChecked(false);
+                    else
+                        checkBox.setChecked(true);
+                }
+            });
+            checkBox.setOnCheckedChangeListener(this);
         }
+
         @Override
-        public void onClick(View v){
-            if((boolean)CheckedPic.get((int)imageView.getTag(R.string.app_name))) {
-                CheckedPic.set((int) imageView.getTag(R.string.app_name), false);
-                checkBox.setChecked(false);
-            }
-            else {
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (checkBox.isChecked())
                 CheckedPic.set((int) imageView.getTag(R.string.app_name), true);
-                checkBox.setChecked(true);
-            }
+            else
+                CheckedPic.set((int) imageView.getTag(R.string.app_name), false);
             pictureClickListener.onPictureClick(itemView);
         }
     }
@@ -100,7 +107,6 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder>{
             holder.checkBox.setChecked(true);
         else
             holder.checkBox.setChecked(false);
-
     }
 
     public int getItemCount(){return coll.size();}

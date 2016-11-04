@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.example.arthome.newexchangeworld.ItemPage.PostAdapter;
 import com.example.arthome.newexchangeworld.Models.PostModel;
+import com.example.arthome.newexchangeworld.Constant;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -37,7 +38,10 @@ public class PostActivity extends AppCompatActivity {
     private ArrayAdapter<String> classList;
     private Button postButton;
     private PostAdapter postAdapter;
-    private String[] classType = {"書籍","3C產品","教科書","流行服飾","美妝用品","其他"};
+    private String[] classType = {Constant.CATEGORY_3C,Constant.CATEGORY_3C_ACCESSORIES,Constant.CATEGORY_ACCESSORIES,Constant.CATEGORY_BOOKS,
+            Constant.CATEGORY_CLOTHES,Constant.CATEGORY_COSMETIC,Constant.CATEGORY_FOOD,Constant.CATEGORY_GAMES,Constant.CATEGORY_HOUSEWARE,
+            Constant.CATEGORY_TEXTBOOKS,Constant.CATEGORY_SPORTS,Constant.CATEGORY_OTHERS};
+    private String[] classChinese = {"3C產品","3C配件","飾品配件","書籍","服飾","化妝品","食品","遊戲","家居用品","教科書","體育用品","其它"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +70,10 @@ public class PostActivity extends AppCompatActivity {
             public void onClick(View v){
                 AlertDialog.Builder classList = new AlertDialog.Builder(PostActivity.this);
                 classList.setTitle("選擇類別");
-                classList.setItems(classType, new DialogInterface.OnClickListener() {
+                classList.setItems(classChinese, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which){
-                        classText.setText(classType[which]);
+                        classText.setText(classChinese[which]);
                     }
                 });
                 classList.show();
@@ -78,6 +82,7 @@ public class PostActivity extends AppCompatActivity {
         postButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String category = setCategory(classText.getText().toString());
                 File mFile = new File("/sdcard/ExchangeWorld");
                 if (!mFile.exists())
                     mFile.mkdirs();
@@ -86,7 +91,7 @@ public class PostActivity extends AppCompatActivity {
                     BufferedWriter bw = new BufferedWriter(fw); //將BufferedWeiter與FileWrite物件做連結
                     bw.write("Name = " + nameText.getText().toString());
                     bw.newLine();
-                    bw.write("Class = " + classText.getText().toString());
+                    bw.write("Class = " + category);
                     bw.newLine();
                     bw.write("Description = " + describeText.getText().toString());
                     bw.newLine();
@@ -118,5 +123,12 @@ public class PostActivity extends AppCompatActivity {
         Intent i = new Intent(PostActivity.this,pictureActivity.class);
         startActivity(i);
         PostActivity.this.finish();
+    }
+
+    private String setCategory(String s){
+        int i = 0;
+        while(!s.equals(classChinese[i]))
+            i++;
+        return classType[i];
     }
 }
