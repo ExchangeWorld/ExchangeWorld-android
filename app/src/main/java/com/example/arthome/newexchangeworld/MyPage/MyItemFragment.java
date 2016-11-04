@@ -49,6 +49,7 @@ public class MyItemFragment extends Fragment {
     private MyItemAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private ProgressDialog progressDialog;
+    private List<GoodsModel> goodsModels = new ArrayList<>();
     private User user;
 
     public MyItemFragment() {
@@ -82,8 +83,13 @@ public class MyItemFragment extends Fragment {
         int spanCount = 2;
         mLayoutManager = new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mAdapter = new MyItemAdapter(goodsModels);
+        mRecyclerView.setAdapter(mAdapter);
 
         progressDialog = new ProgressDialog(getContext());
+    }
+
+    private void downloadMyGoods() {
         progressDialog = ProgressDialog.show(getContext(), "Loading", "Please wait", true);
 
         Call<List<GoodsModel>> downloadOwnerGoods = new RestClient().getExchangeService().downloadMyGoods(user.getUid());
@@ -92,7 +98,8 @@ public class MyItemFragment extends Fragment {
             public void onResponse(Call<List<GoodsModel>> call, final Response<List<GoodsModel>> response) {
                 if (response.code() == 200) {
                     //TODO 可能要把已經交換的排除? body裡有一個delete欄位
-                    mAdapter = new MyItemAdapter(response.body());
+                    goodsModels.clear();
+                    goodsModels = response.body();
                     mAdapter.setMyViewHolderClicks(new MyItemAdapter.MyViewHolderClicks() {
                         @Override
                         public void onGoodsClick(View itemView, int position) {
@@ -102,7 +109,7 @@ public class MyItemFragment extends Fragment {
                             startActivity(intent);
                         }
                     });
-                    mRecyclerView.setAdapter(mAdapter);
+                    mAdapter.updateGoods(goodsModels);
                     progressDialog.dismiss();
                 } else {
                     progressDialog.dismiss();
@@ -114,5 +121,11 @@ public class MyItemFragment extends Fragment {
                 Toast.makeText(getContext(), "下載物品失敗 onFailure", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        downloadMyGoods();
     }
 }

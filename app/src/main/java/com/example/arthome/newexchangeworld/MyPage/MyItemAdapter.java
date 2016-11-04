@@ -23,6 +23,7 @@ import java.util.List;
 
 public class MyItemAdapter extends RecyclerView.Adapter<MyItemAdapter.myViewHolder> {
     private static MyViewHolderClicks myViewHolderClicks;
+    private List<GoodsModel> goodsModel;
 
     public interface MyViewHolderClicks {
         void onGoodsClick(View itemView, int position);
@@ -32,7 +33,6 @@ public class MyItemAdapter extends RecyclerView.Adapter<MyItemAdapter.myViewHold
         myViewHolderClicks = ViewHolderClicks;
     }
 
-    private List<GoodsModel> goodsModel;
 
     public MyItemAdapter(List<GoodsModel> goodsModel) {
         this.goodsModel = goodsModel;
@@ -105,5 +105,10 @@ public class MyItemAdapter extends RecyclerView.Adapter<MyItemAdapter.myViewHold
             goods_image = (ImageView) itemView.findViewById(R.id.my_goods_image);
             mCardView = (CardView) itemView.findViewById(R.id.cardView);
         }
+    }
+    public void updateGoods(List<GoodsModel> goodsModels){
+        this.goodsModel.clear();
+        this.goodsModel = goodsModels;
+        notifyDataSetChanged();
     }
 }

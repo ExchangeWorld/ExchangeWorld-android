@@ -1,6 +1,8 @@
 package com.example.arthome.newexchangeworld.MyPage;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -65,26 +67,46 @@ public class MyItemDetailActivity extends AppCompatActivity {
             deleteLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Call<ResponseBody> deleteCall = new RestClient().getExchangeService().deleteGoods(goodsModel.getGid(), user.getExToken());
-                    deleteCall.enqueue(new Callback<ResponseBody>() {
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MyItemDetailActivity.this);
+                    alertDialogBuilder.setTitle("刪除物品");
+                    alertDialogBuilder.setMessage("是否要刪除物品?");
+                    alertDialogBuilder.setPositiveButton("確認刪除", new DialogInterface.OnClickListener() {
                         @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            if(response.code()==200){
-                                Toast.makeText(getApplicationContext(),"刪除成功",Toast.LENGTH_SHORT).show();
-                                finish();
-                            }else {
-                                Toast.makeText(getApplicationContext(),"刪除失敗 status code錯誤",Toast.LENGTH_SHORT).show();
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            Toast.makeText(getApplicationContext(),"刪除失敗 onFailure",Toast.LENGTH_SHORT).show();
+                        public void onClick(DialogInterface dialog, int which) {
+                            deleteGoods(goodsModel);
+                            dialog.dismiss();
                         }
                     });
+                    alertDialogBuilder.setNeutralButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    alertDialogBuilder.create().show();
                 }
             });
         }
+    }
+
+    private void deleteGoods(GoodsModel goodsModel) {
+        Call<ResponseBody> deleteCall = new RestClient().getExchangeService().deleteGoods(goodsModel.getGid(), user.getExToken());
+        deleteCall.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if(response.code()==200){
+                    Toast.makeText(getApplicationContext(),"刪除成功",Toast.LENGTH_SHORT).show();
+                    finish();
+                }else {
+                    Toast.makeText(getApplicationContext(),"刪除失敗 status code錯誤",Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getApplicationContext(),"刪除失敗 onFailure",Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void setUpUIView() {
