@@ -5,10 +5,41 @@
     android:layout_height="match_parent"
     tools:context="com.example.arthome.newexchangeworld.ItemPage.ItemDetailActivity">
 
-    <android.support.v7.widget.RecyclerView android:layout_width="match_parent"
-        android:layout_height="200dp"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_item_detail_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="ExchangeWorld"
+                android:textColor="@android:color/white"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/my_item_detail_save_edit_button"
+                android:text="儲存變更"
+                android:textColor="@android:color/white"
+                android:background="@android:color/transparent"
+                android:layout_alignParentEnd="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true" />
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/my_item_detail_recycler_view"
-        />
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_below="@+id/my_item_detail_toolbar" />
 
 
     <TextView
@@ -24,6 +55,17 @@
         android:text="New Text"
         android:textSize="30dp" />
 
+    <EditText
+        android:id="@+id/my_goods_name_detail_edit_text"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/my_goods_name_detail"
+        android:layout_alignBaseline="@+id/my_goods_name_detail"
+        android:text="New Text"
+        android:textSize="30dp"
+        android:layout_alignLeft="@+id/my_goods_name_detail" />
+
     <LinearLayout
         android:id="@+id/item_detail_info_layout"
         android:layout_width="match_parent"
@@ -31,14 +73,14 @@
         android:layout_alignLeft="@+id/my_goods_name_detail"
         android:layout_alignStart="@+id/my_goods_name_detail"
         android:layout_below="@+id/my_goods_name_detail"
-        android:weightSum="4"
-        android:layout_marginTop="13dp">
+        android:layout_marginTop="13dp"
+        android:weightSum="4">
 
         <LinearLayout
-            android:layout_weight="1"
             android:id="@+id/my_item_detail_who_queue_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:gravity="center_vertical">
 
             <ImageView
@@ -49,10 +91,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
                 android:text="看誰排"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:layout_marginLeft="8dp" />
+                android:textAppearance="?android:attr/textAppearanceSmall" />
         </LinearLayout>
 
 
@@ -71,11 +113,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
                 android:gravity="center"
                 android:text="編輯"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:layout_marginLeft="8dp" />
+                android:textAppearance="?android:attr/textAppearanceSmall" />
         </LinearLayout>
 
         <LinearLayout
@@ -93,11 +135,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
                 android:gravity="center"
                 android:text="刪除"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:layout_marginLeft="8dp" />
+                android:textAppearance="?android:attr/textAppearanceSmall" />
         </LinearLayout>
 
         <LinearLayout
@@ -115,11 +157,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
                 android:gravity="center"
                 android:text="分享"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:layout_marginLeft="8dp" />
+                android:textAppearance="?android:attr/textAppearanceSmall" />
         </LinearLayout>
     </LinearLayout>
 
@@ -132,5 +174,16 @@
         android:layout_below="@+id/item_detail_info_layout"
         android:layout_marginTop="19dp"
         android:text="New Text" />
+
+    <EditText
+        android:id="@+id/my_goods_description_detail_edit_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/my_goods_description_detail"
+        android:layout_alignBaseline="@+id/my_goods_description_detail"
+        android:text="New Text"
+        android:textSize="14sp"
+        android:visibility="invisible"
+        android:layout_alignLeft="@+id/my_goods_description_detail" />
 
 </RelativeLayout>
