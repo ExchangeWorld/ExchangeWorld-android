@@ -129,16 +129,23 @@ public class MyItemDetailActivity extends AppCompatActivity {
         });
     }
 
-    private void editGoodsAPI(GoodsModel goodsModel){
+    private void editGoodsAPI(final GoodsModel goodsModel){
         EditGoodsModel editGoodsModel = new EditGoodsModel(goodsModel.getGid(),goodsModel.getPosition_x(),goodsModel.getPosition_y(),goodsModel.getPhoto_path(),goodsModel.getCategory());
-        editGoodsModel.setName(goodsNameEditText.getText().toString());
-        editGoodsModel.setDescription(goodsDescriptionEditText.getText().toString());
+        final String editedName = goodsNameEditText.getText().toString();
+        final String editedDescription = goodsDescriptionEditText.getText().toString();
+
+        editGoodsModel.setName(editedName);
+        editGoodsModel.setDescription(editedDescription);
         Call<ResponseBody> editCall = new RestClient().getExchangeService().editGoods(user.getExToken(), editGoodsModel);
         editCall.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if(response.code()==200){
                     Toast.makeText(getApplicationContext(),"編輯成功",Toast.LENGTH_SHORT).show();
+                    goodsName.setText(editedName);
+                    goodsDescription.setText(editedDescription);
+                    goodsModel.setDescription(editedName);
+                    goodsModel.setDescription(editedDescription);
                 }else {
                     Toast.makeText(getApplicationContext(),"編輯失敗 status code錯誤",Toast.LENGTH_SHORT).show();
                 }
