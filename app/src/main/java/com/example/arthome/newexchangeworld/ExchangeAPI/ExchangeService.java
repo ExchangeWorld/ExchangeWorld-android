@@ -1,6 +1,7 @@
 package com.example.arthome.newexchangeworld.ExchangeAPI;
 
 import com.example.arthome.newexchangeworld.Models.AuthenticationModel;
+import com.example.arthome.newexchangeworld.Models.EditGoodsModel;
 import com.example.arthome.newexchangeworld.Models.FaceBookUser;
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.example.arthome.newexchangeworld.Models.PostModel;
@@ -15,8 +16,10 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Query;
 
 /**
@@ -49,5 +52,17 @@ public interface ExchangeService {
     //http://exwd.csie.org:43002/api/goods/search?category={}
     @GET("api/goods/search")
     Call<List<GoodsModel>> downloadCategoryGoods(@Query("category") String strCategory);
+
+    //exwd.csie.org:43002/api/goods/of?owner_uid=2
+    @GET("api/goods/of")
+    Call<List<GoodsModel>> downloadMyGoods(@Query("owner_uid") int strOwnerUID);
+
+    //exwd.csie.org:43002/api/goods/delete?gid=131&token=1d1f66cb89bf2f19b6e12b35a6c36f8cd1388cdb
+    @DELETE("api/goods/delete")
+    Call<ResponseBody> deleteGoods(@Query("gid") int gid, @Query("token") String strToken);
+
+    //exwd.csie.org:43002/api/goods/edit?token=75cd749ae06b15ecf3817c64a83764b22ebea5ad
+    @PUT("api/goods/edit")
+    Call<ResponseBody> editGoods(@Query("token") String strToken,@Body EditGoodsModel editGoodsModel);
 
 }

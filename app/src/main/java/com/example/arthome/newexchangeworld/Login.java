@@ -25,6 +25,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.Profile;
+import com.facebook.ProfileTracker;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
@@ -51,6 +52,8 @@ public class Login extends AppCompatActivity {
     private String EXtoken;
     private String itemName;
     private String itemDescription;
+    private ProfileTracker mProfileTracker;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +83,22 @@ public class Login extends AppCompatActivity {
         itemDescriptionEditText = (EditText) findViewById(R.id.login_item_description_editText);
         itemNameEditText = (EditText) findViewById(R.id.login_item_name_editText);
 
+        mProfileTracker = new ProfileTracker() {
+            @Override
+            protected void onCurrentProfileChanged(Profile oldProfile, Profile currentProfile) {
+                if (currentProfile == null && RealmManager.INSTANCE.retrieveUser().size() != 0) {   //使用者登出, 且手機資料庫尚有使用者資料
+                    RealmManager.INSTANCE.deleteAllUser();
+                } else if (!(currentProfile == null)) {
+                    User user = new User();
+                    user.setIdentity(currentProfile.getId());
+                    RealmManager.INSTANCE.createUser(user);
+                    CommonAPI.INSTANCE.getExToken(currentProfile.getId(), getApplicationContext());
+                    getAndSaveUserInfo(0, currentProfile.getId());
+                }
+            }
+        };
+        mProfileTracker.startTracking();
+
         List<String> permissionNeeds = Arrays.asList("user_photos", "email", "user_birthday", "public_profile");
         loginButton.setReadPermissions(permissionNeeds);
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -87,20 +106,9 @@ public class Login extends AppCompatActivity {
             public void onSuccess(LoginResult loginResult) {
                 Profile profile = Profile.getCurrentProfile();
                 System.out.println(">>>onSuccess");
-                System.out.println(">>>"+loginResult.getAccessToken().getToken());
-                System.out.println(">>>hash="+loginResult.getAccessToken().getToken().hashCode());
-                System.out.println(">>>id="+loginResult.getAccessToken().getUserId());
-                Fbtoken = loginResult.getAccessToken();
-                fbID = Fbtoken.getUserId();
-                System.out.println(">>onSuccess "+fbID);
-                if(RealmManager.INSTANCE.retrieveUser().size()==0) {
-                    User user = new User();
-                    user.setIdentity(fbID);
-                    RealmManager.INSTANCE.createUser(user);
-                }
-                CommonAPI.INSTANCE.getExToken(fbID,getApplicationContext());
-
-                getAndSaveUserInfo(0,fbID);
+                System.out.println(">>>" + loginResult.getAccessToken().getToken());
+                System.out.println(">>>hash=" + loginResult.getAccessToken().getToken().hashCode());
+                System.out.println(">>>id=" + loginResult.getAccessToken().getUserId());
             }
 
             @Override
@@ -124,35 +132,41 @@ public class Login extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
 
-
-
-    private void getAndSaveUserInfo(int uid, String strIdentity){
-        Call<UserModel> getUserInfo = new RestClient().getExchangeService().getUserInfo(uid,strIdentity);
+    private void getAndSaveUserInfo(int uid, String strIdentity) {
+        Call<UserModel> getUserInfo = new RestClient().getExchangeService().getUserInfo(uid, strIdentity);
         getUserInfo.enqueue(new Callback<UserModel>() {
             @Override
             public void onResponse(Call<UserModel> call, Response<UserModel> response) {
-                if(response.code()==200){
+                if (response.code() == 200) {
                     UserModel userModel = response.body();
                     User realmUser = RealmManager.INSTANCE.retrieveUser().get(0);
                     realmUser.setIdentity(userModel.getIdentity());
                     realmUser.setUserName(userModel.getName());
                     realmUser.setPhotoPath(userModel.getPhoto_path());
+                    realmUser.setUid(userModel.getUid());
                     RealmManager.INSTANCE.createUser(realmUser);
                 }
             }
 
             @Override
             public void onFailure(Call<UserModel> call, Throwable t) {
-                System.out.println(">>>fail "+t);
+                System.out.println(">>>fail " + t);
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mProfileTracker!=null){
+            mProfileTracker.stopTracking();
+        }
     }
 }
 

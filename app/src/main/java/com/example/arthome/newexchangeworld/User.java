@@ -12,6 +12,7 @@ import io.realm.annotations.PrimaryKey;
 public class User extends RealmObject {
     @PrimaryKey
     private String identity;      //If it's with FB, fb_id as identity
+    private int uid;
     private String userName;
     private String photoPath;
     private String exToken;
@@ -57,4 +58,14 @@ public class User extends RealmObject {
     public void setPhotoPath(String photoPath) {
         this.photoPath = photoPath;
     }
+
+
+    public int getUid() {
+        return uid;
+    }
+
+    public void setUid(int uid) {
+        this.uid = uid;
+    }
+
 }

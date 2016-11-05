@@ -47,4 +47,15 @@ public enum RealmManager {
             }
         });
     }
+
+    public void deleteAllUser() {
+        final RealmResults<User> results = realm.where(User.class)
+                .findAll();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                results.deleteAllFromRealm();
+            }
+        });
+    }
 }
