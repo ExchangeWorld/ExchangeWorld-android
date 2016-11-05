@@ -3,6 +3,7 @@ package com.example.arthome.newexchangeworld;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,7 @@ import android.widget.GridView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.bumptech.glide.load.engine.Resource;
 import com.example.arthome.newexchangeworld.ItemPage.PostAdapter;
 import com.example.arthome.newexchangeworld.Models.PostModel;
 import com.example.arthome.newexchangeworld.Constant;
@@ -38,13 +40,14 @@ public class PostActivity extends AppCompatActivity {
     private ArrayAdapter<String> classList;
     private Button postButton;
     private PostAdapter postAdapter;
-    private String[] classType = {Constant.CATEGORY_3C,Constant.CATEGORY_3C_ACCESSORIES,Constant.CATEGORY_ACCESSORIES,Constant.CATEGORY_BOOKS,
-            Constant.CATEGORY_CLOTHES,Constant.CATEGORY_COSMETIC,Constant.CATEGORY_FOOD,Constant.CATEGORY_GAMES,Constant.CATEGORY_HOUSEWARE,
-            Constant.CATEGORY_TEXTBOOKS,Constant.CATEGORY_SPORTS,Constant.CATEGORY_OTHERS};
-    private String[] classChinese = {"3C產品","3C配件","飾品配件","書籍","服飾","化妝品","食品","遊戲","家居用品","教科書","體育用品","其它"};
+    private String[] classType;
+    private String[] classChinese;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Resources res = getResources();
+        classChinese = res.getStringArray(R.array.classChinese);
+        classType = res.getStringArray(R.array.classType);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
         postPic = new ArrayList<String>();

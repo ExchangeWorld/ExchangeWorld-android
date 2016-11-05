@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name = "classChinese">
+        <item>3C產品</item>
+        <item>3C配件</item>
+        <item>飾品配件</item>
+        <item>書籍</item>
+        <item>服飾</item>
+        <item>化妝品</item>
+        <item>食品</item>
+        <item>遊戲</item>
+        <item>家居用品</item>
+        <item>教科書</item>
+        <item>體育用品</item>
+        <item>其它</item>
+    </string-array>
+    <string-array name = "classType">
+        <item>3C</item>
+        <item>3C_accessories</item>
+        <item>accessories</item>
+        <item>Books</item>
+        <item>Clothes</item>
+        <item>Cosmetic</item>
+        <item>Food</item>
+        <item>Games</item>
+        <item>Houseware</item>
+        <item>Textbooks</item>
+        <item>Sports</item>
+        <item>Others</item>
+    </string-array>
+</resources>
