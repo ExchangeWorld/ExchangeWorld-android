@@ -41,7 +41,6 @@
         android:layout_height="200dp"
         android:layout_below="@+id/my_item_detail_toolbar" />
 
-
     <TextView
         android:id="@+id/my_goods_name_detail"
         android:layout_width="wrap_content"
@@ -53,6 +52,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="18dp"
         android:text="New Text"
+        android:visibility="visible"
         android:textSize="30dp" />
 
     <EditText
@@ -67,6 +67,7 @@
         android:layout_alignLeft="@+id/my_goods_name_detail" />
 
     <LinearLayout
+        android:visibility="visible"
         android:id="@+id/item_detail_info_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -163,6 +164,37 @@
                 android:text="分享"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
         </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginStart="4dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/my_goods_name_detail"
+        android:layout_alignStart="@+id/my_goods_name_detail"
+        android:layout_below="@+id/my_goods_name_detail"
+        android:layout_marginTop="13dp"
+        android:weightSum="10"
+        android:id="@+id/my_item_detail_category_layout"
+        android:visibility="invisible"
+        android:layout_marginLeft="4dp">
+
+        <TextView
+            android:layout_weight="3"
+            android:gravity="center_vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="類別"/>
+
+        <Button
+            android:layout_weight="7"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/my_item_detail_category_button"
+            android:background="@android:color/transparent"
+            android:gravity="center_vertical"
+            android:text="請選擇..." />
     </LinearLayout>
 
     <TextView
