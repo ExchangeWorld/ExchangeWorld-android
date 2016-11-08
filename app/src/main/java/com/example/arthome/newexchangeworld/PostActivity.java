@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.load.engine.Resource;
 import com.example.arthome.newexchangeworld.ItemPage.PostAdapter;
@@ -85,38 +86,46 @@ public class PostActivity extends AppCompatActivity {
         postButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String category = setCategory(classText.getText().toString());
-                File mFile = new File("/sdcard/ExchangeWorld");
-                if (!mFile.exists())
-                    mFile.mkdirs();
-                try {
-                    FileWriter fw = new FileWriter("/sdcard/ExchangeWorld/PostData.txt", false);
-                    BufferedWriter bw = new BufferedWriter(fw); //將BufferedWeiter與FileWrite物件做連結
-                    bw.write("Name = " + nameText.getText().toString());
-                    bw.newLine();
-                    bw.write("Class = " + category);
-                    bw.newLine();
-                    bw.write("Description = " + describeText.getText().toString());
-                    bw.newLine();
-                    bw.write("Picture = ");
-                    bw.newLine();
-                    for (int i = 0; i < postPic.size(); i++) {
-                        bw.write(postPic.get(i));
+                if("".equals(nameText.getText().toString().trim()))
+                    Toast.makeText(PostActivity.this,"Please enter item name",Toast.LENGTH_SHORT).show();
+                else if("請選擇...".equals(classText.getText().toString().trim()))
+                    Toast.makeText(PostActivity.this,"Please choose category",Toast.LENGTH_SHORT).show();
+                else if("".equals(describeText.getText().toString().trim()))
+                    Toast.makeText(PostActivity.this,"Please enter desciption",Toast.LENGTH_SHORT).show();
+                else {
+                    String category = setCategory(classText.getText().toString());
+                    File mFile = new File("/sdcard/ExchangeWorld");
+                    if (!mFile.exists())
+                        mFile.mkdirs();
+                    try {
+                        FileWriter fw = new FileWriter("/sdcard/ExchangeWorld/PostData.txt", false);
+                        BufferedWriter bw = new BufferedWriter(fw); //將BufferedWeiter與FileWrite物件做連結
+                        bw.write("Name = " + nameText.getText().toString());
                         bw.newLine();
+                        bw.write("Class = " + category);
+                        bw.newLine();
+                        bw.write("Description = " + describeText.getText().toString());
+                        bw.newLine();
+                        bw.write("Picture = ");
+                        bw.newLine();
+                        for (int i = 0; i < postPic.size(); i++) {
+                            bw.write(postPic.get(i));
+                            bw.newLine();
+                        }
+                        bw.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                    bw.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    PostModel postModel = new PostModel(nameText.getText().toString(),
+                            postPic.get(0),
+                            describeText.getText().toString(),
+                            "Books"         //TODO 這邊要叫陳弘弦改
+                    );
+                    Intent i = new Intent(PostActivity.this, MainActivity.class);
+                    i.putExtra("postInfo", postModel);
+                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(i);
                 }
-                PostModel postModel = new PostModel(nameText.getText().toString(),
-                        postPic.get(0),
-                        describeText.getText().toString(),
-                        "Books"         //TODO 這邊要叫陳弘弦改
-                );
-                Intent i = new Intent(PostActivity.this, MainActivity.class);
-                i.putExtra("postInfo", postModel);
-                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(i);
             }
         });
     }
