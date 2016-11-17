@@ -5,6 +5,7 @@ import com.example.arthome.newexchangeworld.Models.EditGoodsModel;
 import com.example.arthome.newexchangeworld.Models.FaceBookUser;
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.example.arthome.newexchangeworld.Models.PostModel;
+import com.example.arthome.newexchangeworld.Models.QueueOfGoodsModel;
 import com.example.arthome.newexchangeworld.Models.UploadImageModel;
 import com.example.arthome.newexchangeworld.Models.UserModel;
 import com.google.android.gms.auth.api.Auth;
@@ -64,5 +65,9 @@ public interface ExchangeService {
     //exwd.csie.org:43002/api/goods/edit?token=75cd749ae06b15ecf3817c64a83764b22ebea5ad
     @PUT("api/goods/edit")
     Call<ResponseBody> editGoods(@Query("token") String strToken,@Body EditGoodsModel editGoodsModel);
+
+    //exwd.csie.org:43002/api/queue/of/goods?host_goods_gid=119&token=0f2ed5277968c7dbb4175136c58d7e661e0220e3
+    @GET("api/queue/of/goods")
+    Call<List<QueueOfGoodsModel>> quequeOfGoods(@Query("host_goods_gid") int hostGoodsGID, @Query("token") String strToken);
 
 }

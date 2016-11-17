@@ -39,21 +39,15 @@
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
 
-        <LinearLayout
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/category_image"
-            android:layout_alignStart="@+id/category_image"
-            android:layout_below="@+id/id_goods_name"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="4dp"
-            android:weightSum="2">
-
             <LinearLayout
+                android:layout_alignLeft="@+id/category_image"
+                android:layout_alignStart="@+id/category_image"
+                android:layout_below="@+id/id_goods_name"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="8dp"
                 android:id="@+id/item_goods_user_layout"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:gravity="center_vertical">
 
                 <ImageView
@@ -71,33 +65,5 @@
                     android:text="user_name"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
             </LinearLayout>
-
-
-            <LinearLayout
-                android:id="@+id/item_goods_follow_layout"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:id="@+id/item_goods_follow_ic"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/heart" />
-
-                <TextView
-                    android:id="@+id/item_goods_follow_text_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginStart="8dp"
-                    android:gravity="center"
-                    android:text="關注"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-            </LinearLayout>
-        </LinearLayout>
-
-
     </RelativeLayout>
 </android.support.v7.widget.CardView>

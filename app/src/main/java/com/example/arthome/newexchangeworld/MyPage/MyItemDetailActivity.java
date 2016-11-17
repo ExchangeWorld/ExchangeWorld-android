@@ -13,10 +13,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.arthome.newexchangeworld.CustomViews.CustomWhoQueueDialog;
 import com.example.arthome.newexchangeworld.ExchangeAPI.RestClient;
 import com.example.arthome.newexchangeworld.ItemDetailAdapter;
 import com.example.arthome.newexchangeworld.Models.EditGoodsModel;
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
+import com.example.arthome.newexchangeworld.Models.QueueOfGoodsModel;
 import com.example.arthome.newexchangeworld.R;
 import com.example.arthome.newexchangeworld.RealmManager;
 import com.example.arthome.newexchangeworld.User;
@@ -24,6 +26,7 @@ import com.example.arthome.newexchangeworld.util.StringTool;
 import com.google.gson.Gson;
 
 import java.util.Arrays;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -131,6 +134,13 @@ public class MyItemDetailActivity extends AppCompatActivity {
                     alertDialogBuilder.create().show();
                 }
             });
+
+            whoQueueLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    lookWhosQuequeing(goodsModel.getGid());
+                }
+            });
         }
     }
 
@@ -183,6 +193,34 @@ public class MyItemDetailActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "編輯失敗 onFailure", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void lookWhosQuequeing(int gid){
+        Call<List<QueueOfGoodsModel>> call = new RestClient().getExchangeService().quequeOfGoods(gid,user.getExToken());
+        call.enqueue(new Callback<List<QueueOfGoodsModel>>() {
+            @Override
+            public void onResponse(Call<List<QueueOfGoodsModel>> call, Response<List<QueueOfGoodsModel>> response) {
+                if (response.code() == 200) {
+                    List<QueueOfGoodsModel> queueOfGoodsModelList = response.body();
+                    if(queueOfGoodsModelList.size()==0){
+                        //TODO 11/11沒人排
+                    }else {
+                        //TODO 11/11跳出排的人
+                        CustomWhoQueueDialog dialog = new CustomWhoQueueDialog(MyItemDetailActivity.this,queueOfGoodsModelList);
+
+                        new CustomWhoQueueDialog(MyItemDetailActivity.this,queueOfGoodsModelList).show();
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), "看誰排失敗 status code錯誤", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<QueueOfGoodsModel>> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "看誰排失敗 onFailure", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     private void setNormalView() {
