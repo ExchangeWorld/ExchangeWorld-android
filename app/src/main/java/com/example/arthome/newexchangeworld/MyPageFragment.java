@@ -75,7 +75,7 @@ public class MyPageFragment extends Fragment {
 
         @Override//幾個tab?
         public int getCount() {
-            return 5;
+            return 4;
         }
 
         @Override//設定tab對應的fragment
@@ -89,8 +89,6 @@ public class MyPageFragment extends Fragment {
                     return oneFragment.newInstance("1", "2");
                 case 3:
                     return twoFragment.newInstance("1", "2");
-                case 4:
-                    return oneFragment.newInstance("1", "2");
                 default:
                     return null;
             }
@@ -104,10 +102,8 @@ public class MyPageFragment extends Fragment {
                 case 1:
                     return "等待交換";
                 case 2:
-                    return "交換成功";
-                case 3:
                     return "交換請求";
-                case 4:
+                case 3:
                     return "歷史交換";
                 default:
                     return null;

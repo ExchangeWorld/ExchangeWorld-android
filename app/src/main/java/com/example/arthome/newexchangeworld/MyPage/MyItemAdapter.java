@@ -23,10 +23,10 @@ import java.util.List;
 
 public class MyItemAdapter extends RecyclerView.Adapter<MyItemAdapter.myViewHolder> {
     private static MyViewHolderClicks myViewHolderClicks;
-    private List<GoodsModel> goodsModel;
+    private static List<GoodsModel> goodsModel;
 
     public interface MyViewHolderClicks {
-        void onGoodsClick(View itemView, int position);
+        void onGoodsClick(GoodsModel goodsModel);
     }
 
     public void setMyViewHolderClicks(MyViewHolderClicks ViewHolderClicks) {
@@ -93,7 +93,7 @@ public class MyItemAdapter extends RecyclerView.Adapter<MyItemAdapter.myViewHold
 //                        Log.i("oscart", "user clicked");  //TODO go to user page
 //                        break;
                     default:
-                        myViewHolderClicks.onGoodsClick(itemView, getLayoutPosition());
+                        myViewHolderClicks.onGoodsClick(goodsModel.get(getAdapterPosition()));
                         break;
                 }
         }
@@ -105,10 +105,5 @@ public class MyItemAdapter extends RecyclerView.Adapter<MyItemAdapter.myViewHold
             goods_image = (ImageView) itemView.findViewById(R.id.my_goods_image);
             mCardView = (CardView) itemView.findViewById(R.id.cardView);
         }
-    }
-    public void updateGoods(List<GoodsModel> goodsModels){
-        this.goodsModel.clear();
-        this.goodsModel = goodsModels;
-        notifyDataSetChanged();
     }
 }

@@ -99,17 +99,22 @@ public class MyItemFragment extends Fragment {
                 if (response.code() == 200) {
                     //TODO 可能要把已經交換的排除? body裡有一個delete欄位
                     goodsModels.clear();
-                    goodsModels = response.body();
+
+                    for(int i =0; i<response.body().size();i++){    //把尚未交換的物品加入要顯示的List
+                        if(response.body().get(i).getExchanged()==0){
+                            goodsModels.add(response.body().get(i));
+                        }
+                    }
+
                     mAdapter.setMyViewHolderClicks(new MyItemAdapter.MyViewHolderClicks() {
                         @Override
-                        public void onGoodsClick(View itemView, int position) {
-                            GoodsModel goodsModel = response.body().get(position);
+                        public void onGoodsClick(GoodsModel goodsModel) {
                             Intent intent = new Intent(getActivity(), MyItemDetailActivity.class);
                             intent.putExtra("goodModel", new Gson().toJson(goodsModel));
                             startActivity(intent);
                         }
                     });
-                    mAdapter.updateGoods(goodsModels);
+                    mAdapter.notifyDataSetChanged();
                     progressDialog.dismiss();
                 } else {
                     progressDialog.dismiss();
