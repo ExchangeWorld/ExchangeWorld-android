@@ -179,7 +179,7 @@ public class pictureActivity extends AppCompatActivity {
             }
         });
         gallery.setAdapter(photoAdapter);
-        photoAdapter.notifyDataSetChanged();
+        photoAdapter.notifyItemInserted(photoAdapter.getItemCount());
     }
 }
 
