@@ -2,6 +2,7 @@ package com.example.arthome.newexchangeworld.ExchangeAPI;
 
 import com.example.arthome.newexchangeworld.Models.AuthenticationModel;
 import com.example.arthome.newexchangeworld.Models.EditGoodsModel;
+import com.example.arthome.newexchangeworld.Models.ExchangeModel;
 import com.example.arthome.newexchangeworld.Models.FaceBookUser;
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.example.arthome.newexchangeworld.Models.PostModel;
@@ -70,4 +71,8 @@ public interface ExchangeService {
     @GET("api/queue/of/goods")
     Call<List<QueueOfGoodsModel>> quequeOfGoods(@Query("host_goods_gid") int hostGoodsGID, @Query("token") String strToken);
 
+    //exwd.csie.org:43002/api/exchange/of/user/all?owner_udi=2&token=
+    //歷史紀錄
+    @GET("api/exchange/of/user/all")
+    Call<List<ExchangeModel>> historyExchange(@Query("owner_udi") int ownerID, @Query("token") String strToken);
 }

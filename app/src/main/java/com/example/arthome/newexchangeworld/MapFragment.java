@@ -31,7 +31,6 @@ import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.example.arthome.newexchangeworld.Models.PostModel;
 import com.example.arthome.newexchangeworld.Models.UploadImageModel;
 import com.example.arthome.newexchangeworld.util.StringTool;
-import com.facebook.Profile;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -70,7 +69,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.realm.RealmResults;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -391,11 +389,11 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             public View getInfoContents(Marker marker) {
                 Log.i("oscart", marker.getId() + marker.getTitle());
                 View view = getActivity().getLayoutInflater().inflate(R.layout.item_goods, null);
-                TextView goods_textView = (TextView) view.findViewById(R.id.id_goods_name);
-                TextView user_textView = (TextView) view.findViewById(R.id.id_user_name);
-                ImageView category_image = (ImageView) view.findViewById(R.id.category_image);
-                ImageView goods_image = (ImageView) view.findViewById(R.id.goods_image);
-                user_image = (ImageView) view.findViewById(R.id.user_image);
+                TextView goods_textView = (TextView) view.findViewById(R.id.item_history_other_goods_name);
+                TextView user_textView = (TextView) view.findViewById(R.id.item_history_other_user_name);
+                ImageView category_image = (ImageView) view.findViewById(R.id.item_history_other_category_image);
+                ImageView goods_image = (ImageView) view.findViewById(R.id.item_history_other_goods_image);
+                user_image = (ImageView) view.findViewById(R.id.item_history_other_user_image);
                 GoodsModel good = allMarkersMap.get(marker);
                 user_textView.setText(good.getOwner().getName());
                 goods_textView.setText(good.getName());

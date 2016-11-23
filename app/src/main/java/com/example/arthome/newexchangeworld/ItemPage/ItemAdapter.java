@@ -1,7 +1,6 @@
 package com.example.arthome.newexchangeworld.ItemPage;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -10,9 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.arthome.newexchangeworld.Constant;
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.example.arthome.newexchangeworld.R;
 import com.example.arthome.newexchangeworld.util.CategoryTool;
@@ -95,8 +92,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.myViewHolder> 
             // Triggers click upwards to the adapter on click
             if (myViewHolderClicks != null)
                 switch (v.getId()) {
-                    case R.id.user_image:
-                    case R.id.id_user_name:
+                    case R.id.item_history_other_user_image:
+                    case R.id.item_history_other_user_name:
                         Log.i("oscart", "user clicked");  //TODO go to user page
                         break;
                     default:
@@ -105,11 +102,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.myViewHolder> 
         }
 
         public void SetUpUIViews() {
-            goods_textView = (TextView) itemView.findViewById(R.id.id_goods_name);
-            user_textView = (TextView) itemView.findViewById(R.id.id_user_name);
-            category_image = (ImageView) itemView.findViewById(R.id.category_image);
-            goods_image = (ImageView) itemView.findViewById(R.id.goods_image);
-            user_image = (ImageView) itemView.findViewById(R.id.user_image);
+            goods_textView = (TextView) itemView.findViewById(R.id.item_history_other_goods_name);
+            user_textView = (TextView) itemView.findViewById(R.id.item_history_other_user_name);
+            category_image = (ImageView) itemView.findViewById(R.id.item_history_other_category_image);
+            goods_image = (ImageView) itemView.findViewById(R.id.item_history_other_goods_image);
+            user_image = (ImageView) itemView.findViewById(R.id.item_history_other_user_image);
             mCardView = (CardView) itemView.findViewById(R.id.cardView);
         }
     }
