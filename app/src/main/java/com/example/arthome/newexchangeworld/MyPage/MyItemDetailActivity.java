@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.arthome.newexchangeworld.Constant;
 import com.example.arthome.newexchangeworld.CustomViews.CustomWhoQueueDialog;
 import com.example.arthome.newexchangeworld.ExchangeAPI.RestClient;
 import com.example.arthome.newexchangeworld.ItemDetailAdapter;
@@ -68,7 +69,7 @@ public class MyItemDetailActivity extends AppCompatActivity {
         setNormalView();
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            String json = bundle.getString("goodModel");
+            String json = bundle.getString(Constant.INTENT_GOODS);
             goodsModel = new Gson().fromJson(json, GoodsModel.class);
 
             imageRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));

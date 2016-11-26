@@ -30,6 +30,8 @@ import com.example.arthome.newexchangeworld.ItemPage.ItemDetailActivity;
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.example.arthome.newexchangeworld.Models.PostModel;
 import com.example.arthome.newexchangeworld.Models.UploadImageModel;
+import com.example.arthome.newexchangeworld.MyPage.MyItemDetailActivity;
+import com.example.arthome.newexchangeworld.util.CategoryTool;
 import com.example.arthome.newexchangeworld.util.StringTool;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -137,13 +139,6 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                 }
             });
         }
-
-        if (RealmManager.INSTANCE.retrieveUser().size()!=0) {
-            user = RealmManager.INSTANCE.retrieveUser().get(0);
-            exToken = user.getExToken();
-            System.out.println(">>>map找到user name is " + user.getUserName());
-            System.out.println(">>>map找到user EXToken is " + user.getExToken());
-        }
         return view;
     }
 
@@ -171,9 +166,17 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         return new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                Intent intent = new Intent(getActivity(), ItemDetailActivity.class);
-                intent.putExtra("goodModel", new Gson().toJson(allMarkersMap.get(marker)));
-                startActivity(intent);
+                GoodsModel goodsModel = allMarkersMap.get(marker);
+                if(user!=null && user.getUid() == goodsModel.getOwner().getUid()){  //if the goods is the current users, start MyItemDetailActivity
+                    Intent intent = new Intent(getActivity(), MyItemDetailActivity.class);
+                    intent.putExtra(Constant.INTENT_GOODS, new Gson().toJson(allMarkersMap.get(marker)));
+                    startActivity(intent);
+                }else {
+                    Intent intent = new Intent(getActivity(), ItemDetailActivity.class);
+                    intent.putExtra(Constant.INTENT_GOODS, new Gson().toJson(allMarkersMap.get(marker)));
+                    startActivity(intent);
+                }
+
             }
         };
     }
@@ -265,94 +268,12 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public class downloadGoodsAPI extends AsyncTask<String, String, List<GoodsModel>> {
-
-        @Override
-        protected List<GoodsModel> doInBackground(String... params) {
-            HttpURLConnection connection = null;
-            BufferedReader reader = null;
-            //int goods_count=1;
-            try {
-
-                URL url = new URL(params[0]);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.connect(); // it still works without this line, don't know why
-                List<GoodsModel> goodsModelList = new ArrayList<>();
-
-
-                InputStream stream = connection.getInputStream();
-
-                reader = new BufferedReader(new InputStreamReader(stream));
-
-                StringBuffer buffer = new StringBuffer();
-
-                String line = "";
-                while ((line = reader.readLine()) != null) {
-                    buffer.append(line);
-                }
-                String sJson;
-                sJson = buffer.toString();
-
-                JSONArray jsonArray = null; //try and catch?
-                try {
-                    jsonArray = new JSONArray(sJson);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                GoodsModel goodsModel = null;
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    Gson gson = new Gson();
-                    try {
-                        goodsModel = gson.fromJson(jsonArray.get(i).toString(), GoodsModel.class);
-                        String goods_imageUrl = goodsModel.getPhoto_path();
-                        goods_imageUrl = goods_imageUrl.substring(2, goods_imageUrl.length() - 2);
-                        goodsModel.setPhoto_path(goods_imageUrl);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    if (goodsModel != null) {
-                        //Log.i("oscart",Integer.toString(i)+goodsModel.getName());
-                        goodsModelList.add(goodsModel);
-                    }
-                }
-                return goodsModelList;
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (connection != null) {
-                    connection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(final List<GoodsModel> result) {
-            super.onPostExecute(result);
-            //mText.setText(result.toString());
-            //TODO need to set data to list
-            if (result != null) {
-                setGoodsMap(result);
-            }
-        }
-    }
-
     Map<Marker, GoodsModel> allMarkersMap = new HashMap<Marker, GoodsModel>();  //hash map for infowindow
     ImageView user_image;
 
     public void setGoodsMap(List<GoodsModel> listGoodsModel) {
         mMap.clear();   //清除所有marker
         allMarkersMap.clear();
-
 
         BitmapDescriptor icon;
         for (int i = 0; i < listGoodsModel.size(); i++) {
@@ -361,20 +282,8 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             String title = listGoodsModel.get(i).getName();
             LatLng sydney = new LatLng(lng, lat); //check if x is lat or x is lng
             Log.i("oscart", title + " " + Double.toString(lat));
-            switch (listGoodsModel.get(i).getCategory()) {//TODO add all category
-                case "Textbooks":
-                    icon = getBitmapDescriptor(R.drawable.category_textbooks);
-                    break;
-                case "Others":
-                    icon = getBitmapDescriptor(R.drawable.category_others);
-                    break;
-                case "Books":
-                    icon = getBitmapDescriptor(R.drawable.category_books);
-                    break;
-                default:
-                    icon = getBitmapDescriptor(R.drawable.category_books);
-                    break;
-            }
+            icon = getBitmapDescriptor(CategoryTool.INSTANCE.getCategoryDrawableID(listGoodsModel.get(i).getCategory()));
+
             Marker marker = mMap.addMarker(new MarkerOptions().position(sydney).title(title).icon(icon));
             allMarkersMap.put(marker, listGoodsModel.get(i));
 //            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 15)); //for test, remove later
@@ -467,94 +376,6 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public class postTask extends AsyncTask<PostModel, String, Integer> {
-
-        private int statusCode;
-
-        @Override
-        protected Integer doInBackground(PostModel... params) {
-
-            HttpClient client = new DefaultHttpClient();
-            HttpPost post = new HttpPost("http://exwd.csie.org:43002/api/goods?token=" + exToken);
-            post.addHeader("content-type", "application/json");
-            try {
-                PostModel postModel = params[0];
-                String jsonString = new Gson().toJson(postModel);
-                HttpEntity entity = new StringEntity(jsonString, HTTP.UTF_8);
-                post.setEntity(entity);
-                HttpResponse response = client.execute(post);
-                entity = response.getEntity();
-                jsonString = EntityUtils.toString(entity);
-                System.out.println(">>>return String=" + jsonString);
-                statusCode = response.getStatusLine().getStatusCode();
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            } catch (ClientProtocolException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return statusCode;
-        }
-
-        @Override
-        protected void onPostExecute(Integer integer) {
-            super.onPostExecute(integer);
-            if (integer == 201) {  //post success
-                Toast.makeText(getContext(), "Posted", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(getContext(), "Post fail", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    public class uploadImageTask extends AsyncTask<PostModel, String, AsyncWrapper> {
-
-        private AsyncWrapper asyncWrapper;
-
-        @Override
-        protected AsyncWrapper doInBackground(PostModel... params) {
-
-            HttpClient client = new DefaultHttpClient();
-            HttpPost post = new HttpPost("http://exwd.csie.org:43002/api/upload/image?token=" + exToken);
-            post.addHeader("content-type", "application/json");
-            try {
-                PostModel postModel = params[0];
-                //TODO 這邊可能要改成傳path就好 不用PostModel
-                UploadImageModel uploadImageModel = new UploadImageModel(convertPathTOBase(postModel.getPhoto_path()));
-                String jsonString = new Gson().toJson(uploadImageModel);
-                HttpEntity entity = new StringEntity(jsonString, HTTP.UTF_8);
-                post.setEntity(entity);
-                HttpResponse response = client.execute(post);
-                entity = response.getEntity();
-                jsonString = EntityUtils.toString(entity);
-
-
-                postModel.setPhoto_path(jsonString);
-                asyncWrapper = new AsyncWrapper();
-                asyncWrapper.setPostModel(postModel);
-                asyncWrapper.setStatusCode(response.getStatusLine().getStatusCode());
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            } catch (ClientProtocolException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return asyncWrapper;
-        }
-
-        @Override
-        protected void onPostExecute(AsyncWrapper asyncWrapper) {
-            super.onPostExecute(asyncWrapper);
-            if (asyncWrapper.getStatusCode() == 200) {  //post success
-                new postTask().execute(asyncWrapper.getPostModel());
-            } else {
-                Toast.makeText(getContext(), "上傳圖片失敗", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
     private String convertPathTOBase(String path) {
         Bitmap bm = BitmapFactory.decodeFile(path);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -606,6 +427,16 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
             //  gps functionality
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        user = null;
+        if (RealmManager.INSTANCE.retrieveUser().size()!=0) {
+            user = RealmManager.INSTANCE.retrieveUser().get(0);
+            exToken = user.getExToken();
         }
     }
 }

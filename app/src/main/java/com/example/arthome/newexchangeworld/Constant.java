@@ -7,7 +7,7 @@ package com.example.arthome.newexchangeworld;
 public class Constant {
     //Intent
     public static final String INTENT_CATEGORY = "CATEGORY";
-
+    public static final String INTENT_GOODS = "GOODS";
 
     //Category
     public static final String CATEGORY_OTHERS = "Others";

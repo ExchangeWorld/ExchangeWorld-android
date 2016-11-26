@@ -18,6 +18,9 @@ import android.widget.Toast;
 import com.example.arthome.newexchangeworld.Constant;
 import com.example.arthome.newexchangeworld.ExchangeAPI.RestClient;
 import com.example.arthome.newexchangeworld.MainActivity;
+import com.example.arthome.newexchangeworld.MyPage.MyItemDetailActivity;
+import com.example.arthome.newexchangeworld.RealmManager;
+import com.example.arthome.newexchangeworld.User;
 import com.google.android.gms.maps.MapFragment;
 import com.google.gson.Gson;
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
@@ -46,7 +49,7 @@ import retrofit2.Response;
  * Created by arthome on 2016/4/10.
  */
 public class ItemFragment extends Fragment {
-
+    private User user;
     private RecyclerView mRecyclerView;
     private ItemAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -103,9 +106,15 @@ public class ItemFragment extends Fragment {
                         @Override
                         public void onGoodsClick(View itemView, int position) {
                             GoodsModel goodsModel = response.body().get(position);
-                            Intent intent = new Intent(getActivity(), ItemDetailActivity.class);
-                            intent.putExtra("goodModel", new Gson().toJson(goodsModel));
-                            startActivity(intent);
+                            if (user != null && user.getUid() == goodsModel.getOwner().getUid()) {
+                                Intent intent = new Intent(getActivity(), MyItemDetailActivity.class);
+                                intent.putExtra(Constant.INTENT_GOODS, new Gson().toJson(goodsModel));
+                                startActivity(intent);
+                            } else {
+                                Intent intent = new Intent(getActivity(), ItemDetailActivity.class);
+                                intent.putExtra(Constant.INTENT_GOODS, new Gson().toJson(goodsModel));
+                                startActivity(intent);
+                            }
                         }
                     });
                     mRecyclerView.setAdapter(mAdapter);
@@ -119,124 +128,13 @@ public class ItemFragment extends Fragment {
                 Toast.makeText(getContext(), "下載物品失敗 onFailure", Toast.LENGTH_SHORT).show();
             }
         });
-       /*
-        //列數為2
-        int spanCount = 2;
-        mLayoutManager = new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        //建構臨時數據源
-        for (int i = 0; i < 10; i++) {
-            items.add("item"+i);
-        }
-        mAdapter = new ItemAdapter(items);
-        mRecyclerView.setAdapter(mAdapter);
-    */
     }
 
-    public class downloadAPI extends AsyncTask<String, String, List<GoodsModel>> {
-
-        private ProgressDialog progressDialog = new ProgressDialog(getContext());
-
-        @Override
-        protected void onPreExecute() {
-            //progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog = ProgressDialog.show(getContext(), "Loading", "Please wait", true);
-            super.onPreExecute();
-        }
-
-        @Override
-        protected List<GoodsModel> doInBackground(String... params) {
-            HttpURLConnection connection = null;
-            BufferedReader reader = null;
-            //int goods_count=1;
-            try {
-
-                URL url = new URL(params[0]);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.connect(); // it still works without this line, don't know why
-                List<GoodsModel> goodsModelList = new ArrayList<>();
-
-
-                InputStream stream = connection.getInputStream();
-
-                reader = new BufferedReader(new InputStreamReader(stream));
-
-                StringBuffer buffer = new StringBuffer();
-
-                String line = "";
-                while ((line = reader.readLine()) != null) {
-                    buffer.append(line);
-                }
-                String sJson;
-                sJson = buffer.toString();
-
-                JSONArray jsonArray = null; //try and catch?
-                try {
-                    jsonArray = new JSONArray(sJson);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                GoodsModel goodsModel = null;
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    Gson gson = new Gson();
-                    try {
-                        goodsModel = gson.fromJson(jsonArray.get(i).toString(), GoodsModel.class);
-                        String goods_imageUrl = goodsModel.getPhoto_path();
-                        goods_imageUrl = goods_imageUrl.substring(2, goods_imageUrl.length() - 2);
-                        goodsModel.setPhoto_path(goods_imageUrl);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    if (goodsModel != null) {
-                        //Log.i("oscart",Integer.toString(i)+goodsModel.getName());
-                        goodsModelList.add(goodsModel);
-                    }
-                }
-
-                return goodsModelList;
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (connection != null) {
-                    connection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            return null;
-        }
-
-
-        @Override
-        protected void onPostExecute(final List<GoodsModel> result) {
-            super.onPostExecute(result);
-            //mText.setText(result.toString());
-            //TODO need to set data to list
-            if (result != null) {
-                //列數為2
-                int spanCount = 2;
-                mLayoutManager = new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL);
-                mRecyclerView.setLayoutManager(mLayoutManager);
-                mAdapter = new ItemAdapter(result);
-                mAdapter.setMyViewHolderClicks(new ItemAdapter.MyViewHolderClicks() {
-                    @Override
-                    public void onGoodsClick(View itemView, int position) {
-                        GoodsModel goodsModel = result.get(position);
-                        Intent intent = new Intent(getActivity(), ItemDetailActivity.class);
-                        intent.putExtra("goodModel", new Gson().toJson(goodsModel));
-                        startActivity(intent);
-                    }
-                });
-                mRecyclerView.setAdapter(mAdapter);
-                progressDialog.dismiss();
-            }
-        }
+    @Override
+    public void onResume() {
+        super.onResume();
+        user = null;
+        if (RealmManager.INSTANCE.retrieveUser().size() != 0)
+            user = RealmManager.INSTANCE.retrieveUser().get(0);
     }
 }

@@ -7,6 +7,8 @@ import com.example.arthome.newexchangeworld.Models.FaceBookUser;
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.example.arthome.newexchangeworld.Models.PostModel;
 import com.example.arthome.newexchangeworld.Models.QueueOfGoodsModel;
+import com.example.arthome.newexchangeworld.Models.QueueRequestModel;
+import com.example.arthome.newexchangeworld.Models.QueueResponseModel;
 import com.example.arthome.newexchangeworld.Models.UploadImageModel;
 import com.example.arthome.newexchangeworld.Models.UserModel;
 import com.google.android.gms.auth.api.Auth;
@@ -75,4 +77,8 @@ public interface ExchangeService {
     //歷史紀錄
     @GET("api/exchange/of/user/all")
     Call<List<ExchangeModel>> historyExchange(@Query("owner_udi") int ownerID, @Query("token") String strToken);
+
+    //exwd.csie.org:43002/api/queue/post?token=db80a7ef431dab870d2ae6f58027020f7918a56d
+    @POST("api/queue/post")
+    Call<QueueResponseModel> quequeGoods(@Query("token") String strToken, @Body QueueRequestModel queueRequestModel);
 }

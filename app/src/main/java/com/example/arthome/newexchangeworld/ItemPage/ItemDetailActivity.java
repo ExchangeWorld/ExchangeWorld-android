@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.arthome.newexchangeworld.Constant;
 import com.example.arthome.newexchangeworld.ItemDetailAdapter;
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.example.arthome.newexchangeworld.R;
@@ -39,7 +40,7 @@ public class ItemDetailActivity extends AppCompatActivity {
         // recovering data from MainActivity, sent via intent
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            String json = bundle.getString("goodModel");
+            String json = bundle.getString(Constant.INTENT_GOODS);
             GoodsModel goodsModel = new Gson().fromJson(json, GoodsModel.class);
 
             setUpUIView();
