@@ -1,5 +1,12 @@
 package com.example.arthome.newexchangeworld.Models;
 
+import android.databinding.BindingAdapter;
+import android.widget.ImageView;
+
+import com.example.arthome.newexchangeworld.util.CategoryTool;
+import com.example.arthome.newexchangeworld.util.StringTool;
+import com.squareup.picasso.Picasso;
+
 /**
  * Created by arthome on 2016/5/14.
  */
@@ -134,6 +141,21 @@ public class GoodsModel {
 
     public void setOwner(Owner owner) {
         this.owner = owner;
+    }
+
+
+    @BindingAdapter({"bind:imageUrl"})
+    public static void loadImage(ImageView view, String imageUrl) {
+        imageUrl = StringTool.INSTANCE.getFirstPhotoURL(imageUrl);
+        Picasso.with(view.getContext())
+                .load(imageUrl)
+                .into(view);
+    }
+
+    @BindingAdapter({"bind:categoryIcon"})
+    public static void setCategoryImage(ImageView view, String category) {
+        int resID = CategoryTool.INSTANCE.getCategoryDrawableID(category);
+        view.setImageResource(resID);
     }
     /*
     {

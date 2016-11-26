@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +14,9 @@ import android.widget.Toast;
 
 import com.example.arthome.newexchangeworld.ExchangeAPI.RestClient;
 import com.example.arthome.newexchangeworld.Models.ExchangeModel;
-import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.example.arthome.newexchangeworld.R;
 import com.example.arthome.newexchangeworld.RealmManager;
 import com.example.arthome.newexchangeworld.User;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +31,7 @@ import retrofit2.Response;
 public class HistoryExchangeFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
-    private HistoryFindAdapter mAdapter;
+    private HistoryAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private ProgressDialog progressDialog;
     private List<ExchangeModel> exchangeModels = new ArrayList<>();
@@ -66,15 +63,14 @@ public class HistoryExchangeFragment extends Fragment {
 
         //原本的initView
         mRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_history_recyclerview);
-
-        //列數為2
-        int spanCount = 1;
-        mLayoutManager = new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new HistoryFindAdapter(exchangeModels, getContext());
+        mAdapter = new HistoryAdapter(exchangeModels);
         mRecyclerView.setAdapter(mAdapter);
 
-        progressDialog = new ProgressDialog(getContext());
+        //列數為2
+        mLayoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        progressDialog = new ProgressDialog(getActivity());
     }
 
     private void downloadHistoryExchanges(){
@@ -85,11 +81,10 @@ public class HistoryExchangeFragment extends Fragment {
             @Override
             public void onResponse(Call<List<ExchangeModel>> call, Response<List<ExchangeModel>> response) {
                 if (response.code() == 200) {
-//                    exchangeModels.clear();
-
-                    exchangeModels = response.body();
-
+                    exchangeModels.clear();
+                    exchangeModels.addAll(response.body());
                     mAdapter.notifyDataSetChanged();
+
                     progressDialog.dismiss();
                 }
             }

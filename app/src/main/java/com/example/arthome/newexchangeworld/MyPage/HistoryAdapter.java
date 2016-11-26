@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.databinding.library.baseAdapters.BR;
 import com.example.arthome.newexchangeworld.Models.ExchangeModel;
 import com.example.arthome.newexchangeworld.R;
 
@@ -31,6 +32,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
 
     @Override
     public void onBindViewHolder(HistoryViewHolder holder, int position) {
+        ExchangeModel exchangeModel = exchangeModels.get(position);
+        holder.getBinding().setVariable(BR.exchangeModel, exchangeModel);
+        holder.getBinding().executePendingBindings();
     }
 
     @Override

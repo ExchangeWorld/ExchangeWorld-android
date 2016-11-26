@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="exchangeModel"
+            type="com.example.arthome.newexchangeworld.Models.ExchangeModel" />
+    </data>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="2">
 
@@ -12,12 +21,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1">
+
             <ImageView
                 android:id="@+id/item_history_other_goods_image"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
+                android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_alignParentTop="true" />
+                bind:imageUrl="@{exchangeModel.other_goods.photo_path}" />
 
             <ImageView
                 android:id="@+id/item_history_other_category_image"
@@ -27,7 +38,8 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/item_history_other_goods_image"
                 android:layout_marginLeft="8dp"
-                android:layout_marginStart="8dp" />
+                android:layout_marginStart="8dp"
+                bind:categoryIcon="@{exchangeModel.other_goods.category}" />
 
             <TextView
                 android:id="@+id/item_history_other_goods_name"
@@ -36,19 +48,19 @@
                 android:layout_below="@+id/item_history_other_goods_image"
                 android:layout_toEndOf="@+id/item_history_other_category_image"
                 android:layout_toRightOf="@+id/item_history_other_category_image"
-                android:text="goods_name"
+                android:text="@{exchangeModel.other_goods.name}"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
 
             <LinearLayout
-                android:layout_alignLeft="@+id/item_history_other_category_image"
-                android:layout_alignStart="@+id/item_history_other_category_image"
-                android:layout_below="@+id/item_history_other_goods_name"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="8dp"
                 android:id="@+id/item_history_other_user_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/item_history_other_category_image"
+                android:layout_alignStart="@+id/item_history_other_category_image"
+                android:layout_below="@+id/item_history_other_goods_name"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="4dp"
                 android:gravity="center_vertical">
 
                 <ImageView
@@ -59,11 +71,11 @@
 
                 <TextView
                     android:id="@+id/item_history_other_user_name"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginStart="8dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="user_name"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:text="@{exchangeModel.other_goods.owner.name}"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
             </LinearLayout>
         </RelativeLayout>
@@ -74,12 +86,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:paddingBottom="8dp">
+
             <ImageView
                 android:id="@+id/item_history_owner_goods_image"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
+                android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_alignParentTop="true" />
+                bind:imageUrl="@{exchangeModel.owner_goods.photo_path}" />
 
             <ImageView
                 android:id="@+id/item_history_owner_category_image"
@@ -89,7 +103,8 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/item_history_owner_goods_image"
                 android:layout_marginLeft="8dp"
-                android:layout_marginStart="8dp" />
+                android:layout_marginStart="8dp"
+                bind:categoryIcon="@{exchangeModel.owner_goods.category}" />
 
             <TextView
                 android:id="@+id/item_history_owner_goods_name"
@@ -98,7 +113,7 @@
                 android:layout_below="@+id/item_history_owner_goods_image"
                 android:layout_toEndOf="@+id/item_history_owner_category_image"
                 android:layout_toRightOf="@+id/item_history_owner_category_image"
-                android:text="goods_name"
+                android:text="@{exchangeModel.owner_goods.name}"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
         </RelativeLayout>

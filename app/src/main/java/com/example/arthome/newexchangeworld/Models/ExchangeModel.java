@@ -1,23 +1,34 @@
 package com.example.arthome.newexchangeworld.Models;
 
+import android.databinding.BaseObservable;
+import android.databinding.Bindable;
+import android.databinding.BindingAdapter;
+import android.widget.ImageView;
+
+import com.android.databinding.library.baseAdapters.BR;
+import com.squareup.picasso.Picasso;
+
 /**
  * Created by art on 2016/11/22.
  */
 
-public class ExchangeModel {
-    private int edi;
+public class ExchangeModel extends BaseObservable{
+    private int eid;
     private String status;
     private GoodsModel owner_goods;
     private GoodsModel other_goods;
     private boolean owner_agree;
     private boolean other_agree;
 
-    public int getEdi() {
-        return edi;
+    @Bindable
+    public int getEid() {
+        return eid;
     }
 
-    public void setEdi(int edi) {
-        this.edi = edi;
+
+    public void setEid(int eid) {
+        this.eid = eid;
+        notifyPropertyChanged(BR.eid);
     }
 
     public String getStatus() {
@@ -59,4 +70,5 @@ public class ExchangeModel {
     public void setOther_agree(boolean other_agree) {
         this.other_agree = other_agree;
     }
+
 }

@@ -87,7 +87,7 @@ public class MyPageFragment extends Fragment {
                 case 1:
                     return MyItemFragment.newInstance();
                 case 2:
-                    return oneFragment.newInstance("1", "2");
+                return oneFragment.newInstance("1", "2");
                 case 3:
                     return HistoryExchangeFragment.newInstance();
                 default:
