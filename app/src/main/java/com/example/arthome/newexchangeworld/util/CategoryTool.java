@@ -38,4 +38,34 @@ public enum  CategoryTool {
         }
         return R.drawable.category_others;  //default
     }
+
+    public String getCategoryName(String category){
+        switch (category) {
+            case Constant.CATEGORY_BOOKS:
+                return "書籍";
+            case Constant.CATEGORY_3C:
+                return "3C用品";
+            case Constant.CATEGORY_3C_ACCESSORIES:
+                return "3C配件";
+            case Constant.CATEGORY_ACCESSORIES:
+                return "配件";
+            case Constant.CATEGORY_CLOTHES:
+                return "潮流衣物";
+            case Constant.CATEGORY_COSMETIC:
+                return "美妝用品";
+            case Constant.CATEGORY_FOOD:
+                return "食物";
+            case Constant.CATEGORY_GAMES:
+                return "電玩遊戲";
+            case Constant.CATEGORY_HOUSEWARE:
+                return "家庭用品";
+            case Constant.CATEGORY_OTHERS:
+                return "其他";
+            case Constant.CATEGORY_SPORTS:
+                return "體育用品";
+            case Constant.CATEGORY_TEXTBOOKS:
+                return "教科書";
+        }
+        return "不明類別";
+    }
 }

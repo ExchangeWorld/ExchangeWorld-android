@@ -2,6 +2,7 @@ package com.example.arthome.newexchangeworld.Models;
 
 import android.databinding.BindingAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.arthome.newexchangeworld.util.CategoryTool;
 import com.example.arthome.newexchangeworld.util.StringTool;
@@ -156,6 +157,12 @@ public class GoodsModel {
     public static void setCategoryImage(ImageView view, String category) {
         int resID = CategoryTool.INSTANCE.getCategoryDrawableID(category);
         view.setImageResource(resID);
+    }
+
+    @BindingAdapter({"bind:categoryName"})
+    public static void setCategoryName(TextView view, String category) {
+        String categoryName = CategoryTool.INSTANCE.getCategoryName(category);
+        view.setText(categoryName);
     }
     /*
     {

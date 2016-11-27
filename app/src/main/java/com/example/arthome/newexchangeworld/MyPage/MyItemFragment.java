@@ -110,7 +110,7 @@ public class MyItemFragment extends Fragment {
                         @Override
                         public void onGoodsClick(GoodsModel goodsModel) {
                             Intent intent = new Intent(getActivity(), MyItemDetailActivity.class);
-                            intent.putExtra("goodModel", new Gson().toJson(goodsModel));
+                            intent.putExtra(Constant.INTENT_GOODS, new Gson().toJson(goodsModel));
                             startActivity(intent);
                         }
                     });

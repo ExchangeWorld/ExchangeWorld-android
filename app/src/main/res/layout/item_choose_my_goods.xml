@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="goods"
+            type="com.example.arthome.newexchangeworld.Models.GoodsModel" />
+    </data>
+
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/cardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        card_view:cardBackgroundColor="@color/cardBackground">
+
+        <LinearLayout
+            android:weightSum="10"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/item_choose_my_goods_image"
+                bind:imageUrl="@{goods.photo_path}"
+                android:layout_weight="4"
+                android:layout_width="0dp"
+                android:layout_height="150dp" />
+
+            <LinearLayout
+                android:layout_weight="4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/item_choose_my_goods_goods_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{goods.name}"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <LinearLayout
+                    android:padding="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        bind:categoryIcon="@{goods.category}"
+                        android:id="@+id/item_choose_my_goods_category_image"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:src="@drawable/ic_book" />
+
+                    <TextView
+                        bind:categoryName="@{goods.category}"
+                        android:id="@+id/item_choose_my_goods_category_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="goods_category"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <RadioButton
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:layout_width="0dp"/>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+</layout>
