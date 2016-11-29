@@ -17,6 +17,8 @@ import com.example.arthome.newexchangeworld.CustomViews.CustomMyGoodsDialog;
 import com.example.arthome.newexchangeworld.ExchangeAPI.RestClient;
 import com.example.arthome.newexchangeworld.ItemDetailAdapter;
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
+import com.example.arthome.newexchangeworld.Models.QueueRequestModel;
+import com.example.arthome.newexchangeworld.Models.QueueResponseModel;
 import com.example.arthome.newexchangeworld.R;
 import com.example.arthome.newexchangeworld.RealmManager;
 import com.example.arthome.newexchangeworld.User;
@@ -40,6 +42,7 @@ public class ItemDetailActivity extends AppCompatActivity {
     LinearLayout quequeLayout;
     RecyclerView imageRecyclerView;
     User user = null;
+    private GoodsModel goodsModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +61,7 @@ public class ItemDetailActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             String json = bundle.getString(Constant.INTENT_GOODS);
-            GoodsModel goodsModel = new Gson().fromJson(json, GoodsModel.class);
+            goodsModel = new Gson().fromJson(json, GoodsModel.class);
 
             setUpUIView();
             imageRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
@@ -103,7 +106,15 @@ public class ItemDetailActivity extends AppCompatActivity {
                             goodsModels.add(response.body().get(i));
                         }
                     }
-                    new CustomMyGoodsDialog(ItemDetailActivity.this, goodsModels).show();
+                    final CustomMyGoodsDialog dialog = new CustomMyGoodsDialog(ItemDetailActivity.this, goodsModels);
+                    dialog.setMyGoodsDialogListener(new CustomMyGoodsDialog.MyGoodsDialogListener() {
+                        @Override
+                        public void quequeClicked(int gid) {
+                            quequeRequest(gid);
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.show();
                 } else {
                     Toast.makeText(getApplicationContext(), "下載物品失敗 status code錯誤", Toast.LENGTH_SHORT).show();
                 }
@@ -112,6 +123,25 @@ public class ItemDetailActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<List<GoodsModel>> call, Throwable t) {
                 Toast.makeText(getApplicationContext(), "下載物品失敗 onFailure", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void quequeRequest(int quequerGid){
+        Call<QueueResponseModel> call = new RestClient().getExchangeService().quequeGoods(user.getExToken(),new QueueRequestModel(goodsModel.getGid(),quequerGid));
+        call.enqueue(new Callback<QueueResponseModel>() {
+            @Override
+            public void onResponse(Call<QueueResponseModel> call, Response<QueueResponseModel> response) {
+                if(response.code()==200){
+                    Toast.makeText(getApplicationContext(),"已發出排請求",Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(getApplicationContext(),"失敗 response code錯誤",Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<QueueResponseModel> call, Throwable t) {
+                Toast.makeText(getApplicationContext(),"失敗 onFailure",Toast.LENGTH_SHORT).show();
             }
         });
     }

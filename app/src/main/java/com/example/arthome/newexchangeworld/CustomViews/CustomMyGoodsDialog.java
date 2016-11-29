@@ -29,9 +29,9 @@ import retrofit2.Response;
 public class CustomMyGoodsDialog extends Dialog {
     private DialogMyGoodsBinding binding;
     private ChooseGoodsAdapter chooseGoodsAdapter;
+    private MyGoodsDialogListener listener;
 
-
-    public CustomMyGoodsDialog(Context context, List<GoodsModel> goodsModels) {
+    public CustomMyGoodsDialog(final Context context, List<GoodsModel> goodsModels) {
         super(context);
         binding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.dialog_my_goods, null, false);
         setContentView(binding.getRoot());
@@ -50,5 +50,19 @@ public class CustomMyGoodsDialog extends Dialog {
                 dismiss();
             }
         });
+        binding.dialogWhoQueueAcceptButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.quequeClicked(chooseGoodsAdapter.getChosenGid());     // return -1 if not chosen
+            }
+        });
+    }
+
+    public void setMyGoodsDialogListener(MyGoodsDialogListener listener){
+        this.listener = listener;
+    }
+
+    public interface MyGoodsDialogListener{
+        void quequeClicked(int gid);
     }
 }

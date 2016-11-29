@@ -19,7 +19,8 @@ import java.util.List;
  */
 
 public class ChooseGoodsAdapter extends RecyclerView.Adapter<ChooseGoodsAdapter.ChooseGoodsViewHolder> {
-    List<GoodsModel> goodsModelList;
+    private List<GoodsModel> goodsModelList;
+    private int checkedPosition = -1;
     public ChooseGoodsAdapter(List<GoodsModel> goodsModelList){
         this.goodsModelList= goodsModelList;
     }
@@ -35,6 +36,10 @@ public class ChooseGoodsAdapter extends RecyclerView.Adapter<ChooseGoodsAdapter.
         GoodsModel goodsModel = goodsModelList.get(position);
         holder.getBinding().setVariable(BR.goods, goodsModel);
         holder.getBinding().executePendingBindings();
+        if(checkedPosition==position)
+            holder.getBinding().itemChooseMyGoodsRadioButton.setChecked(true);
+        else
+            holder.getBinding().itemChooseMyGoodsRadioButton.setChecked(false);
     }
 
     @Override
@@ -51,7 +56,11 @@ public class ChooseGoodsAdapter extends RecyclerView.Adapter<ChooseGoodsAdapter.
             binding.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    System.out.println(">>>>"+getAdapterPosition());
+                    //TODO  爛Code 待改
+                    int oldChecked= checkedPosition;
+                    checkedPosition = getAdapterPosition();
+                    notifyItemRangeChanged(oldChecked,1);
+                    binding.itemChooseMyGoodsRadioButton.setChecked(true);
                 }
             });
         }
@@ -59,5 +68,9 @@ public class ChooseGoodsAdapter extends RecyclerView.Adapter<ChooseGoodsAdapter.
         private ItemChooseMyGoodsBinding getBinding() {
             return binding;
         }
+    }
+    public int getChosenGid(){
+        int gid = (checkedPosition==-1)?-1:goodsModelList.get(checkedPosition).getGid();
+        return gid;
     }
 }

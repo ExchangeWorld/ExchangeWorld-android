@@ -8,6 +8,11 @@ public class QueueRequestModel {
     int host_goods_gid;
     int queuer_goods_gid;
 
+    public QueueRequestModel(int hostGid, int quequerGid){
+        this.host_goods_gid = hostGid;
+        this.queuer_goods_gid = quequerGid;
+    }
+
     public int getHost_goods_gid() {
         return host_goods_gid;
     }
