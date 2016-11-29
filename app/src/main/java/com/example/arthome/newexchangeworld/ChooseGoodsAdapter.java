@@ -10,8 +10,10 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
+import com.example.arthome.newexchangeworld.Models.QueueOfGoodsModel;
 import com.example.arthome.newexchangeworld.databinding.ItemChooseMyGoodsBinding;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,9 +22,19 @@ import java.util.List;
 
 public class ChooseGoodsAdapter extends RecyclerView.Adapter<ChooseGoodsAdapter.ChooseGoodsViewHolder> {
     private List<GoodsModel> goodsModelList;
+    private List<QueueOfGoodsModel> queueOfGoodsModelList;
     private int checkedPosition = -1;
     public ChooseGoodsAdapter(List<GoodsModel> goodsModelList){
         this.goodsModelList= goodsModelList;
+    }
+
+    //TODO 語法錯誤 待改
+    public ChooseGoodsAdapter(List<QueueOfGoodsModel> queueOfGoodsModelList, int nothigh){
+        this.queueOfGoodsModelList = queueOfGoodsModelList;
+        goodsModelList = new ArrayList<>();
+        for(int i = 0; i<queueOfGoodsModelList.size();i++){
+            goodsModelList.add(queueOfGoodsModelList.get(i).getQueuer_goods());
+        }
     }
 
     @Override

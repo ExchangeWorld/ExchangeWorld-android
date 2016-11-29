@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.arthome.newexchangeworld.MyPage.ExchangeRequestFragment;
 import com.example.arthome.newexchangeworld.MyPage.HistoryExchangeFragment;
 import com.example.arthome.newexchangeworld.MyPage.MyItemFragment;
 import com.squareup.picasso.Picasso;
@@ -87,7 +88,7 @@ public class MyPageFragment extends Fragment {
                 case 1:
                     return MyItemFragment.newInstance();
                 case 2:
-                return oneFragment.newInstance("1", "2");
+                return ExchangeRequestFragment.newInstance();
                 case 3:
                     return HistoryExchangeFragment.newInstance();
                 default:

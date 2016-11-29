@@ -3,6 +3,7 @@ package com.example.arthome.newexchangeworld.ExchangeAPI;
 import com.example.arthome.newexchangeworld.Models.AuthenticationModel;
 import com.example.arthome.newexchangeworld.Models.EditGoodsModel;
 import com.example.arthome.newexchangeworld.Models.ExchangeModel;
+import com.example.arthome.newexchangeworld.Models.ExchangeRequestModel;
 import com.example.arthome.newexchangeworld.Models.FaceBookUser;
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.example.arthome.newexchangeworld.Models.PostModel;
@@ -81,4 +82,8 @@ public interface ExchangeService {
     //exwd.csie.org:43002/api/queue/post?token=db80a7ef431dab870d2ae6f58027020f7918a56d
     @POST("api/queue/post")
     Call<QueueResponseModel> quequeGoods(@Query("token") String strToken, @Body QueueRequestModel queueRequestModel);
+
+    //exwd.csie.org:43002/api/user/me/goods/queue?token=019b04aea862b35b0ae0aaa18c76208b77355631
+    @GET("api/user/me/goods/queue")
+    Call<List<ExchangeRequestModel>> getMyExchangeRequest(@Query("token") String strToken);
 }
