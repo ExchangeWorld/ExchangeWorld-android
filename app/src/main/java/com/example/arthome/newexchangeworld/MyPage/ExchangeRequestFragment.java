@@ -52,6 +52,12 @@ public class ExchangeRequestFragment extends Fragment {
         //原本的initView
         mRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_history_recyclerview);
         mAdapter = new ExchangeRequestAdapter(getContext(), exchangeRequestModels);
+        mAdapter.setExchangeRequestAdapterListener(new ExchangeRequestAdapter.ExchangeRequestAdapterListener() {
+            @Override
+            public void refreshAdapter() {
+                downloadExchangeRequest();
+            }
+        });
         mRecyclerView.setAdapter(mAdapter);
 
         mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);

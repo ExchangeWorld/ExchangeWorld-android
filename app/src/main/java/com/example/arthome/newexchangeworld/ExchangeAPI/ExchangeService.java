@@ -1,6 +1,8 @@
 package com.example.arthome.newexchangeworld.ExchangeAPI;
 
 import com.example.arthome.newexchangeworld.Models.AuthenticationModel;
+import com.example.arthome.newexchangeworld.Models.CreateExchangeModel;
+import com.example.arthome.newexchangeworld.Models.CreateExchangeResponse;
 import com.example.arthome.newexchangeworld.Models.EditGoodsModel;
 import com.example.arthome.newexchangeworld.Models.ExchangeModel;
 import com.example.arthome.newexchangeworld.Models.ExchangeRequestModel;
@@ -33,8 +35,8 @@ import retrofit2.http.Query;
 public interface ExchangeService {
 
     // GET api/user?uid={int}&identity={string}
-        @GET("api/user")
-        Call<UserModel> getUserInfo(@Query("uid") int intUID, @Query("identity") String strIdentity);
+    @GET("api/user")
+    Call<UserModel> getUserInfo(@Query("uid") int intUID, @Query("identity") String strIdentity);
 
     @POST("api/authenticate/login")
     Call<AuthenticationModel> getToken(@Body FaceBookUser faceBookUser);
@@ -48,7 +50,8 @@ public interface ExchangeService {
     rx.Observable<ResponseBody> upLoadImageRxJava(@Query("token") String strToken, @Body UploadImageModel uploadImageModel);
 
     //api/goods/post?token=
-    @POST("api/goods/post")     //暫時不管ResponseType 故用ResponseBody即可
+    @POST("api/goods/post")
+    //暫時不管ResponseType 故用ResponseBody即可
     Call<ResponseBody> upLoadGoods(@Query("token") String strToken, @Body PostModel postModel);
 
     @GET("api/goods/search")
@@ -68,7 +71,7 @@ public interface ExchangeService {
 
     //exwd.csie.org:43002/api/goods/edit?token=75cd749ae06b15ecf3817c64a83764b22ebea5ad
     @PUT("api/goods/edit")
-    Call<ResponseBody> editGoods(@Query("token") String strToken,@Body EditGoodsModel editGoodsModel);
+    Call<ResponseBody> editGoods(@Query("token") String strToken, @Body EditGoodsModel editGoodsModel);
 
     //exwd.csie.org:43002/api/queue/of/goods?host_goods_gid=119&token=0f2ed5277968c7dbb4175136c58d7e661e0220e3
     @GET("api/queue/of/goods")
@@ -86,4 +89,8 @@ public interface ExchangeService {
     //exwd.csie.org:43002/api/user/me/goods/queue?token=019b04aea862b35b0ae0aaa18c76208b77355631
     @GET("api/user/me/goods/queue")
     Call<List<ExchangeRequestModel>> getMyExchangeRequest(@Query("token") String strToken);
+
+    //api/exchange/create( goods_one_gid, goods_two_gid )
+    @POST("api/exchange/create")
+    Call<CreateExchangeResponse> createExchange(@Query("token") String strToken, @Body CreateExchangeModel createExchangeModel);
 }
