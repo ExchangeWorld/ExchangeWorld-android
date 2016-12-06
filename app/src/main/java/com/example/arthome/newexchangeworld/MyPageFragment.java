@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.example.arthome.newexchangeworld.MyPage.ExchangeRequestFragment;
 import com.example.arthome.newexchangeworld.MyPage.HistoryExchangeFragment;
 import com.example.arthome.newexchangeworld.MyPage.MyItemFragment;
+import com.example.arthome.newexchangeworld.MyPage.WishListFragment;
 import com.squareup.picasso.Picasso;
 
 
@@ -84,7 +85,7 @@ public class MyPageFragment extends Fragment {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return oneFragment.newInstance("1", "2");
+                    return WishListFragment.newInstance();
                 case 1:
                     return MyItemFragment.newInstance();
                 case 2:

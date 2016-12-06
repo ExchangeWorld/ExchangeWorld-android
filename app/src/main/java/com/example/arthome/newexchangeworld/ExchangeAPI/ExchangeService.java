@@ -12,6 +12,8 @@ import com.example.arthome.newexchangeworld.Models.PostModel;
 import com.example.arthome.newexchangeworld.Models.QueueOfGoodsModel;
 import com.example.arthome.newexchangeworld.Models.QueueRequestModel;
 import com.example.arthome.newexchangeworld.Models.QueueResponseModel;
+import com.example.arthome.newexchangeworld.Models.StarGoodsModel;
+import com.example.arthome.newexchangeworld.Models.StarModel;
 import com.example.arthome.newexchangeworld.Models.UploadImageModel;
 import com.example.arthome.newexchangeworld.Models.UserModel;
 import com.google.android.gms.auth.api.Auth;
@@ -55,11 +57,11 @@ public interface ExchangeService {
     Call<ResponseBody> upLoadGoods(@Query("token") String strToken, @Body PostModel postModel);
 
     @GET("api/goods/search")
-    Call<List<GoodsModel>> downloadGoods();
+    Call<List<GoodsModel>> downloadGoods(@Query("token") String strToken);
 
     //http://exwd.csie.org:43002/api/goods/search?category={}
     @GET("api/goods/search")
-    Call<List<GoodsModel>> downloadCategoryGoods(@Query("category") String strCategory);
+    Call<List<GoodsModel>> downloadCategoryGoods(@Query("category") String strCategory, @Query("token") String strToken);
 
     //exwd.csie.org:43002/api/goods/of?owner_uid=2
     @GET("api/goods/of")
@@ -93,4 +95,12 @@ public interface ExchangeService {
     //api/exchange/create( goods_one_gid, goods_two_gid )
     @POST("api/exchange/create")
     Call<CreateExchangeResponse> createExchange(@Query("token") String strToken, @Body CreateExchangeModel createExchangeModel);
+
+    //http://exwd.csie.org:43002/api/star?token=853
+    @POST("api/star")
+    Call<StarModel> starGoods(@Query("token") String strToken, @Body StarGoodsModel starGoodsModel);
+
+    //exwd.csie.org:43002/api/star/by?starring_user_uid=5
+    @GET("api/star/by")
+    Call<List<StarModel>> getUserWishList(@Query("starring_user_uid") int UID);
 }

@@ -386,7 +386,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     }
 
     public void downloadGoods() {
-        Call<List<GoodsModel>> downloadGoodsCall = new RestClient().getExchangeService().downloadGoods();
+        Call<List<GoodsModel>> downloadGoodsCall = new RestClient().getExchangeService().downloadGoods(user.getExToken());
         downloadGoodsCall.enqueue(new Callback<List<GoodsModel>>() {
             @Override
             public void onResponse(Call<List<GoodsModel>> call, Response<List<GoodsModel>> response) {

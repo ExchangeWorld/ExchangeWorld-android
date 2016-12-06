@@ -4,7 +4,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -19,12 +18,13 @@ import com.example.arthome.newexchangeworld.ItemDetailAdapter;
 import com.example.arthome.newexchangeworld.Models.GoodsModel;
 import com.example.arthome.newexchangeworld.Models.QueueRequestModel;
 import com.example.arthome.newexchangeworld.Models.QueueResponseModel;
+import com.example.arthome.newexchangeworld.Models.StarGoodsModel;
+import com.example.arthome.newexchangeworld.Models.StarModel;
 import com.example.arthome.newexchangeworld.R;
 import com.example.arthome.newexchangeworld.RealmManager;
 import com.example.arthome.newexchangeworld.User;
 import com.example.arthome.newexchangeworld.util.StringTool;
 import com.google.gson.Gson;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,11 +35,9 @@ import retrofit2.Response;
 
 public class ItemDetailActivity extends AppCompatActivity {
 
-    ImageView goodsImage;
-    TextView ownerName;
-    TextView goodsDescription;
-    TextView goodsName;
-    LinearLayout quequeLayout;
+    ImageView goodsImage, starImage;
+    TextView ownerName, goodsDescription, goodsName, starTextView;
+    LinearLayout quequeLayout, starLayout;
     RecyclerView imageRecyclerView;
     User user = null;
     private GoodsModel goodsModel;
@@ -63,7 +61,9 @@ public class ItemDetailActivity extends AppCompatActivity {
             String json = bundle.getString(Constant.INTENT_GOODS);
             goodsModel = new Gson().fromJson(json, GoodsModel.class);
 
+
             setUpUIView();
+            setStaredView(goodsModel.isStarredByUser());
             imageRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
             imageRecyclerView.setAdapter(new ItemDetailAdapter(goodsModel.getPhoto_path(), this));
 
@@ -82,6 +82,12 @@ public class ItemDetailActivity extends AppCompatActivity {
                 showQueueDialog();
                 }
             });
+            starLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    starGoods();
+                }
+            });
         }
     }
 
@@ -91,6 +97,9 @@ public class ItemDetailActivity extends AppCompatActivity {
         goodsName = (TextView) findViewById(R.id.goods_name_detail);
         imageRecyclerView = (RecyclerView) findViewById(R.id.item_detail_recycler_view);
         quequeLayout = (LinearLayout) findViewById(R.id.item_detail_queue_layout);
+        starImage = (ImageView) findViewById(R.id.item_detail_star_ic);
+        starTextView = (TextView) findViewById(R.id.item_detail_star_textView);
+        starLayout = (LinearLayout) findViewById(R.id.item_detail_star_layout);
     }
 
     private void showQueueDialog() {
@@ -127,6 +136,12 @@ public class ItemDetailActivity extends AppCompatActivity {
         });
     }
 
+    private void setStaredView(boolean isStared){
+        starImage.setSelected(isStared);
+        if(isStared)
+            starTextView.setText("已關注");
+    }
+
     private void quequeRequest(int quequerGid){
         Call<QueueResponseModel> call = new RestClient().getExchangeService().quequeGoods(user.getExToken(),new QueueRequestModel(goodsModel.getGid(),quequerGid));
         call.enqueue(new Callback<QueueResponseModel>() {
@@ -146,19 +161,23 @@ public class ItemDetailActivity extends AppCompatActivity {
         });
     }
 
+    private void starGoods(){
+        Call<StarModel> call = new RestClient().getExchangeService().starGoods(user.getExToken(), new StarGoodsModel(user.getUid(), goodsModel.getGid()));
+        call.enqueue(new Callback<StarModel>() {
+            @Override
+            public void onResponse(Call<StarModel> call, Response<StarModel> response) {
+                if(response.code()==201){
+                    Toast.makeText(getApplicationContext(),"已關注",Toast.LENGTH_SHORT).show();
+                    setStaredView(true);
+                }else {
+                    Toast.makeText(getApplicationContext(),"關注失敗 response code錯誤",Toast.LENGTH_SHORT).show();
+                }
+            }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        if (id == android.R.id.home) {
-            //go back arrow
-            finish();
-        }
-
-        return super.onOptionsItemSelected(item);
+            @Override
+            public void onFailure(Call<StarModel> call, Throwable t) {
+                Toast.makeText(getApplicationContext(),"關注失敗 onFailure",Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

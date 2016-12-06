@@ -25,8 +25,17 @@ public class GoodsModel {
     private String created_at;
     private String updated_at;
     private Owner owner;
+    private boolean starredByUser = false;  //帶token才會回傳這項
 
     public GoodsModel() {
+    }
+
+    public boolean isStarredByUser() {
+        return starredByUser;
+    }
+
+    public void setStarredByUser(boolean starredByUser) {
+        this.starredByUser = starredByUser;
     }
 
     public String getError() {
