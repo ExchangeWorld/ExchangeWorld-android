@@ -66,6 +66,7 @@ public class ExchangingFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        selectedExchangeModel = null;
         binding.setVariable(BR.exchangeModel, selectedExchangeModel);
         binding.executePendingBindings();
 
