@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -30,6 +31,7 @@ import retrofit2.Response;
  */
 public class HistoryExchangeFragment extends Fragment {
 
+    private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView mRecyclerView;
     private HistoryAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -62,6 +64,14 @@ public class HistoryExchangeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         //原本的initView
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fragment_history_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                downloadHistoryExchanges();
+            }
+        });
+
         mRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_history_recyclerview);
         mAdapter = new HistoryAdapter(exchangeModels);
         mRecyclerView.setAdapter(mAdapter);
@@ -85,6 +95,7 @@ public class HistoryExchangeFragment extends Fragment {
                     exchangeModels.addAll(response.body());
                     mAdapter.notifyDataSetChanged();
 
+                    swipeRefreshLayout.setRefreshing(false);
                     progressDialog.dismiss();
                 }
             }

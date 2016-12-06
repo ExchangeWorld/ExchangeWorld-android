@@ -394,13 +394,13 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                     List<GoodsModel> goodsModelList = response.body();
                     setGoodsMap(goodsModelList);
                 } else {
-                    Toast.makeText(getContext(), "下載物品失敗 status Code錯誤", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "下載物品失敗 status Code錯誤", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<List<GoodsModel>> call, Throwable t) {
-                Toast.makeText(getContext(), "下載物品失敗 onFailure", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "下載物品失敗 onFailure", Toast.LENGTH_SHORT).show();
             }
         });
     }

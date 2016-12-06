@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -101,6 +102,13 @@ public class ExchangingFragment extends Fragment {
             }
         });
 
+        binding.fragmentExchangingRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                downloadHistoryExchanges();
+            }
+        });
+
         progressDialog = new ProgressDialog(getActivity());
     }
 
@@ -170,7 +178,7 @@ public class ExchangingFragment extends Fragment {
                             exchangeModels.add(response.body().get(i));
                     }
                     mAdapter.notifyDataSetChanged();
-
+                    binding.fragmentExchangingRefreshLayout.setRefreshing(false);
                     progressDialog.dismiss();
                 }
             }
