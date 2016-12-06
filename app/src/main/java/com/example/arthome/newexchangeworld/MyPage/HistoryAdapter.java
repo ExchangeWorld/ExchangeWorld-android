@@ -18,7 +18,7 @@ import java.util.List;
  */
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder> {
-    List<ExchangeModel> exchangeModels;
+    private List<ExchangeModel> exchangeModels;
 
     public HistoryAdapter(List<ExchangeModel> exchangeModels){
         this.exchangeModels = exchangeModels;
@@ -44,7 +44,6 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
 
     class HistoryViewHolder extends RecyclerView.ViewHolder{
         private ViewDataBinding binding;
-
 
         public HistoryViewHolder(View view){
             super(view);

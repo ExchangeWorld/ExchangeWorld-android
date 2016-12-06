@@ -89,7 +89,7 @@ public class ExchangeRequestAdapter extends RecyclerView.Adapter<ExchangeRequest
                         call.enqueue(new Callback<CreateExchangeResponse>() {
                             @Override
                             public void onResponse(Call<CreateExchangeResponse> call, Response<CreateExchangeResponse> response) {
-                                if (response.code()==201){
+                                if (response.code()==201 || response.code()==200){
                                     Toast.makeText(context, "成功接受請求", Toast.LENGTH_SHORT).show();
                                     listener.refreshAdapter();
                                 }else {

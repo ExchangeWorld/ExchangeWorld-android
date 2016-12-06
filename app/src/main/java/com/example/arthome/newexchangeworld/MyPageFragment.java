@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.arthome.newexchangeworld.MyPage.ExchangeRequestFragment;
+import com.example.arthome.newexchangeworld.MyPage.ExchangingFragment;
 import com.example.arthome.newexchangeworld.MyPage.HistoryExchangeFragment;
 import com.example.arthome.newexchangeworld.MyPage.MyItemFragment;
 import com.example.arthome.newexchangeworld.MyPage.WishListFragment;
@@ -24,7 +25,6 @@ import com.squareup.picasso.Picasso;
  * Created by arthome on 2016/4/9.
  */
 public class MyPageFragment extends Fragment {
-    private static final String BUNDLE = "BUNDLE";
     private TextView userName;
     ViewPager viewPager;
     PagerAdapter pagerAdapter;
@@ -78,7 +78,7 @@ public class MyPageFragment extends Fragment {
 
         @Override//幾個tab?
         public int getCount() {
-            return 4;
+            return 5;
         }
 
         @Override//設定tab對應的fragment
@@ -89,8 +89,10 @@ public class MyPageFragment extends Fragment {
                 case 1:
                     return MyItemFragment.newInstance();
                 case 2:
-                return ExchangeRequestFragment.newInstance();
+                    return ExchangeRequestFragment.newInstance();
                 case 3:
+                    return ExchangingFragment.newInstance();
+                case 4:
                     return HistoryExchangeFragment.newInstance();
                 default:
                     return null;
@@ -107,6 +109,8 @@ public class MyPageFragment extends Fragment {
                 case 2:
                     return "交換請求";
                 case 3:
+                    return "正在交換";
+                case 4:
                     return "歷史交換";
                 default:
                     return null;
