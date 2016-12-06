@@ -9,6 +9,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -85,8 +86,21 @@ public class ExchangingFragment extends Fragment {
         });
         binding.fragmentExchangingRecyclerView.setAdapter(mAdapter);
 
+
         mLayoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false);
         binding.fragmentExchangingRecyclerView.setLayoutManager(mLayoutManager);
+
+        binding.fragmentExchangingRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                binding.fragmentExchangingRecyclerView.requestDisallowInterceptTouchEvent(true);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            }
+        });
 
         binding.fragmentExchangingAcceptImageButton.setOnClickListener(new View.OnClickListener() {
             @Override

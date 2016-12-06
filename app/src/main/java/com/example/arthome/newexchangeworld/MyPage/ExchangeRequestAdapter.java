@@ -60,7 +60,17 @@ public class ExchangeRequestAdapter extends RecyclerView.Adapter<ExchangeRequest
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         holder.getBinding().itemExhcangeRequestRecyclerView.setLayoutManager(mLayoutManager);
+        holder.getBinding().itemExhcangeRequestRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                recyclerView.requestDisallowInterceptTouchEvent(true);
+            }
 
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            }
+        });
 
         holder.adapter = new ChooseGoodsAdapter(exchangeRequestModel.getQueue(), 0);
         holder.getBinding().itemExhcangeRequestRecyclerView.setAdapter(holder.adapter);
