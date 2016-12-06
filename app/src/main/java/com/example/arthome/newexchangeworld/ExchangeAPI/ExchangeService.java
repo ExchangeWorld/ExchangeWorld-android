@@ -57,7 +57,7 @@ public interface ExchangeService {
     Call<ResponseBody> upLoadGoods(@Query("token") String strToken, @Body PostModel postModel);
 
     @GET("api/goods/search")
-    Call<List<GoodsModel>> downloadGoods(@Query("token") String strToken);
+    Call<List<GoodsModel>> downloadGoods();
 
     //http://exwd.csie.org:43002/api/goods/search?category={}
     @GET("api/goods/search")
@@ -103,4 +103,12 @@ public interface ExchangeService {
     //exwd.csie.org:43002/api/star/by?starring_user_uid=5
     @GET("api/star/by")
     Call<List<StarModel>> getUserWishList(@Query("starring_user_uid") int UID);
+
+    //exwd.csie.org:43002/api/exchange/agree?eid=7&owner_uid=2&token=853bc0f295c5a6649f02943e14471f9066df8fe0
+    @PUT("api/exchange/agree")
+    Call<CreateExchangeResponse> agreeExchange(@Query("eid") int EID, @Query("owner_uid") int ownerUID, @Query("token") String StrToken);
+
+    @PUT("api/exchange/drop")
+    Call<CreateExchangeResponse> dropExchange(@Query("eid") int EID, @Query("token") String StrToken);
+
 }

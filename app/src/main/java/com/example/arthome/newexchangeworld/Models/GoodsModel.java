@@ -4,6 +4,7 @@ import android.databinding.BindingAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.arthome.newexchangeworld.CircleTransform;
 import com.example.arthome.newexchangeworld.util.CategoryTool;
 import com.example.arthome.newexchangeworld.util.StringTool;
 import com.squareup.picasso.Picasso;
@@ -156,16 +157,28 @@ public class GoodsModel {
 
     @BindingAdapter({"bind:imageUrl"})
     public static void loadImage(ImageView view, String imageUrl) {
-        imageUrl = StringTool.INSTANCE.getFirstPhotoURL(imageUrl);
+        if(imageUrl!=null) {
+            imageUrl = StringTool.INSTANCE.getFirstPhotoURL(imageUrl);
+            Picasso.with(view.getContext())
+                    .load(imageUrl)
+                    .into(view);
+        }
+    }
+
+    @BindingAdapter({"bind:userImage"})
+    public static void loadUserImage(ImageView view, String imageUrl) {
         Picasso.with(view.getContext())
                 .load(imageUrl)
+                .transform(new CircleTransform())
                 .into(view);
     }
 
     @BindingAdapter({"bind:categoryIcon"})
     public static void setCategoryImage(ImageView view, String category) {
-        int resID = CategoryTool.INSTANCE.getCategoryDrawableID(category);
-        view.setImageResource(resID);
+        if(category!=null) {
+            int resID = CategoryTool.INSTANCE.getCategoryDrawableID(category);
+            view.setImageResource(resID);
+        }
     }
 
     @BindingAdapter({"bind:categoryName"})

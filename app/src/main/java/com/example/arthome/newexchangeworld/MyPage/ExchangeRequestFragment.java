@@ -3,6 +3,7 @@ package com.example.arthome.newexchangeworld.MyPage;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ import retrofit2.Response;
  */
 
 public class ExchangeRequestFragment extends Fragment {
+    private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView mRecyclerView;
     private ExchangeRequestAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -50,6 +52,7 @@ public class ExchangeRequestFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         //原本的initView
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fragment_history_refresh_layout);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_history_recyclerview);
         mAdapter = new ExchangeRequestAdapter(getContext(), exchangeRequestModels);
         mAdapter.setExchangeRequestAdapterListener(new ExchangeRequestAdapter.ExchangeRequestAdapterListener() {
@@ -62,6 +65,13 @@ public class ExchangeRequestFragment extends Fragment {
 
         mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(mLayoutManager);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                downloadExchangeRequest();
+            }
+        });
 
         progressDialog = new ProgressDialog(getActivity());
     }
@@ -78,6 +88,7 @@ public class ExchangeRequestFragment extends Fragment {
                     exchangeRequestModels.addAll(response.body());
                     mAdapter.notifyDataSetChanged();
                     progressDialog.dismiss();
+                    swipeRefreshLayout.setRefreshing(false);
                 }
             }
 

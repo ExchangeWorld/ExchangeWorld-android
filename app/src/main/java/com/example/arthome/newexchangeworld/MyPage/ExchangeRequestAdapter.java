@@ -60,7 +60,17 @@ public class ExchangeRequestAdapter extends RecyclerView.Adapter<ExchangeRequest
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         holder.getBinding().itemExhcangeRequestRecyclerView.setLayoutManager(mLayoutManager);
+        holder.getBinding().itemExhcangeRequestRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                recyclerView.requestDisallowInterceptTouchEvent(true);
+            }
 
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            }
+        });
 
         holder.adapter = new ChooseGoodsAdapter(exchangeRequestModel.getQueue(), 0);
         holder.getBinding().itemExhcangeRequestRecyclerView.setAdapter(holder.adapter);
@@ -89,7 +99,7 @@ public class ExchangeRequestAdapter extends RecyclerView.Adapter<ExchangeRequest
                         call.enqueue(new Callback<CreateExchangeResponse>() {
                             @Override
                             public void onResponse(Call<CreateExchangeResponse> call, Response<CreateExchangeResponse> response) {
-                                if (response.code()==201){
+                                if (response.code()==201 || response.code()==200){
                                     Toast.makeText(context, "成功接受請求", Toast.LENGTH_SHORT).show();
                                     listener.refreshAdapter();
                                 }else {
