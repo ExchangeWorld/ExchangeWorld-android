@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v4.app.ActivityCompat;
@@ -126,11 +127,11 @@ public class pictureActivity extends AppCompatActivity {
         Intent intent = new Intent(ACTION_IMAGE_CAPTURE);
         SimpleDateFormat tmpTime = new SimpleDateFormat("yyyyMMdd_HHmmss");
         String filename = tmpTime.format(new Date())+".jpg";
-        String filepath = Environment.getExternalStorageDirectory().toString();
-        File tmpfile = new File(Environment.getExternalStorageDirectory(), filename);
+        String filepath = Environment.getExternalStorageDirectory().getAbsolutePath().toString();
+        File tmpfile = new File(filepath+"/"+filename);
         Uri uri = Uri.fromFile(tmpfile);
         intent.putExtra(EXTRA_OUTPUT, uri);
-        intent.putExtra("Picturename",filepath+filename);
+        intent.putExtra("Picturename",filepath+"/"+filename);
         startActivityForResult(intent, 1);
     }
 
@@ -139,17 +140,7 @@ public class pictureActivity extends AppCompatActivity {
         if(requestCode==REQUEST_CAMERA)
             takePic();
     }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-      if (data != null) {
-            if ((requestCode == 1)) {
-                String picname = "";
-                data.putExtra("Picturename",picname);
-                imagePaths.add(picname);
-            }
-        }
-    }
+
 
     @Override
     public void onBackPressed(){
@@ -159,8 +150,21 @@ public class pictureActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onActivityResult(int requestCode,int resultCode,Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data != null) {
+            if ((requestCode == 1)) {
+                String picname = "";
+                data.putExtra("Picturename",picname);
+                imagePaths.add(picname);
+            }
+        }
+    }
+
+    @Override
     public void onResume(){
         super.onResume();
+        Handler handler = new Handler();
         Cursor cursor = managedQuery(Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null);
         imagePaths = new ArrayList<String>();
         for (int i = cursor.getCount() - 1; i >= 0; i--) {
@@ -179,7 +183,12 @@ public class pictureActivity extends AppCompatActivity {
             }
         });
         gallery.setAdapter(photoAdapter);
-        photoAdapter.notifyItemInserted(photoAdapter.getItemCount());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                photoAdapter.notifyDataSetChanged();
+            }
+        }, 500);
     }
 }
 
