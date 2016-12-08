@@ -5,6 +5,7 @@ package com.example.arthome.newexchangeworld.Models;
  */
 
 public class ChatRoomMessageModel {
+    private int mid;
     private int chatroom_cid;
     private int sender_uid;
     private String created_at;

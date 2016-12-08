@@ -3,7 +3,6 @@
     xmlns:bind="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="goods"
             type="com.example.arthome.newexchangeworld.Models.GoodsModel" />

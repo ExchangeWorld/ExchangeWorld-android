@@ -1,6 +1,7 @@
 package com.example.arthome.newexchangeworld.ExchangeAPI;
 
 import com.example.arthome.newexchangeworld.Models.AuthenticationModel;
+import com.example.arthome.newexchangeworld.Models.ChatRoomMessageModel;
 import com.example.arthome.newexchangeworld.Models.ChatRoomModel;
 import com.example.arthome.newexchangeworld.Models.CreateExchangeModel;
 import com.example.arthome.newexchangeworld.Models.CreateExchangeResponse;
@@ -116,4 +117,8 @@ public interface ExchangeService {
     //exwd.csie.org:43002/api/chatroom/with/8?token=853bc0f295c5a6649f02943e14471f9066df8fe0
     @GET("api/chatroom/with/{uid}")
     Call<ChatRoomModel> getChatRoom(@Path("uid") String other_uid, @Query("token") String StrToken);
+
+    //exwd.csie.org:43002/api/message/of/chatroom?chatroom_cid=3&limit=30&offset=0&token=7
+    @GET("api/message/of/chatroom")
+    Call<List<ChatRoomMessageModel>> getMessage(@Query("chatroom_cid") int cid, @Query("limit") int limit,@Query("offset") int offset, @Query("token") String strToken);
 }
