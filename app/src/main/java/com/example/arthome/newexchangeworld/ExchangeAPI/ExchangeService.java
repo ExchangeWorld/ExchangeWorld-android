@@ -1,6 +1,7 @@
 package com.example.arthome.newexchangeworld.ExchangeAPI;
 
 import com.example.arthome.newexchangeworld.Models.AuthenticationModel;
+import com.example.arthome.newexchangeworld.Models.ChatRoomModel;
 import com.example.arthome.newexchangeworld.Models.CreateExchangeModel;
 import com.example.arthome.newexchangeworld.Models.CreateExchangeResponse;
 import com.example.arthome.newexchangeworld.Models.EditGoodsModel;
@@ -29,6 +30,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
@@ -111,4 +113,7 @@ public interface ExchangeService {
     @PUT("api/exchange/drop")
     Call<CreateExchangeResponse> dropExchange(@Query("eid") int EID, @Query("token") String StrToken);
 
+    //exwd.csie.org:43002/api/chatroom/with/8?token=853bc0f295c5a6649f02943e14471f9066df8fe0
+    @GET("api/chatroom/with/{uid}")
+    Call<ChatRoomModel> getChatRoom(@Path("uid") String other_uid, @Query("token") String StrToken);
 }

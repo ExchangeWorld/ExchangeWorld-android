@@ -9,7 +9,6 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.multidex.MultiDex;
@@ -26,7 +25,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import static android.Manifest.permission.*;
 
@@ -35,13 +33,16 @@ import android.widget.TextView;
 import com.example.arthome.newexchangeworld.Models.PostModel;
 import com.example.arthome.newexchangeworld.util.CommonAPI;
 import com.example.arthome.newexchangeworld.util.DateTool;
-import com.facebook.Profile;
 
 
 import com.facebook.FacebookSdk;
 import com.squareup.picasso.Picasso;
 
 
+import org.java_websocket.client.WebSocketClient;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Date;
 
 import io.realm.Realm;
@@ -84,7 +85,6 @@ public class MainActivity extends AppCompatActivity
         Realm.init(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
         FloatingActionButton cameraButton = (FloatingActionButton) findViewById(R.id.cameraFab);
 
@@ -133,30 +133,19 @@ public class MainActivity extends AppCompatActivity
             userName.setText(user.getUserName());
         }
 
-//        if (Profile.getCurrentProfile() != null) {
-//            String id = Profile.getCurrentProfile().getId();
-//            System.out.println(">>>main id= " + id);
-//            if (RealmManager.INSTANCE.retrieveUser().size() == 0) {
-//                User user = new User();
-//                user.setIdentity(Profile.getCurrentProfile().getId());
-//                user.setUserName(Profile.getCurrentProfile().getName());
-//
-//                RealmManager.INSTANCE.createUser(user);
-//            } else {
-//                User user = RealmManager.INSTANCE.retrieveUser().get(0);
-//                if (user.getLastTokenDate() == null) {
-//                    CommonAPI.INSTANCE.getExToken(user.getIdentity(), this);
-//                    user = RealmManager.INSTANCE.retrieveUser().get(0);
-//                } else {
-//                    if (!DateTool.INSTANCE.isSameDay(user.getLastTokenDate(), new Date())) {  //Token過期 重新取得
-//                        CommonAPI.INSTANCE.getExToken(user.getIdentity(), this);
-//                        user = RealmManager.INSTANCE.retrieveUser().get(0);
-//                    }
-//                }
-//                Picasso.with(this).load(user.getPhotoPath()).transform(new CircleTransform()).into(userPhoto);
-//                userName.setText(user.getUserName());
+
+        //TODO  放哪？
+//        if(user!=null) {
+//            WebSocketClient client = null;
+//            try {
+//                client = new MyWebSocketClient(new URI("ws://exwd.csie.org:43002/?token="+user.getExToken()));
+//            } catch (URISyntaxException e) {
+//                e.printStackTrace();
 //            }
+//            client.connect();
 //        }
+
+
     }
 
     public void toGallery() {
