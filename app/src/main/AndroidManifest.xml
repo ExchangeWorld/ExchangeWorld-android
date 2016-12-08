@@ -47,7 +47,7 @@
         <activity
             android:name=".Login"
             android:label="@string/title_activity_login"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".pictureActivity" />
         <!--
              ATTENTION: This was auto-generated to add Google Play services to your project for
@@ -58,7 +58,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity android:name=".PostActivity" />
-
+        <activity android:name=".UserPageActivity"></activity>
     </application>
 
 </manifest>

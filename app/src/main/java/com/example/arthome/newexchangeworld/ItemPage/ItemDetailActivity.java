@@ -1,5 +1,6 @@
 package com.example.arthome.newexchangeworld.ItemPage;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,6 +24,7 @@ import com.example.arthome.newexchangeworld.Models.StarModel;
 import com.example.arthome.newexchangeworld.R;
 import com.example.arthome.newexchangeworld.RealmManager;
 import com.example.arthome.newexchangeworld.User;
+import com.example.arthome.newexchangeworld.UserPageActivity;
 import com.example.arthome.newexchangeworld.util.StringTool;
 import com.google.gson.Gson;
 
@@ -37,7 +39,7 @@ public class ItemDetailActivity extends AppCompatActivity {
 
     ImageView goodsImage, starImage;
     TextView ownerName, goodsDescription, goodsName, starTextView;
-    LinearLayout quequeLayout, starLayout;
+    LinearLayout quequeLayout, starLayout, userLayout;
     RecyclerView imageRecyclerView;
     User user = null;
     private GoodsModel goodsModel;
@@ -89,6 +91,14 @@ public class ItemDetailActivity extends AppCompatActivity {
                 }
             });
         }
+        userLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ItemDetailActivity.this, UserPageActivity.class);
+                intent.putExtra(Constant.INTENT_OWNER, new Gson().toJson(goodsModel.getOwner()));
+                startActivity(intent);
+            }
+        });
     }
 
     public void setUpUIView() {
@@ -100,6 +110,7 @@ public class ItemDetailActivity extends AppCompatActivity {
         starImage = (ImageView) findViewById(R.id.item_detail_star_ic);
         starTextView = (TextView) findViewById(R.id.item_detail_star_textView);
         starLayout = (LinearLayout) findViewById(R.id.item_detail_star_layout);
+        userLayout = (LinearLayout) findViewById(R.id.item_detail_user_layout);
     }
 
     private void showQueueDialog() {

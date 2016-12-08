@@ -51,10 +51,10 @@ public class TabFragment extends Fragment implements AreaFragment.AreaSelectedLi
         FragmentManager childFragmentManager = getChildFragmentManager();//fragment in fragment
         //set tab to fragment
         pagerAdapter =new myTabPagerAdapter(childFragmentManager);
-        viewPager = (ViewPager) view.findViewById(R.id.Viewpager);
+        viewPager = (ViewPager) view.findViewById(R.id.userpage_viewpager);
         viewPager.setAdapter(pagerAdapter);
         viewPager.setOffscreenPageLimit(2); //create the two fragment beside, more memory needed
-        tabLayout = (TabLayout) view.findViewById(R.id.TabLayout);
+        tabLayout = (TabLayout) view.findViewById(R.id.userpage_tab_layout);
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setOnTabSelectedListener(
                 new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
@@ -76,7 +76,7 @@ public class TabFragment extends Fragment implements AreaFragment.AreaSelectedLi
     @Override
     public void MapZooming(LatLng latLng, int zoomSize) {
         //spend five hour finding, viewpager autoTag the fragments Tag name "android:switcher:" + R.id.Viewpager + ":0"
-        MapFragment mapF = (MapFragment) getChildFragmentManager().findFragmentByTag("android:switcher:" + R.id.Viewpager + ":0");
+        MapFragment mapF = (MapFragment) getChildFragmentManager().findFragmentByTag("android:switcher:" + R.id.userpage_viewpager + ":0");
         if(mapF!=null){
             mapF.move(latLng,zoomSize);
         }
@@ -86,7 +86,7 @@ public class TabFragment extends Fragment implements AreaFragment.AreaSelectedLi
     }
 
     public MapFragment getMapFragment(){
-        MapFragment mapF = (MapFragment) getChildFragmentManager().findFragmentByTag("android:switcher:" + R.id.Viewpager + ":0");
+        MapFragment mapF = (MapFragment) getChildFragmentManager().findFragmentByTag("android:switcher:" + R.id.userpage_viewpager + ":0");
         return mapF;
     }
 

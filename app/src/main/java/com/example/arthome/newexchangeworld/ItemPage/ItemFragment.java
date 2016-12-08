@@ -125,7 +125,7 @@ public class ItemFragment extends Fragment {
     }
 
     private void downLoadGoods() {
-        Call<List<GoodsModel>> downloadCategoryGoods = new RestClient().getExchangeService().downloadCategoryGoods(category, user.getExToken());
+        Call<List<GoodsModel>> downloadCategoryGoods = new RestClient().getExchangeService().downloadCategoryGoods(category);
         downloadCategoryGoods.enqueue(new Callback<List<GoodsModel>>() {
             @Override
             public void onResponse(Call<List<GoodsModel>> call, final Response<List<GoodsModel>> response) {

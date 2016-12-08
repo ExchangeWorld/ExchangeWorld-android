@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:bind="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="owner"
+            type="com.example.arthome.newexchangeworld.Models.Owner" />
+    </data>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/activity_user_page"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.example.arthome.newexchangeworld.UserPageActivity">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/item_detail_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="@{owner.name}"
+                        android:textColor="@android:color/white"
+                        android:textSize="20sp" />
+                </RelativeLayout>
+            </android.support.v7.widget.Toolbar>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:background="@drawable/mypage_background">
+
+                <ImageView
+                    android:id="@+id/fragment_mypage_user_photo"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="88dp"
+                    android:layout_marginStart="88dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/default_user"
+                    bind:userImage="@{owner.photo_path}" />
+
+                <LinearLayout
+                    android:id="@+id/linearLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/fragment_mypage_user_photo"
+                    android:layout_marginLeft="23dp"
+                    android:layout_marginStart="23dp"
+                    android:layout_toEndOf="@+id/fragment_mypage_user_photo"
+                    android:layout_toRightOf="@+id/fragment_mypage_user_photo"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/userpage_user_name"
+                        style="@style/mTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="8dp"
+                        android:text="@{owner.name}"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/textView5"
+                        style="@style/mTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="8dp"
+                        android:text="現在位置"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <Button
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/rec_button"
+                            android:text="追蹤"
+                            android:layout_width="wrap_content"/>
+
+                        <Button
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/rec_button"
+                            android:text="發訊息"
+                            android:layout_width="wrap_content"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/userpage_tab_layout"
+                    style="@style/MyCustomTabLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:background="#FFFF" />
+
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/userpage_viewpager"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/userpage_tab_layout"
+                    android:layout_centerHorizontal="true" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </RelativeLayout>
+</layout>

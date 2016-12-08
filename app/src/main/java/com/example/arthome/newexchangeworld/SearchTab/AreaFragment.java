@@ -1,16 +1,13 @@
 package com.example.arthome.newexchangeworld.SearchTab;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.example.arthome.newexchangeworld.MapFragment;
 import com.example.arthome.newexchangeworld.R;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -167,7 +164,7 @@ public class AreaFragment extends Fragment implements View.OnClickListener {
     }
     public void moveTomap(){
         View vv = getParentFragment().getView();
-        ViewPager page = (ViewPager)vv.findViewById(R.id.Viewpager);
+        ViewPager page = (ViewPager)vv.findViewById(R.id.userpage_viewpager);
         page.setCurrentItem(0); // mapfragment is at 0
     }
 }

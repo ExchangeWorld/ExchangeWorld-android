@@ -8,6 +8,8 @@ public class Constant {
     //Intent
     public static final String INTENT_CATEGORY = "CATEGORY";
     public static final String INTENT_GOODS = "GOODS";
+    public static final String INTENT_OWNER = "OWNER";
+
 
     //Category
     public static final String CATEGORY_OTHERS = "Others";

@@ -17,7 +17,7 @@
             android:background="@drawable/mypage_background">
 
             <TextView
-                android:id="@+id/fragment_mypage_user_name"
+                android:id="@+id/userpage_user_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="未登入"
@@ -39,9 +39,9 @@
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:paddingBottom="8dp"
-                android:layout_below="@+id/fragment_mypage_user_name"
-                android:layout_alignLeft="@+id/fragment_mypage_user_name"
-                android:layout_alignStart="@+id/fragment_mypage_user_name"
+                android:layout_below="@+id/userpage_user_name"
+                android:layout_alignLeft="@+id/userpage_user_name"
+                android:layout_alignStart="@+id/userpage_user_name"
                 style="@style/mTextStyle"/>
 
             <ImageView
@@ -65,7 +65,7 @@
             <android.support.design.widget.TabLayout
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
-                android:id="@+id/TabLayout"
+                android:id="@+id/userpage_tab_layout"
                 android:background="#FFFF"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
@@ -75,8 +75,8 @@
             <android.support.v4.view.ViewPager
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:id="@+id/Viewpager"
-                android:layout_below="@+id/TabLayout"
+                android:id="@+id/userpage_viewpager"
+                android:layout_below="@+id/userpage_tab_layout"
                 android:layout_centerHorizontal="true" />
 
         </LinearLayout>

@@ -26,9 +26,9 @@ import com.squareup.picasso.Picasso;
  */
 public class MyPageFragment extends Fragment {
     private TextView userName;
-    ViewPager viewPager;
-    PagerAdapter pagerAdapter;
-    TabLayout tabLayout;
+    private ViewPager viewPager;
+    private PagerAdapter pagerAdapter;
+    private TabLayout tabLayout;
 
     public MyPageFragment() {
     }
@@ -55,7 +55,7 @@ public class MyPageFragment extends Fragment {
 
         //for circle head view
         ImageView head = (ImageView) view.findViewById(R.id.fragment_mypage_user_photo);
-        userName = (TextView) view.findViewById(R.id.fragment_mypage_user_name);
+        userName = (TextView) view.findViewById(R.id.userpage_user_name);
         if (RealmManager.INSTANCE.retrieveUser().size() != 0) {
             User user = RealmManager.INSTANCE.retrieveUser().get(0);
             Picasso.with(getContext()).load(user.getPhotoPath()).transform(new CircleTransform()).into(head);
@@ -64,9 +64,9 @@ public class MyPageFragment extends Fragment {
         FragmentManager childFragmentManager = getChildFragmentManager();//fragment in frament
         //set tab to fragment
         pagerAdapter = new myTabPagerAdapter(childFragmentManager);
-        viewPager = (ViewPager) view.findViewById(R.id.Viewpager);
+        viewPager = (ViewPager) view.findViewById(R.id.userpage_viewpager);
         viewPager.setAdapter(pagerAdapter);
-        tabLayout = (TabLayout) view.findViewById(R.id.TabLayout);
+        tabLayout = (TabLayout) view.findViewById(R.id.userpage_tab_layout);
         tabLayout.setupWithViewPager(viewPager);
     }
 

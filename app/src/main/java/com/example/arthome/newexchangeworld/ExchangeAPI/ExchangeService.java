@@ -63,7 +63,7 @@ public interface ExchangeService {
 
     //http://exwd.csie.org:43002/api/goods/search?category={}
     @GET("api/goods/search")
-    Call<List<GoodsModel>> downloadCategoryGoods(@Query("category") String strCategory, @Query("token") String strToken);
+    Call<List<GoodsModel>> downloadCategoryGoods(@Query("category") String strCategory);
 
     //exwd.csie.org:43002/api/goods/of?owner_uid=2
     @GET("api/goods/of")
