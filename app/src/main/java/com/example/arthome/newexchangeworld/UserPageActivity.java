@@ -1,5 +1,6 @@
 package com.example.arthome.newexchangeworld;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -60,8 +61,9 @@ public class UserPageActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ChatRoomModel> call, Response<ChatRoomModel> response) {
                 if (response.code() == 200) {
-                    CustomMessageDialog dialog = new CustomMessageDialog(UserPageActivity.this, user, response.body());
-                    dialog.show();
+                    Intent intent = new Intent(UserPageActivity.this, MessageActivity.class);
+                    intent.putExtra(Constant.INTENT_CHATROOM_MODEL ,new Gson().toJson(response.body()));
+                    startActivity(intent);
                 } else {
                     Toast.makeText(getApplicationContext(), "開啟聊天室失敗 status code錯誤", Toast.LENGTH_SHORT).show();
                 }

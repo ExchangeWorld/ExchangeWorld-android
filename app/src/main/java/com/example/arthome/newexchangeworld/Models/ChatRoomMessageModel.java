@@ -16,6 +16,7 @@ public class ChatRoomMessageModel {
         this.content = content;
     }
 
+
     public int getChatroom_cid() {
         return chatroom_cid;
     }

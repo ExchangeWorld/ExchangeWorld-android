@@ -51,6 +51,7 @@ import io.realm.Realm;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static MyWebSocketClient myWebSocketClient;
     private TabFragment tabFragment = TabFragment.newInstance();
     private ImageView userPhoto;
     private TextView userName;
@@ -134,18 +135,14 @@ public class MainActivity extends AppCompatActivity
         }
 
 
-        //TODO  放哪？
-//        if(user!=null) {
-//            WebSocketClient client = null;
-//            try {
-//                client = new MyWebSocketClient(new URI("ws://exwd.csie.org:43002/?token="+user.getExToken()));
-//            } catch (URISyntaxException e) {
-//                e.printStackTrace();
-//            }
-//            client.connect();
-//        }
-
-
+        if(user!=null) {
+            try {
+                myWebSocketClient = new MyWebSocketClient(new URI("ws://exwd.csie.org:43002/?token="+user.getExToken()));
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+            myWebSocketClient.connect();
+        }
     }
 
     public void toGallery() {
@@ -263,4 +260,8 @@ public class MainActivity extends AppCompatActivity
         //return _bmp;
         return output;
     }
+    public static MyWebSocketClient getMyWebSocketClient() {
+        return myWebSocketClient;
+    }
+
 }

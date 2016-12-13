@@ -30,7 +30,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public MessageAdapter(List<ChatRoomMessageModel> messageModelList, int myUID){
-        this.messageModelList= messageModelList;
+        this.messageModelList = messageModelList;
         this.myUID = myUID;
     }
 
