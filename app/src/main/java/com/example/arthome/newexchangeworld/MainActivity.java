@@ -42,6 +42,7 @@ import com.squareup.picasso.Picasso;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Date;
 
 import io.realm.Realm;
@@ -195,8 +196,10 @@ public class MainActivity extends AppCompatActivity
         if (intent.getFlags() == Intent.FLAG_ACTIVITY_CLEAR_TOP) {
             mapFragment = tabFragment.getMapFragment();
             PostModel postModel = (PostModel) intent.getExtras().getSerializable("postInfo");
+            ArrayList<String> photoArray = intent.getExtras().getStringArrayList(Constant.INTENT_PHOTO_ARRAY);
             System.out.println(">>>post " + postModel.getName());
             mapFragment.setPostModelDetail(postModel);
+            mapFragment.setPhotoPath(photoArray);
             mapFragment.setUploadView(true);
         }
     }
