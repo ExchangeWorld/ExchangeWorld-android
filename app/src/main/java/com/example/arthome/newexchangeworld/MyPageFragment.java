@@ -17,6 +17,7 @@ import com.example.arthome.newexchangeworld.MyPage.ExchangeRequestFragment;
 import com.example.arthome.newexchangeworld.MyPage.ExchangingFragment;
 import com.example.arthome.newexchangeworld.MyPage.HistoryExchangeFragment;
 import com.example.arthome.newexchangeworld.MyPage.MyItemFragment;
+import com.example.arthome.newexchangeworld.MyPage.MyWishListFragment;
 import com.example.arthome.newexchangeworld.MyPage.WishListFragment;
 import com.squareup.picasso.Picasso;
 
@@ -85,7 +86,7 @@ public class MyPageFragment extends Fragment {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return WishListFragment.newInstance();
+                    return MyWishListFragment.newInstance();
                 case 1:
                     return MyItemFragment.newInstance();
                 case 2:

@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity
 
         if(user!=null) {
             try {
-                myWebSocketClient = new MyWebSocketClient(new URI("ws://exwd.csie.org:43002/?token="+user.getExToken()));
+                myWebSocketClient = new MyWebSocketClient(new URI("ws://exwd.csie.org:43002/?token=" + user.getExToken()));
             } catch (URISyntaxException e) {
                 e.printStackTrace();
             }
