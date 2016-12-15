@@ -129,13 +129,6 @@ public class PostActivity extends AppCompatActivity {
             }
         });
     }
-    @Override
-
-    public void onBackPressed(){
-        Intent i = new Intent(PostActivity.this,pictureActivity.class);
-        startActivity(i);
-        PostActivity.this.finish();
-    }
 
     private String setCategory(String s){
         int i = 0;

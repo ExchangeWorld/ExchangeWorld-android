@@ -1,5 +1,6 @@
 package com.example.arthome.newexchangeworld;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -9,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.multidex.MultiDex;
@@ -29,17 +31,14 @@ import android.widget.ImageView;
 import static android.Manifest.permission.*;
 
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.arthome.newexchangeworld.Models.PostModel;
 import com.example.arthome.newexchangeworld.util.CommonAPI;
 import com.example.arthome.newexchangeworld.util.DateTool;
 
-
 import com.facebook.FacebookSdk;
 import com.squareup.picasso.Picasso;
-
-
-import org.java_websocket.client.WebSocketClient;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -53,29 +52,23 @@ public class MainActivity extends AppCompatActivity
 
     private static MyWebSocketClient myWebSocketClient;
     private TabFragment tabFragment = TabFragment.newInstance();
+    private MyPageFragment myPageFragment = MyPageFragment.newInstance();
     private ImageView userPhoto;
     private TextView userName;
     private TextView userLocation;
     private User user;
+    private MapFragment mapFragment;
+    private NavigationView navigationView;
+    private FloatingActionButton cameraButton;
 
-    public void camera(View view) {
+    public void camera() {
         int permission = ActivityCompat.checkSelfPermission(MainActivity.this, READ_EXTERNAL_STORAGE);
         if (permission != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE}, 0);
         else
             toGallery();
-
     }
 
-/*    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == 0 && resultCode == RESULT_OK && data != null) {
-            Bitmap mbmp = (Bitmap) data.getExtras().get("data");
-            ImageView CameraV = (ImageView) findViewById(R.id.cameraImageView);
-            CameraV.setImageBitmap(mbmp);
-        }
-    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,8 +80,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton cameraButton = (FloatingActionButton) findViewById(R.id.cameraFab);
-
+        cameraButton = (FloatingActionButton) findViewById(R.id.cameraFab);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -96,8 +88,10 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        marshmallowGPSPremissionCheck();
 
         //for circle head view
         View headerView = navigationView.getHeaderView(0); // for Navigation findViewById
@@ -111,15 +105,23 @@ public class MainActivity extends AppCompatActivity
             transaction.commit();
             cameraButton.setVisibility(View.VISIBLE);
         }
+        cameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (user != null) {
+                    camera();
+                } else {
+                    Toast.makeText(getApplicationContext(), "登入後才能上傳照片", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     @Override
     protected void onResume() {
-        super.onResume();
-        if(RealmManager.INSTANCE.retrieveUser().size()==0){
-            userPhoto.setImageResource(R.drawable.default_user);
-            userName.setText("請登入");
-        }else {
+        if (RealmManager.INSTANCE.retrieveUser().size() == 0) {
+            setUserLoginView(false);
+        } else {
             user = RealmManager.INSTANCE.retrieveUser().get(0);
             if (user.getLastTokenDate() == null) {
                 CommonAPI.INSTANCE.getExToken(user.getIdentity(), this);
@@ -130,12 +132,11 @@ public class MainActivity extends AppCompatActivity
                     user = RealmManager.INSTANCE.retrieveUser().get(0);
                 }
             }
-            Picasso.with(this).load(user.getPhotoPath()).transform(new CircleTransform()).into(userPhoto);
-            userName.setText(user.getUserName());
+            setUserLoginView(true);
         }
 
 
-        if(user!=null) {
+        if (user != null) {
             try {
                 myWebSocketClient = new MyWebSocketClient(new URI("ws://exwd.csie.org:43002/?token=" + user.getExToken()));
             } catch (URISyntaxException e) {
@@ -143,6 +144,7 @@ public class MainActivity extends AppCompatActivity
             }
             myWebSocketClient.connect();
         }
+        super.onResume();
     }
 
     public void toGallery() {
@@ -155,6 +157,9 @@ public class MainActivity extends AppCompatActivity
     public void onRequestPermissionsResult(int requestCode, String[] permission, int[] grantResult) {
         if (requestCode == 0)
             toGallery();
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            return;
+//        }
     }
 
     @Override
@@ -188,8 +193,7 @@ public class MainActivity extends AppCompatActivity
     protected void onNewIntent(Intent intent) { //從post Activity回到Main會call
         super.onNewIntent(intent);
         if (intent.getFlags() == Intent.FLAG_ACTIVITY_CLEAR_TOP) {
-
-            MapFragment mapFragment = tabFragment.getMapFragment();
+            mapFragment = tabFragment.getMapFragment();
             PostModel postModel = (PostModel) intent.getExtras().getSerializable("postInfo");
             System.out.println(">>>post " + postModel.getName());
             mapFragment.setPostModelDetail(postModel);
@@ -206,26 +210,17 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         FloatingActionButton cameraButton = (FloatingActionButton) findViewById(R.id.cameraFab);
         if (id == R.id.drawer_searchPage) {
-            transaction.replace(R.id.content_frame, TabFragment.newInstance());
+            transaction.replace(R.id.content_frame, tabFragment);
             transaction.commit();
             cameraButton.setVisibility(View.VISIBLE);
         } else if (id == R.id.drawer_myPage) {
-            transaction.replace(R.id.content_frame, MyPageFragment.newInstance());
+            transaction.replace(R.id.content_frame, myPageFragment);
             transaction.commit();
             cameraButton.setVisibility(View.INVISIBLE);
         } else if (id == R.id.drawer_accountSetting) {
             Intent intent = new Intent();
             intent.setClass(MainActivity.this, Login.class);
             startActivity(intent);
-        } else if (id == R.id.nav_gallery) {
-            Intent intent = new Intent();
-            intent.setClass(MainActivity.this, TestActivity.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-            transaction.replace(R.id.content_frame, oneFragment.newInstance("one", "one"));
-            transaction.commit();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -260,8 +255,38 @@ public class MainActivity extends AppCompatActivity
         //return _bmp;
         return output;
     }
+
     public static MyWebSocketClient getMyWebSocketClient() {
         return myWebSocketClient;
     }
 
+    private void marshmallowGPSPremissionCheck() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && checkSelfPermission(
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && checkSelfPermission(
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.ACCESS_FINE_LOCATION},
+                    Constant.PERMISSION_LOCATION);
+        } else {
+            //   gps functions.
+        }
+    }
+
+    private void setUserLoginView(boolean isLogin) {
+        if (isLogin) {
+            Picasso.with(this).load(user.getPhotoPath()).transform(new CircleTransform()).into(userPhoto);
+            userName.setText(user.getUserName());
+            navigationView.getMenu().findItem(R.id.drawer_myPage).setEnabled(true);
+        } else {
+            userPhoto.setImageResource(R.drawable.default_user);
+            userName.setText("請登入");
+            navigationView.getMenu().findItem(R.id.drawer_myPage).setEnabled(false);
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.content_frame, tabFragment);
+            transaction.commit();
+        }
+    }
 }

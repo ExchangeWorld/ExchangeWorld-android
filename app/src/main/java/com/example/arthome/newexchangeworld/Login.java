@@ -42,16 +42,7 @@ import retrofit2.Response;
 
 public class Login extends AppCompatActivity {
     private LoginButton loginButton;
-    private TextView textView;
-    private Button postButton;
-    private EditText itemNameEditText;
-    private EditText itemDescriptionEditText;
     private CallbackManager callbackManager;
-    private AccessToken Fbtoken;
-    private String fbID;
-    private String EXtoken;
-    private String itemName;
-    private String itemDescription;
     private ProfileTracker mProfileTracker;
 
     @Override
@@ -78,10 +69,6 @@ public class Login extends AppCompatActivity {
         callbackManager = CallbackManager.Factory.create();
         loginButton = (LoginButton) findViewById(R.id.login_button);
 
-        textView = (TextView) findViewById(R.id.login_text);
-        postButton = (Button) findViewById(R.id.login_post_button);
-        itemDescriptionEditText = (EditText) findViewById(R.id.login_item_description_editText);
-        itemNameEditText = (EditText) findViewById(R.id.login_item_name_editText);
 
         mProfileTracker = new ProfileTracker() {
             @Override
@@ -122,13 +109,6 @@ public class Login extends AppCompatActivity {
             }
         });
 
-        postButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                itemName = itemNameEditText.getText().toString();
-                itemDescription = itemDescriptionEditText.getText().toString();
-            }
-        });
     }
 
     @Override
