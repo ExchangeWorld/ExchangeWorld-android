@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.example.arthome.newexchangeworld.ExchangeAPI.RestClient;
 import com.example.arthome.newexchangeworld.Models.AuthenticationModel;
 import com.example.arthome.newexchangeworld.Models.FaceBookUser;
+import com.example.arthome.newexchangeworld.Models.RegisterModel;
 import com.example.arthome.newexchangeworld.Models.UserModel;
 import com.example.arthome.newexchangeworld.util.CommonAPI;
 import com.facebook.AccessToken;
@@ -24,10 +25,15 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -44,6 +50,7 @@ public class Login extends AppCompatActivity {
     private LoginButton loginButton;
     private CallbackManager callbackManager;
     private ProfileTracker mProfileTracker;
+    private String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +86,8 @@ public class Login extends AppCompatActivity {
                     User user = new User();
                     user.setIdentity(currentProfile.getId());
                     RealmManager.INSTANCE.createUser(user);
+                    getAndSaveUserInfo(currentProfile);
                     CommonAPI.INSTANCE.getExToken(currentProfile.getId(), getApplicationContext());
-                    getAndSaveUserInfo(0, currentProfile.getId());
                 }
             }
         };
@@ -96,6 +103,21 @@ public class Login extends AppCompatActivity {
                 System.out.println(">>>" + loginResult.getAccessToken().getToken());
                 System.out.println(">>>hash=" + loginResult.getAccessToken().getToken().hashCode());
                 System.out.println(">>>id=" + loginResult.getAccessToken().getUserId());
+                GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+
+                    @Override
+                    public void onCompleted(JSONObject object, GraphResponse response) {
+                        try {
+                            email = object.getString("email");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "email");
+                request.setParameters(parameters);
+                request.executeAsync();
             }
 
             @Override
@@ -118,19 +140,34 @@ public class Login extends AppCompatActivity {
     }
 
 
-    private void getAndSaveUserInfo(int uid, String strIdentity) {
-        Call<UserModel> getUserInfo = new RestClient().getExchangeService().getUserInfo(uid, strIdentity);
+    private void getAndSaveUserInfo(final Profile profile) {
+        Call<UserModel> getUserInfo = new RestClient().getExchangeService().getUserInfo(0, profile.getId());
         getUserInfo.enqueue(new Callback<UserModel>() {
             @Override
             public void onResponse(Call<UserModel> call, Response<UserModel> response) {
                 if (response.code() == 200) {
-                    UserModel userModel = response.body();
-                    User realmUser = RealmManager.INSTANCE.retrieveUser().get(0);
-                    realmUser.setIdentity(userModel.getIdentity());
-                    realmUser.setUserName(userModel.getName());
-                    realmUser.setPhotoPath(userModel.getPhoto_path());
-                    realmUser.setUid(userModel.getUid());
-                    RealmManager.INSTANCE.createUser(realmUser);
+                    if (response.body() == null) {  //使用者"第一次"登入exchangeWorld
+                        final RegisterModel registerModel = new RegisterModel(true, profile.getId(), profile.getName(), email, profile.getProfilePictureUri(320, 320).toString());
+                        Call<UserModel> registerCall = new RestClient().getExchangeService().registerUser(registerModel);
+                        registerCall.enqueue(new Callback<UserModel>() {
+                            @Override
+                            public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+                                if(response.code()==200|| response.code()==201){
+                                    saveUserToRealm(response.body());
+                                }else {
+                                    Toast.makeText(getApplicationContext(),"註冊失敗 responseCode錯誤",Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<UserModel> call, Throwable t) {
+                                Toast.makeText(getApplicationContext(),"註冊失敗 onFailure",Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else {
+                        UserModel userModel = response.body();
+                        saveUserToRealm(userModel);
+                    }
                 }
             }
 
@@ -141,10 +178,19 @@ public class Login extends AppCompatActivity {
         });
     }
 
+    private void saveUserToRealm(UserModel userModel) {
+        User realmUser = RealmManager.INSTANCE.retrieveUser().get(0);
+        realmUser.setIdentity(userModel.getIdentity());
+        realmUser.setUserName(userModel.getName());
+        realmUser.setPhotoPath(userModel.getPhoto_path());
+        realmUser.setUid(userModel.getUid());
+        RealmManager.INSTANCE.createUser(realmUser);
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mProfileTracker!=null){
+        if (mProfileTracker != null) {
             mProfileTracker.stopTracking();
         }
     }

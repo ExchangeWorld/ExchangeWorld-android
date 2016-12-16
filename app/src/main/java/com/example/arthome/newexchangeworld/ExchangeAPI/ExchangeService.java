@@ -14,6 +14,7 @@ import com.example.arthome.newexchangeworld.Models.PostModel;
 import com.example.arthome.newexchangeworld.Models.QueueOfGoodsModel;
 import com.example.arthome.newexchangeworld.Models.QueueRequestModel;
 import com.example.arthome.newexchangeworld.Models.QueueResponseModel;
+import com.example.arthome.newexchangeworld.Models.RegisterModel;
 import com.example.arthome.newexchangeworld.Models.StarGoodsModel;
 import com.example.arthome.newexchangeworld.Models.StarModel;
 import com.example.arthome.newexchangeworld.Models.UploadImageModel;
@@ -121,4 +122,9 @@ public interface ExchangeService {
     //exwd.csie.org:43002/api/message/of/chatroom?chatroom_cid=3&limit=30&offset=0&token=7
     @GET("api/message/of/chatroom")
     Call<List<ChatRoomMessageModel>> getMessage(@Query("chatroom_cid") int cid, @Query("limit") int limit,@Query("offset") int offset, @Query("token") String strToken);
+
+    //exwd.csie.org:43002/api/authenticate/register
+
+    @POST("api/authenticate/register")
+    Call<UserModel> registerUser(@Body RegisterModel registerModel);
 }
