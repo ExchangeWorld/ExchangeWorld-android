@@ -7,10 +7,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -45,27 +44,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -78,6 +58,8 @@ import retrofit2.Response;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -91,6 +73,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     private PostModel postModelDetail;
     String exToken;
     private User user;
+    private List<String> photoPath;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -167,11 +150,11 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onInfoWindowClick(Marker marker) {
                 GoodsModel goodsModel = allMarkersMap.get(marker);
-                if(user!=null && user.getUid() == goodsModel.getOwner().getUid()){  //if the goods is the current users, start MyItemDetailActivity
+                if (user != null && user.getUid() == goodsModel.getOwner().getUid()) {  //if the goods is the current users, start MyItemDetailActivity
                     Intent intent = new Intent(getActivity(), MyItemDetailActivity.class);
                     intent.putExtra(Constant.INTENT_GOODS, new Gson().toJson(allMarkersMap.get(marker)));
                     startActivity(intent);
-                }else {
+                } else {
                     Intent intent = new Intent(getActivity(), ItemDetailActivity.class);
                     intent.putExtra(Constant.INTENT_GOODS, new Gson().toJson(allMarkersMap.get(marker)));
                     startActivity(intent);
@@ -219,24 +202,28 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             case R.id.map_upload_button:
                 postModelDetail.setPosition_x((float) draggableMarker.getPosition().longitude);
                 postModelDetail.setPosition_y((float) draggableMarker.getPosition().latitude);
-//                new  uploadImageTask().execute(postModelDetail);
 
-                Observable<ResponseBody> call = new RestClient().getExchangeService().upLoadImageRxJava(user.getExToken(),
-                        new UploadImageModel(convertPathTOBase(postModelDetail.getPhoto_path())));
-                call.subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Subscriber<ResponseBody>() {
+                System.out.println(">>>upload image start");
+
+                Observable.from(photoPath).subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread()).concatMap(new Func1<String, Observable<ResponseBody>>() {
+                    @Override
+                    public Observable<ResponseBody> call(String s) {
+                        return new RestClient().getExchangeService().upLoadImageRxJava(user.getExToken(),
+                                new UploadImageModel(convertPathTOBase(s))).subscribeOn(Schedulers.newThread())
+                                .observeOn(AndroidSchedulers.mainThread());
+                    }
+                }).subscribe(new Subscriber<ResponseBody>() {
                             @Override
                             public void onCompleted() {
-                                System.out.println(">>>onCompleted");
                                 Call<ResponseBody> uploadGood = new RestClient().getExchangeService().upLoadGoods(user.getExToken(), postModelDetail);
                                 uploadGood.enqueue(new Callback<ResponseBody>() {
                                     @Override
                                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                        if (response.code() == 201) {
+                                        if (response.code() == 201||response.code() == 200) {
                                             Toast.makeText(getContext(), "上傳成功", Toast.LENGTH_SHORT).show();
                                             downloadGoods();
-                                        }else
+                                        } else
                                             Toast.makeText(getContext(), "上傳失敗 status code錯誤", Toast.LENGTH_SHORT).show();
                                     }
 
@@ -249,7 +236,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
 
                             @Override
                             public void onError(Throwable e) {
-                                Toast.makeText(getContext(), "上傳圖片失敗 onError", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "上傳照片失敗 onError", Toast.LENGTH_SHORT).show();
                             }
 
                             @Override
@@ -269,8 +256,8 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     }
 
     Map<Marker, GoodsModel> allMarkersMap = new HashMap<Marker, GoodsModel>();  //hash map for infowindow
-    ImageView user_image;
 
+    ImageView user_image;
     public void setGoodsMap(List<GoodsModel> listGoodsModel) {
         mMap.clear();   //清除所有marker
         allMarkersMap.clear();
@@ -280,7 +267,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             double lat = listGoodsModel.get(i).getPosition_x();
             double lng = listGoodsModel.get(i).getPosition_y();
             String title = listGoodsModel.get(i).getName();
-            LatLng sydney = new LatLng(lng, lat); //check if x is lat or x is lng
+            LatLng sydney = new LatLng(lng, lat);
             Log.i("oscart", title + " " + Double.toString(lat));
             icon = getBitmapDescriptor(CategoryTool.INSTANCE.getCategoryDrawableID(listGoodsModel.get(i).getCategory()));
 
@@ -318,15 +305,14 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         });
     }
 
-
     public void setPostModelDetail(PostModel postModelDetail) {
         this.postModelDetail = postModelDetail;
-//        System.out.println("Base64 is:\n"+convertPathTOBase(postModelDetail.getPhoto_path()));
     }
 
-    private class InfoWindowRefresher implements com.squareup.picasso.Callback {
-        private Marker markerToRefresh;
 
+    private class InfoWindowRefresher implements com.squareup.picasso.Callback {
+
+        private Marker markerToRefresh;
         private InfoWindowRefresher(Marker markerToRefresh) {
             this.markerToRefresh = markerToRefresh;
         }
@@ -343,9 +329,8 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         public void onError() {
             Log.i("oscart", "error");
         }
+
     }
-
-
     //google marker cant add vector image
     private BitmapDescriptor getBitmapDescriptor(int id) {
         Drawable vectorDrawable = ContextCompat.getDrawable(getContext(), id);
@@ -358,8 +343,8 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         return BitmapDescriptorFactory.fromBitmap(bm);
     }
 
+
     private void setDraggableMarker() {
-//        LatLng sydney = new LatLng(24.989042, 121.546373);
         LatLng myLocation = new LatLng(mMap.getMyLocation().getLatitude(), mMap.getMyLocation().getLongitude());
         draggableMarker = mMap.addMarker(new MarkerOptions().position(myLocation).title("長按並拖曳定位").draggable(true));
     }
@@ -377,11 +362,13 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     }
 
     private String convertPathTOBase(String path) {
+        System.out.println(">>>up load start convertToBase");
         Bitmap bm = BitmapFactory.decodeFile(path);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
+        bm.compress(Bitmap.CompressFormat.JPEG, 50, baos); //bm is the bitmap object
         byte[] byteImage = baos.toByteArray();
         String encodedImage = Base64.encodeToString(byteImage, Base64.NO_WRAP); //NO_WRAP才不會出現換行
+        System.out.println(">>>up load finish convertToBase");
         return encodedImage;
     }
 
@@ -405,30 +392,17 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         });
     }
 
-    private void marshmallowGPSPremissionCheck() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && getActivity().checkSelfPermission(
-                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && getActivity().checkSelfPermission(
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
-                            Manifest.permission.ACCESS_FINE_LOCATION},
-                    Constant.PERMISSION_LOCATION);
-        } else {
-            //   gps functions.
-        }
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == Constant.PERMISSION_LOCATION
-                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//        if (requestCode == Constant.PERMISSION_LOCATION
+//                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//        }
 
-            //  gps functionality
-        }
+
     }
+
+
 
     @Override
     public void onResume() {
@@ -438,5 +412,9 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             user = RealmManager.INSTANCE.retrieveUser().get(0);
             exToken = user.getExToken();
         }
+    }
+
+    public void setPhotoPath(List<String> photoPath) {
+        this.photoPath = photoPath;
     }
 }

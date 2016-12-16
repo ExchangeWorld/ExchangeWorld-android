@@ -117,24 +117,17 @@ public class PostActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     PostModel postModel = new PostModel(nameText.getText().toString(),
-                            postPic.get(0),
                             describeText.getText().toString(),
-                            "Books"         //TODO 這邊要叫陳弘弦改
+                            "Books"
                     );
                     Intent i = new Intent(PostActivity.this, MainActivity.class);
                     i.putExtra("postInfo", postModel);
+                    i.putExtra(Constant.INTENT_PHOTO_ARRAY, postPic);
                     i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(i);
                 }
             }
         });
-    }
-    @Override
-
-    public void onBackPressed(){
-        Intent i = new Intent(PostActivity.this,pictureActivity.class);
-        startActivity(i);
-        PostActivity.this.finish();
     }
 
     private String setCategory(String s){

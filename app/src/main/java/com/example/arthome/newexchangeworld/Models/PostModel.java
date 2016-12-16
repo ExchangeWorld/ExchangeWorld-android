@@ -7,22 +7,21 @@ import java.io.Serializable;
  */
 public class PostModel implements Serializable {
     String name;
-    String photo_path = "[\"http://exwd.csie.org/images/87ea5379d1d295841e1b34c0227524a5e56e61e2e993aa16617d47346e4f14ee.jpeg\"]";
+    String photo_path = "[\"\"]";
     String description;
     float position_x = 121;     //long
     float position_y = 24;      //lan
     String category = "Books";
 
     public PostModel() {
-        photo_path = "[\"http://exwd.csie.org/images/87ea5379d1d295841e1b34c0227524a5e56e61e2e993aa16617d47346e4f14ee.jpeg\"]";
+        photo_path = "[\"\"]";
         position_x = 121;     //long
         position_y = 24;      //lan
         category = "Books";
     }
 
-    public PostModel(String name, String photo_path, String description, String category) {
+    public PostModel(String name, String description, String category) {
         this.name = name;
-        this.photo_path = photo_path;
         this.description = description;
         this.category = category;
     }
@@ -40,7 +39,11 @@ public class PostModel implements Serializable {
     }
 
     public void setPhoto_path(String photo_path) {
-        this.photo_path = "[\""+photo_path+"\"]";
+        if(this.photo_path.length()==4){
+                    this.photo_path = new StringBuilder(this.photo_path).insert(this.photo_path.length()-2, photo_path).toString();
+        }else {
+            this.photo_path = new StringBuilder(this.photo_path).insert(this.photo_path.length()-2, "\",\""+photo_path).toString();
+        }
     }
 
     public String getDescription() {

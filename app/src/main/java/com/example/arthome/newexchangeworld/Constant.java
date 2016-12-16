@@ -10,6 +10,7 @@ public class Constant {
     public static final String INTENT_GOODS = "GOODS";
     public static final String INTENT_OWNER = "OWNER";
     public static final String INTENT_CHATROOM_MODEL = "INTENT_CHATROOM_MODEL";
+    public static final String INTENT_PHOTO_ARRAY = "INTENT_PHOTO_ARRAY";
 
 
     //Category

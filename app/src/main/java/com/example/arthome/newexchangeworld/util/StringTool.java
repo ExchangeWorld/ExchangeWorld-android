@@ -31,8 +31,6 @@ public enum StringTool {
             dotPosition = arrayString.indexOf("\",\"");
         }
         urlList.add(arrayString);   //將剩下的最後一個url加入list
-        for (int i = 0; i < urlList.size(); i++) {
-        }
 
         return urlList;
     }

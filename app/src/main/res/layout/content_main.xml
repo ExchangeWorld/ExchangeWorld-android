@@ -32,7 +32,6 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="30dp"
-        android:onClick="camera"
         android:visibility="invisible"/>
 
 </RelativeLayout>

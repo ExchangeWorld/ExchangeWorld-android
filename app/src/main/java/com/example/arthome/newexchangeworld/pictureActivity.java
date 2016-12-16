@@ -116,7 +116,6 @@ public class pictureActivity extends AppCompatActivity {
                 bundle.putStringArrayList("imagePaths",  selectedPic);
                 intent.putExtras(bundle);
                 startActivity(intent);
-                pictureActivity.this.finish();
             }
         });
 
@@ -141,13 +140,6 @@ public class pictureActivity extends AppCompatActivity {
             takePic();
     }
 
-
-    @Override
-    public void onBackPressed(){
-        Intent i = new Intent(pictureActivity.this,MainActivity.class);
-        startActivity(i);
-        pictureActivity.this.finish();
-    }
 
     @Override
     public void onActivityResult(int requestCode,int resultCode,Intent data){

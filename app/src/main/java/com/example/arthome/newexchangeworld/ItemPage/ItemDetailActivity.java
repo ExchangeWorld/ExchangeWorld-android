@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -24,7 +23,7 @@ import com.example.arthome.newexchangeworld.Models.StarModel;
 import com.example.arthome.newexchangeworld.R;
 import com.example.arthome.newexchangeworld.RealmManager;
 import com.example.arthome.newexchangeworld.User;
-import com.example.arthome.newexchangeworld.UserPageActivity;
+import com.example.arthome.newexchangeworld.UserPage.UserPageActivity;
 import com.example.arthome.newexchangeworld.util.StringTool;
 import com.google.gson.Gson;
 
