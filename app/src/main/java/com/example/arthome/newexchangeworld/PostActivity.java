@@ -118,7 +118,7 @@ public class PostActivity extends AppCompatActivity {
                     }
                     PostModel postModel = new PostModel(nameText.getText().toString(),
                             describeText.getText().toString(),
-                            "Books"
+                            category
                     );
                     Intent i = new Intent(PostActivity.this, MainActivity.class);
                     i.putExtra("postInfo", postModel);
