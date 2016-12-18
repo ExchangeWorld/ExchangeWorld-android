@@ -77,13 +77,13 @@ public class HistoryExchangeFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
 
         //列數為2
-        mLayoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false);
+        mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         progressDialog = new ProgressDialog(getActivity());
     }
 
-    private void downloadHistoryExchanges(){
+    private void downloadHistoryExchanges() {
         progressDialog = ProgressDialog.show(getContext(), "Loading", "Please wait", true);
 
         Call<List<ExchangeModel>> call = new RestClient().getExchangeService().historyExchange(user.getUid(), user.getExToken());
@@ -92,7 +92,11 @@ public class HistoryExchangeFragment extends Fragment {
             public void onResponse(Call<List<ExchangeModel>> call, Response<List<ExchangeModel>> response) {
                 if (response.code() == 200) {
                     exchangeModels.clear();
-                    exchangeModels.addAll(response.body());
+                    for (int i = 0; i < response.body().size(); i++) {
+                        ExchangeModel exchangeModel = response.body().get(i);
+                        if (exchangeModel.getStatus().equals("completed"))
+                            exchangeModels.add(exchangeModel);
+                    }
                     mAdapter.notifyDataSetChanged();
 
                     swipeRefreshLayout.setRefreshing(false);
