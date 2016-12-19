@@ -143,8 +143,9 @@ public class UserPageActivity extends AppCompatActivity {
                     userModel = response.body();
                     List<GoodsModel> goodsModelList = new ArrayList<GoodsModel>();
                     goodsModelList.clear();
-                    for(int i = 0; i<userModel.getStar_starring_user().size();i++){
-                        goodsModelList.add(userModel.getStar_starring_user().get(i).getGoods());
+                    for (int i = 0; i < userModel.getStar_starring_user().size(); i++) {
+                        if (userModel.getStar_starring_user().get(i).getGoods() != null)    //物品刪除後server端會成null
+                            goodsModelList.add(userModel.getStar_starring_user().get(i).getGoods());
                     }
                     userWishListFragment.refreshGoodsModelList(goodsModelList);
                 } else {
