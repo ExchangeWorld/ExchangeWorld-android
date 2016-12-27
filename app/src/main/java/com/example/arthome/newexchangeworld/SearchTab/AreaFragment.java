@@ -96,7 +96,7 @@ public class AreaFragment extends Fragment implements View.OnClickListener {
                 moveTomap();
                 break;
             case R.id.im_taipei :
-                latLng = new LatLng(25.046156, 121.516632);
+                latLng = new LatLng(24.9874495, 121.5765);
                 areaCallback.MapZooming(latLng,15);
                 moveTomap();
                 break;
